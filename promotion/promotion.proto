@@ -1,0 +1,62 @@
+syntax = "proto3";
+option go_package = "goTemp/promotion";
+
+package promotion;
+
+import  "google/protobuf/timestamp.proto";
+
+
+service PromotionSrv {
+    rpc GetPromotionById(SearchId) returns (Promotion) {}
+    rpc GetPromotions(SearchParams) returns (Promotions) {}
+//    rpc GetPromotion(SearchParams) returns (Promotion) {}
+    rpc CreatePromotion(Promotion) returns (Promotion) {}
+    rpc UpdatePromotion(Promotion) returns (Promotion) {}
+    rpc DeletePromotion(SearchId) returns (affectedCount) {}
+}
+
+message Discount {
+    int64 id = 1;
+    double value = 2;
+    int32 type = 3;
+    string description = 4;
+}
+
+message Product {
+    int64 id =1;
+    string upcCode = 2;
+    repeated Discount discount = 3;
+}
+
+message Promotion {
+    int64 id =1;
+    string name =2;
+    string description = 3;
+    google.protobuf.Timestamp validFrom = 4;
+    google.protobuf.Timestamp validThru = 5;
+    bool active = 6;
+    int64 customerId = 7;
+    repeated Product product =8;
+    int32 approvalStatus = 9;
+    int32 prevApprovalStatus = 10;
+}
+
+message Promotions {
+    repeated Promotion promotion =1;
+}
+
+message SearchParams {
+    int64 id = 1;
+    string name = 2;
+    int64 productId = 3;
+    int64 customerId = 4;
+    google.protobuf.Timestamp validDate = 5;
+}
+
+message SearchId {
+    int64 id = 1;
+}
+
+message affectedCount {
+    int64 value = 1;
+}

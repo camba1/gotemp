@@ -1,0 +1,42 @@
+version: "3.7"
+
+services:
+  pgdb:
+    image: postgres
+    restart: always
+    container_name: pgdb
+    env_file: docker-compose.env
+    volumes:
+      - ./postgres/postgresDB:/var/lib/postgresql/data
+      - ./postgres/postgresInit:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+  promotionsrv:
+    build:
+      context: .
+      dockerfile: ./promotion/Dockerfile
+      target: Dev
+    depends_on:
+      - pgdb
+    container_name: promotionsrvcont
+    environment:
+      - MICRO_SERVER_ADDRESS=:50051
+    entrypoint: CompileDaemon --build="go build -o promotionServer ./promotion/server/" --command=./promotionServer
+    env_file: docker-compose.env
+    volumes:
+      - ./promotion/server:/go/src/goTemp/promotion/server
+    ports:
+      - "50051:50051"
+  promotioncli:
+    build:
+      context: .
+      dockerfile: ./promotion/DockerfileCli
+      target: Dev
+    container_name: promotionclicont
+    environment:
+      - MICRO_SERVER_ADDRESS=":50051"
+    entrypoint: CompileDaemon --build="go build -o promotionClient ./promotion/client/" --command=./promotionClient
+    volumes:
+      - ./promotion/client:/go/src/goTemp/promotion/client
+    ports:
+      - "50052:50051"

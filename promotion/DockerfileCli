@@ -1,0 +1,18 @@
+FROM golang AS Dev
+WORKDIR /go/src/goTemp
+RUN go get github.com/githubnemo/CompileDaemon
+ENV GO111MODULE=on
+COPY ./promotion ./promotion
+COPY ./go.mod ./go.sum ./
+RUN go get -d  -v ./...
+RUN go build -o promotionClient ./promotion/client/
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o promotionClientAlp ./promotion/client/
+EXPOSE 50051
+CMD ["./promotionClient"]
+
+
+FROM alpine
+RUN apk --no-cache add ca-certificates
+WORKDIR /goTemp
+COPY --from=Dev /go/src/goTemp/promotionClientAlp promotionClientAlp
+CMD ["./promotionClientAlp"]
