@@ -19,6 +19,7 @@ var glErr globalerrors.SrvError
 //promoErr: Holds service specific errors
 var promoErr statements.PromoErr
 
+//Promotion: Main entry point for promotion related services
 type Promotion struct{}
 
 //UpdatePromotion: Updates a promotion based on the is provided in the inPromotion. Returns updated promotion
@@ -78,7 +79,6 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, 
 		return err
 	}
 	if commandTag.RowsAffected() != 1 {
-		//return fmt.Errorf("row with id %d not found. Unable to delete the row", searchid.Id)
 		return fmt.Errorf(promoErr.DeleteRowNotFoundError(searchid.Id))
 	}
 
