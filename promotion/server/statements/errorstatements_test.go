@@ -2,6 +2,7 @@ package statements
 
 import (
 	"fmt"
+	"goTemp/globalUtils"
 	"testing"
 )
 
@@ -15,17 +16,17 @@ func Test_promoErr_internalError(t *testing.T) {
 		ge      PromoErr
 		args    args
 		want    string
-		lang    Languages
+		lang    globalUtils.Languages
 		setLang bool
 	}{
 		{name: "Pull English internal error", ge: prmerr, args: args{err: fmt.Errorf("test Error")}, want: "Internal error. Error: test Error\n",
-			lang: en, setLang: false,
+			lang: globalUtils.LangEN, setLang: false,
 		},
 		{name: "Pull English internal error", ge: prmerr, args: args{err: fmt.Errorf("error prueba")}, want: "Error interno. Error: error prueba\n",
-			lang: es, setLang: true,
+			lang: globalUtils.LangES, setLang: true,
 		},
 		{name: "Pull English internal error", ge: prmerr, args: args{err: fmt.Errorf("test Error")}, want: "Internal error. Error: test Error\n",
-			lang: en, setLang: true,
+			lang: globalUtils.LangEN, setLang: true,
 		},
 	}
 	for _, tt := range tests {
@@ -44,7 +45,7 @@ func Test_promoErr_getSqlTxt(t *testing.T) {
 	var prmerr PromoErr
 	type args struct {
 		errKey   string
-		language Languages
+		language globalUtils.Languages
 	}
 	tests := []struct {
 		name string
@@ -52,8 +53,8 @@ func Test_promoErr_getSqlTxt(t *testing.T) {
 		args args
 		want string
 	}{
-		{name: "Pull English internal error", ge: prmerr, args: args{errKey: "internalError", language: en}, want: "Internal error. Error: %v\n"},
-		{name: "Pull Spanish internal error", ge: prmerr, args: args{errKey: "internalError", language: es}, want: "Error interno. Error: %v\n"},
+		{name: "Pull English internal error", ge: prmerr, args: args{errKey: "internalError", language: globalUtils.LangEN}, want: "Internal error. Error: %v\n"},
+		{name: "Pull Spanish internal error", ge: prmerr, args: args{errKey: "internalError", language: globalUtils.LangES}, want: "Error interno. Error: %v\n"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

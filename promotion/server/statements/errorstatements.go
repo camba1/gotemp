@@ -2,24 +2,13 @@ package statements
 
 import (
 	"fmt"
+	"goTemp/globalUtils"
 	"log"
 )
 
-type Languages int
+var language globalUtils.Languages = globalUtils.LangEN
 
-const (
-	en Languages = iota
-	es
-	fr
-)
-
-func (l Languages) String() string {
-	return [...]string{"English", "Spanish", "French"}[l]
-}
-
-var language Languages = en
-
-func SetLanguage(newLanguage Languages) {
+func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
@@ -47,14 +36,14 @@ var errTxtES = map[string]PromoErr{
 	"SelectRowReadError":     "No se pudo leer la promocion de la base de datos. Error: %v \n",
 }
 
-func (ge *PromoErr) getSqlTxt(errKey string, myLanguage Languages) string {
+func (ge *PromoErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
 	var returnstr string
 	switch myLanguage {
-	case en:
+	case globalUtils.LangEN:
 		returnstr = string(errTxtEn[errKey])
-	case es:
+	case globalUtils.LangES:
 		returnstr = string(errTxtES[errKey])
-	case fr:
+	case globalUtils.LangFR:
 		log.Fatalf("%s language not implemented for promotions", myLanguage)
 	default:
 		log.Fatalf("%s language not implemented for promotions", myLanguage)
