@@ -4,6 +4,7 @@ RUN go get github.com/githubnemo/CompileDaemon
 ENV GO111MODULE=on
 COPY ./promotion ./promotion
 COPY ./globalerrors ./globalerrors
+COPY ./globalUtils ./globalUtils
 COPY ./go.mod ./go.sum ./
 RUN go get -d  -v ./...
 RUN go build -o promotionServer ./promotion/server/

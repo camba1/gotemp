@@ -1,14 +1,20 @@
 package globalerrors
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/golang/protobuf/ptypes/timestamp"
+	"time"
+)
 
 type SrvError string
 
 const (
-	srvNoStartTxt           SrvError = "Unable to start %s server. Error: %v \n"
-	srvNoHandlerTxt         SrvError = "Unable to register service handler. Error: %v"
-	dbNoConnectionTxt       SrvError = "Unable to connect to DB %s. Error: %v\n"
-	dbNoConnectionStringTxt SrvError = "Unable to find DB connection string. Please set environment variable %s \n"
+	srvNoStartTxt               SrvError = "Unable to start %s server. Error: %v \n"
+	srvNoHandlerTxt             SrvError = "Unable to register service handler. Error: %v"
+	dbNoConnectionTxt           SrvError = "Unable to connect to DB %s. Error: %v\n"
+	dbNoConnectionStringTxt     SrvError = "Unable to find DB connection string. Please set environment variable %s \n"
+	dtProtoTimeStampToTimeStamp SrvError = "Unable to convert proto timestamp %v to timestamp  when trying to update promotion. Error: %v \n"
+	dtTimeStampToProtoTimeStamp SrvError = "Unable to convert timestamp %v to proto timestamp  when trying to update promotion. Error: %v \n"
 )
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
@@ -25,4 +31,12 @@ func (ge *SrvError) DbNoConnectionString(envVarName string) string {
 
 func (ge *SrvError) SrvNoHandler(err error) string {
 	return fmt.Sprintf(string(srvNoHandlerTxt), err)
+}
+
+func (ge *SrvError) DtProtoTimeStampToTimeStamp(currTimeStamp *timestamp.Timestamp, err error) string {
+	return fmt.Sprintf(string(dtProtoTimeStampToTimeStamp), currTimeStamp, err)
+}
+
+func (ge *SrvError) DtTimeStampToProtoTimeStamp(currentTime time.Time, err error) string {
+	return fmt.Sprintf(string(dtTimeStampToProtoTimeStamp), currentTime, err)
 }

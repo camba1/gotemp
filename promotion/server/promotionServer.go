@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
+	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/promotion"
 	"goTemp/promotion/server/statements"
@@ -36,35 +36,46 @@ var promoErr statements.PromoErr
 
 type Promotion struct{}
 
+//func TimeStampPPBToTime(timeStamps...*timestamp.Timestamp) ([]time.Time, error) {
+//	var returnTimes []time.Time
+//	for _, timeStamp := range timeStamps {
+//		newTime, err := ptypes.Timestamp(timeStamp)
+//		if err != nil {
+//			log.Printf(glErr.DtProtoTimeStampToTimeStamp(timeStamp, err) )
+//			//log.Printf("Unable to convert proto timestamp %v to timestamp  when trying to update promotion. Error: %v \n", timeStamp, err)
+//			return nil, err
+//		}
+//		returnTimes = append(returnTimes, newTime)
+//	}
+//	return returnTimes, nil
+//
+//}
+//
+//func TimeToTimeStampPPB(times...time.Time) ([]*timestamp.Timestamp, error){
+//	var returnStamps []*timestamp.Timestamp
+//	for _, currentTime := range times {
+//		newStamp, err := ptypes.TimestampProto(currentTime)
+//		if err != nil {
+//			log.Printf(glErr.DtTimeStampToProtoTimeStamp(currentTime, err))
+//			//log.Printf("Unable to convert timestamp %v to proto timestamp  when trying to update promotion. Error: %v \n", currentTime, err)
+//			return nil, err
+//		}
+//		returnStamps = append(returnStamps, newStamp)
+//	}
+//	return returnStamps, nil
+//}
+
 //UpdatePromotion: Updates a promotion based on the is provided in the inPromotion. Returns updated promotion
 func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promotion, outPromotion *pb.Promotion) error {
 	_ = ctx
-	//sqlStatement := ` update promotion set
-	//					 name = $1,
-	//					 description = $2,
-	//					 validfrom = $3,
-	//					 validthru = $4,
-	//					 customerid = $5,
-	//					 active = $6,
-	//					 approvalstatus = $7,
-	//					 prevapprovalstatus = $8
-	//					where id = $9
-	//					RETURNING id, name, description, validfrom, validthru, customerid, active, approvalstatus,  prevapprovalstatus
-	//				`
 
 	sqlStatement := statements.SqlUpdate.String()
 
-	validFrom, err := ptypes.Timestamp(inPromotion.GetValidFrom())
+	convertedDates, err := globalUtils.TimeStampPPBToTime(inPromotion.GetValidFrom(), inPromotion.GetValidThru())
 	if err != nil {
-		log.Printf("Unable to convert valid from proto timestamp to timestamp when trying to update promotion. Error: %v \n", err)
 		return err
 	}
-
-	validThru, err := ptypes.Timestamp(inPromotion.GetValidThru())
-	if err != nil {
-		log.Printf("Unable to convert valid thru proto timestamp to timestamp  when trying to update promotion. Error: %v \n", err)
-		return err
-	}
+	validFrom, validThru := convertedDates[0], convertedDates[1]
 
 	err = conn.QueryRow(context.Background(), sqlStatement,
 		inPromotion.GetName(),
@@ -92,8 +103,13 @@ func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promoti
 		log.Printf(promoErr.UpdateError(err))
 		return err
 	}
-	outPromotion.ValidFrom, _ = ptypes.TimestampProto(validFrom)
-	outPromotion.ValidThru, _ = ptypes.TimestampProto(validThru)
+	//outPromotion.ValidFrom, _ = ptypes.TimestampProto(validFrom)
+	//outPromotion.ValidThru, _ = ptypes.TimestampProto(validThru)
+	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+	if err != nil {
+		return err
+	}
+	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
 	return nil
 }
@@ -121,11 +137,6 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, 
 func (p *Promotion) GetPromotions(ctx context.Context, searchParms *pb.SearchParams, promotions *pb.Promotions) error {
 
 	_ = ctx
-
-	//sqlStatement := `select
-	//					id, name, description, validfrom, validthru,
-	//					customerid, active, approvalstatus,  prevapprovalstatus
-	//				 from promotion`
 
 	sqlStatement := statements.SqlSelectAll.String()
 	sqlWhereClause, values, err2 := p.buildSearchWhereClause(searchParms)
@@ -162,8 +173,15 @@ func (p *Promotion) GetPromotions(ctx context.Context, searchParms *pb.SearchPar
 			log.Printf(promoErr.SelectScanError(err))
 			return err
 		}
-		promo.ValidFrom, _ = ptypes.TimestampProto(validFrom)
-		promo.ValidThru, _ = ptypes.TimestampProto(validThru)
+		//promo.ValidFrom, _ = ptypes.TimestampProto(validFrom)
+		//promo.ValidThru, _ = ptypes.TimestampProto(validThru)
+
+		convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+		if err != nil {
+			return err
+		}
+		promo.ValidFrom, promo.ValidThru = convertedTimes[0], convertedTimes[1]
+
 		promotions.Promotion = append(promotions.Promotion, &promo)
 	}
 
@@ -199,11 +217,16 @@ func (p *Promotion) buildSearchWhereClause(searchParms *pb.SearchParams) (string
 		i++
 	}
 	if searchParms.GetValidDate() != nil {
-		validFrom, err := ptypes.Timestamp(searchParms.GetValidDate())
+		//validFrom, err := ptypes.Timestamp(searchParms.GetValidDate())
+		//if err != nil {
+		//	log.Printf("Unable to convert valid from proto timestamp to timestamp when trying to search promotions. Error: %v \n", err)
+		//	return "", nil, err
+		//}
+		convertedDates, err := globalUtils.TimeStampPPBToTime(searchParms.GetValidDate())
 		if err != nil {
-			log.Printf("Unable to convert valid from proto timestamp to timestamp when trying to search promotions. Error: %v \n", err)
 			return "", nil, err
 		}
+		validFrom := convertedDates[0]
 		sqlWhereClause += fmt.Sprintf(" AND promotion.validfrom <= $%d AND promotion.validthru >= $%d", i, i)
 		values = append(values, validFrom)
 		i++
@@ -218,11 +241,6 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *pb.SearchId,
 	var validFrom time.Time
 	var validThru time.Time
 
-	//sqlStatement := `select
-	//					id, name, description, validfrom, validthru,
-	//					customerid, active, approvalstatus,  prevapprovalstatus
-	//				from promotion
-	//				where id = $1`
 	sqlStatement := statements.SqlSelectById.String()
 	err := conn.QueryRow(context.Background(), sqlStatement,
 		searchId.Id).
@@ -248,8 +266,14 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *pb.SearchId,
 
 	}
 
-	outPromotion.ValidFrom, _ = ptypes.TimestampProto(validFrom)
-	outPromotion.ValidThru, _ = ptypes.TimestampProto(validThru)
+	//outPromotion.ValidFrom, _ = ptypes.TimestampProto(validFrom)
+	//outPromotion.ValidThru, _ = ptypes.TimestampProto(validThru)
+
+	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+	if err != nil {
+		return err
+	}
+	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
 	return nil
 }
@@ -258,21 +282,23 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *pb.SearchId,
 func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *pb.Promotion, outPromotion *pb.Promotion) error {
 	_ = ctx
 
-	validFrom, err := ptypes.Timestamp(inPromotion.GetValidFrom())
+	//validFrom, err := ptypes.Timestamp(inPromotion.GetValidFrom())
+	//if err != nil {
+	//	log.Printf("Unable to convert valid from proto timestamp to timestamp when trying to create promotion. Error: %v \n", err)
+	//	return err
+	//}
+	//
+	//validThru, err := ptypes.Timestamp(inPromotion.GetValidThru())
+	//if err != nil {
+	//	log.Printf("Unable to convert valid thru proto timestamp to timestamp  when trying to create promotion. Error: %v \n", err)
+	//	return err
+	//}
+
+	convertedDates, err := globalUtils.TimeStampPPBToTime(inPromotion.GetValidFrom(), inPromotion.GetValidThru())
 	if err != nil {
-		log.Printf("Unable to convert valid from proto timestamp to timestamp when trying to create promotion. Error: %v \n", err)
 		return err
 	}
-
-	validThru, err := ptypes.Timestamp(inPromotion.GetValidThru())
-	if err != nil {
-		log.Printf("Unable to convert valid thru proto timestamp to timestamp  when trying to create promotion. Error: %v \n", err)
-		return err
-	}
-
-	//sqlStatement := `insert into promotion (name, description, validfrom, validthru, customerid, active, approvalstatus, prevapprovalstatus)
-	//			VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
-	//			RETURNING id, name, description, validfrom, validthru, customerid, active, approvalstatus,  prevapprovalstatus `
+	validFrom, validThru := convertedDates[0], convertedDates[1]
 
 	sqlStatement := statements.SqlInsert.String()
 	errIns := conn.QueryRow(context.Background(), sqlStatement,
@@ -302,8 +328,14 @@ func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *pb.Promoti
 		return errIns
 	}
 
-	outPromotion.ValidFrom, _ = ptypes.TimestampProto(validFrom)
-	outPromotion.ValidThru, _ = ptypes.TimestampProto(validThru)
+	//outPromotion.ValidFrom, _ = ptypes.TimestampProto(validFrom)
+	//outPromotion.ValidThru, _ = ptypes.TimestampProto(validThru)
+
+	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+	if err != nil {
+		return err
+	}
+	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
 	return nil
 }
