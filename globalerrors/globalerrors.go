@@ -13,8 +13,8 @@ const (
 	srvNoHandlerTxt             SrvError = "Unable to register service handler. Error: %v"
 	dbNoConnectionTxt           SrvError = "Unable to connect to DB %s. Error: %v\n"
 	dbNoConnectionStringTxt     SrvError = "Unable to find DB connection string. Please set environment variable %s \n"
-	dtProtoTimeStampToTimeStamp SrvError = "Unable to convert proto timestamp %v to timestamp  when trying to update promotion. Error: %v \n"
-	dtTimeStampToProtoTimeStamp SrvError = "Unable to convert timestamp %v to proto timestamp  when trying to update promotion. Error: %v \n"
+	dtProtoTimeStampToTimeStamp SrvError = "Unable to convert proto timestamp %v to timestamp. Error: %v \n"
+	dtTimeStampToProtoTimeStamp SrvError = "Unable to convert timestamp %v to proto timestamp. Error: %v \n"
 )
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
