@@ -2,19 +2,11 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"goTemp/globalUtils"
+	"goTemp/globalerrors"
 	pb "goTemp/promotion"
 )
-
-type ValidationError struct {
-	source string
-}
-
-func (v *ValidationError) Error() string {
-	return fmt.Sprintf("validation error in %s\n ", v.source)
-}
 
 func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Timestamp) ([]string, error) {
 	var FailureDesc []string
@@ -73,7 +65,7 @@ func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *pb.Pro
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
 	if len(validationErr.FailureDesc) > 0 {
-		return &ValidationError{"BeforeCreatePromotion"}
+		return &globalerrors.ValidationError{Source: "BeforeCreatePromotion"}
 	}
 	return nil
 }
@@ -86,7 +78,7 @@ func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *pb.Pro
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
 	if len(validationErr.FailureDesc) > 0 {
-		return &ValidationError{"BeforeUpdatePromotion"}
+		return &globalerrors.ValidationError{Source: "BeforeUpdatePromotion"}
 	}
 	return nil
 }
@@ -94,10 +86,10 @@ func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *pb.Pro
 func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *pb.Promotion, validationErr *pb.ValidationErr) error {
 	_ = ctx
 	if promotion.ApprovalStatus > 0 {
-		validationErr.FailureDesc = append(validationErr.FailureDesc, "Promotion cannot be deleted because it is not in initial state")
+		validationErr.FailureDesc = append(validationErr.FailureDesc, promoErr.DelPromoNotInitialState())
 	}
 	if len(validationErr.FailureDesc) > 0 {
-		return &ValidationError{"BeforeDeletePromotion"}
+		return &globalerrors.ValidationError{Source: "BeforeDeletePromotion"}
 	}
 	return nil
 }
@@ -106,7 +98,7 @@ func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *pb.Prom
 	_ = ctx
 	_ = promotion
 	if len(afterFuncErr.FailureDesc) > 0 {
-		return &ValidationError{"AfterCreatePromotion"}
+		return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
 	}
 	return nil
 }
@@ -115,7 +107,7 @@ func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *pb.Prom
 	_ = ctx
 	_ = promotion
 	if len(afterFuncErr.FailureDesc) > 0 {
-		return &ValidationError{"AfterUpdatePromotion"}
+		return &globalerrors.ValidationError{Source: "AfterUpdatePromotion"}
 	}
 	return nil
 }
@@ -124,7 +116,7 @@ func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *pb.Prom
 	_ = ctx
 	_ = promotion
 	if len(afterFuncErr.FailureDesc) > 0 {
-		return &ValidationError{"AfterDeletePromotion"}
+		return &globalerrors.ValidationError{Source: "AfterDeletePromotion"}
 	}
 	return nil
 }

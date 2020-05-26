@@ -1,9 +1,11 @@
 package main
 
 import (
+	"context"
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"goTemp/globalUtils"
+	"goTemp/globalerrors"
 	pb "goTemp/promotion"
 	"testing"
 	"time"
@@ -89,6 +91,7 @@ func Test_checkMandatoryFields(t *testing.T) {
 
 func Test_checkValidityDates(t *testing.T) {
 	nextYear := getNextYear()
+	currentDate := ptypes.TimestampNow()
 	type args struct {
 		validFrom *timestamp.Timestamp
 		validThru *timestamp.Timestamp
@@ -101,11 +104,11 @@ func Test_checkValidityDates(t *testing.T) {
 		wantErr bool
 	}{
 		{name: "Nil validity dates", args: args{validFrom: nil, validThru: nil}, want: 2, wantErr: false},
-		{name: "Nil valid from date", args: args{validFrom: nil, validThru: ptypes.TimestampNow()}, want: 1, wantErr: false},
-		{name: "Nil valid thru date", args: args{validFrom: ptypes.TimestampNow(), validThru: nil}, want: 1, wantErr: false},
-		{name: "Invalid equal  Dates", args: args{validFrom: ptypes.TimestampNow(), validThru: ptypes.TimestampNow()}, want: 1, wantErr: false},
-		{name: "Invalid Dates", args: args{validFrom: nextYear, validThru: ptypes.TimestampNow()}, want: 1, wantErr: false},
-		{name: "Valid dates", args: args{validFrom: ptypes.TimestampNow(), validThru: nextYear}, want: 0, wantErr: false},
+		{name: "Nil valid from date", args: args{validFrom: nil, validThru: currentDate}, want: 1, wantErr: false},
+		{name: "Nil valid thru date", args: args{validFrom: currentDate, validThru: nil}, want: 1, wantErr: false},
+		{name: "Invalid equal  Dates", args: args{validFrom: currentDate, validThru: currentDate}, want: 1, wantErr: false},
+		{name: "Invalid Dates", args: args{validFrom: nextYear, validThru: currentDate}, want: 1, wantErr: false},
+		{name: "Valid dates", args: args{validFrom: currentDate, validThru: nextYear}, want: 0, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -124,4 +127,59 @@ func Test_checkValidityDates(t *testing.T) {
 func getNextYear() *timestamp.Timestamp {
 	myDates, _ := globalUtils.TimeToTimeStampPPB(time.Now().AddDate(1, 0, 0))
 	return myDates[0]
+}
+
+func TestPromotion_BeforeDeletePromotion(t *testing.T) {
+	nextYear := getNextYear()
+	type args struct {
+		ctx           context.Context
+		promotion     *pb.Promotion
+		validationErr *pb.ValidationErr
+	}
+	ctx := context.Background()
+	otherStatePromo := pb.Promotion{
+		Id:                 0,
+		Name:               "Test",
+		Description:        "",
+		ValidFrom:          ptypes.TimestampNow(),
+		ValidThru:          nextYear,
+		Active:             false,
+		CustomerId:         1233,
+		Product:            nil,
+		ApprovalStatus:     1,
+		PrevApprovalStatus: 0,
+	}
+	goodPromo := pb.Promotion{
+		Id:                 0,
+		Name:               "test",
+		Description:        "test",
+		ValidFrom:          ptypes.TimestampNow(),
+		ValidThru:          nextYear,
+		Active:             false,
+		CustomerId:         1233,
+		Product:            nil,
+		ApprovalStatus:     0,
+		PrevApprovalStatus: 0,
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{name: "Promo in initial State", args: args{ctx: ctx, promotion: &goodPromo, validationErr: &pb.ValidationErr{FailureDesc: []string{}}}, wantErr: false},
+		{name: "Promo not in initial State", args: args{ctx: ctx, promotion: &otherStatePromo, validationErr: &pb.ValidationErr{FailureDesc: []string{}}}, wantErr: true},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			p := &Promotion{}
+			err := p.BeforeDeletePromotion(tt.args.ctx, tt.args.promotion, tt.args.validationErr)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("BeforeDeletePromotion() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			if err, ok := err.(*globalerrors.ValidationError); err != nil && tt.wantErr && !ok {
+				t.Errorf("BeforeDeletePromotion() expected ValidationError but got error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }
