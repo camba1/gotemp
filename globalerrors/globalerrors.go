@@ -6,6 +6,14 @@ import (
 	"time"
 )
 
+type ValidationError struct {
+	Source string
+}
+
+func (v *ValidationError) Error() string {
+	return fmt.Sprintf("validation error in %s\n ", v.Source)
+}
+
 type SrvError string
 
 const (
