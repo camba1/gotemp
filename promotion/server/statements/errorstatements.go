@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"goTemp/globalUtils"
 	"log"
+	"time"
 )
 
 var language globalUtils.Languages = globalUtils.LangEN
@@ -15,25 +16,31 @@ func SetLanguage(newLanguage globalUtils.Languages) {
 type PromoErr string
 
 var errTxtEn = map[string]PromoErr{
-	"internalError":          "Internal error. Error: %v\n",
-	"insertError":            "Unable to create promotion. Error: %v\n",
-	"UpdateError":            "Unable to update promotion. Error: %v \n",
-	"DeleteError":            "Unable to delete promotion %v. Error: %v\n",
-	"DeleteRowNotFoundError": "row with id %d not found. Unable to delete the row",
-	"SelectReadError":        "Unable to get rows from the DB. Error: %v \n",
-	"SelectScanError":        "Unable to read the promotion rows returned from the Db. Error: %v\n",
-	"SelectRowReadError":     "Unable to get row from the DB. Error: %v \n",
+	"internalError":           "Internal error. Error: %v\n",
+	"insertError":             "Unable to create promotion. Error: %v\n",
+	"UpdateError":             "Unable to update promotion. Error: %v \n",
+	"DeleteError":             "Unable to delete promotion %v. Error: %v\n",
+	"DeleteRowNotFoundError":  "row with id %d not found. Unable to delete the row",
+	"SelectReadError":         "Unable to get rows from the DB. Error: %v \n",
+	"SelectScanError":         "Unable to read the promotion rows returned from the Db. Error: %v\n",
+	"SelectRowReadError":      "Unable to get row from the DB. Error: %v \n",
+	"MissingField":            "%s must not be empty\n",
+	"DtInvalidValidityDates":  "The valid thru date (%v) must take place after the valid from date (%v)\n",
+	"DelPromoNotInitialState": "Promotion cannot be deleted because it is not in initial state \n",
 }
 
 var errTxtES = map[string]PromoErr{
-	"internalError":          "Error interno. Error: %v\n",
-	"insertError":            "No se pudo crear la promocion. Error: %v\n",
-	"UpdateError":            "No se pudo actualizar la promocion. Error: %v \n",
-	"DeleteError":            "No se pudo borrar la promocion %v. Error: %v\n",
-	"DeleteRowNotFoundError": "Promocion %d no se pudo encontrar. No se pudo borrar la promocion",
-	"SelectReadError":        "No su pudo leer datos de la base de datos. Error: %v \n",
-	"SelectScanError":        "No se pudo leer los datos recibidos de la base de datos. Error: %v\n",
-	"SelectRowReadError":     "No se pudo leer la promocion de la base de datos. Error: %v \n",
+	"internalError":           "Error interno. Error: %v\n",
+	"insertError":             "No se pudo crear la promocion. Error: %v\n",
+	"UpdateError":             "No se pudo actualizar la promocion. Error: %v \n",
+	"DeleteError":             "No se pudo borrar la promocion %v. Error: %v\n",
+	"DeleteRowNotFoundError":  "Promocion %d no se pudo encontrar. No se pudo borrar la promocion",
+	"SelectReadError":         "No su pudo leer datos de la base de datos. Error: %v \n",
+	"SelectScanError":         "No se pudo leer los datos recibidos de la base de datos. Error: %v\n",
+	"SelectRowReadError":      "No se pudo leer la promocion de la base de datos. Error: %v \n",
+	"MissingField":            "%s no debe estar vacio\n",
+	"DtInvalidValidityDates":  "La fecha final (%v) no puede ser menor a la fecha inicial (%v)\n",
+	"DelPromoNotInitialState": "Promocion no puede ser borrada porque no esta en estado inicial \n",
 }
 
 func (ge *PromoErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
@@ -81,4 +88,17 @@ func (ge *PromoErr) SelectScanError(err error) string {
 
 func (ge *PromoErr) SelectRowReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), err)
+}
+
+func (ge *PromoErr) MissingField(fieldName string) string {
+	return fmt.Sprintf(ge.getSqlTxt("MissingField", language), fieldName)
+}
+
+func (ge *PromoErr) DtInvalidValidityDates(validFrom, validThru time.Time) string {
+	dateLayout := globalUtils.DateLayoutISO
+	return fmt.Sprintf(ge.getSqlTxt("DtInvalidValidityDates", language), validThru.Format(dateLayout), validFrom.Format(dateLayout))
+}
+
+func (ge *PromoErr) DelPromoNotInitialState() string {
+	return fmt.Sprintf(ge.getSqlTxt("DelPromoNotInitialState", language))
 }
