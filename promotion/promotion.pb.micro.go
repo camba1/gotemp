@@ -45,10 +45,15 @@ func NewPromotionSrvEndpoints() []*api.Endpoint {
 type PromotionSrvService interface {
 	GetPromotionById(ctx context.Context, in *SearchId, opts ...client.CallOption) (*Promotion, error)
 	GetPromotions(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Promotions, error)
-	//    rpc GetPromotion(SearchParams) returns (Promotion) {}
 	CreatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*Promotion, error)
 	UpdatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*Promotion, error)
 	DeletePromotion(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error)
+	BeforeCreatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*ValidationErr, error)
+	BeforeUpdatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*ValidationErr, error)
+	BeforeDeletePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*ValidationErr, error)
+	AfterCreatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*AfterFuncErr, error)
+	AfterUpdatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*AfterFuncErr, error)
+	AfterDeletePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*AfterFuncErr, error)
 }
 
 type promotionSrvService struct {
@@ -113,15 +118,80 @@ func (c *promotionSrvService) DeletePromotion(ctx context.Context, in *SearchId,
 	return out, nil
 }
 
+func (c *promotionSrvService) BeforeCreatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*ValidationErr, error) {
+	req := c.c.NewRequest(c.name, "PromotionSrv.BeforeCreatePromotion", in)
+	out := new(ValidationErr)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionSrvService) BeforeUpdatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*ValidationErr, error) {
+	req := c.c.NewRequest(c.name, "PromotionSrv.BeforeUpdatePromotion", in)
+	out := new(ValidationErr)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionSrvService) BeforeDeletePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*ValidationErr, error) {
+	req := c.c.NewRequest(c.name, "PromotionSrv.BeforeDeletePromotion", in)
+	out := new(ValidationErr)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionSrvService) AfterCreatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*AfterFuncErr, error) {
+	req := c.c.NewRequest(c.name, "PromotionSrv.AfterCreatePromotion", in)
+	out := new(AfterFuncErr)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionSrvService) AfterUpdatePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*AfterFuncErr, error) {
+	req := c.c.NewRequest(c.name, "PromotionSrv.AfterUpdatePromotion", in)
+	out := new(AfterFuncErr)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *promotionSrvService) AfterDeletePromotion(ctx context.Context, in *Promotion, opts ...client.CallOption) (*AfterFuncErr, error) {
+	req := c.c.NewRequest(c.name, "PromotionSrv.AfterDeletePromotion", in)
+	out := new(AfterFuncErr)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for PromotionSrv service
 
 type PromotionSrvHandler interface {
 	GetPromotionById(context.Context, *SearchId, *Promotion) error
 	GetPromotions(context.Context, *SearchParams, *Promotions) error
-	//    rpc GetPromotion(SearchParams) returns (Promotion) {}
 	CreatePromotion(context.Context, *Promotion, *Promotion) error
 	UpdatePromotion(context.Context, *Promotion, *Promotion) error
 	DeletePromotion(context.Context, *SearchId, *AffectedCount) error
+	BeforeCreatePromotion(context.Context, *Promotion, *ValidationErr) error
+	BeforeUpdatePromotion(context.Context, *Promotion, *ValidationErr) error
+	BeforeDeletePromotion(context.Context, *Promotion, *ValidationErr) error
+	AfterCreatePromotion(context.Context, *Promotion, *AfterFuncErr) error
+	AfterUpdatePromotion(context.Context, *Promotion, *AfterFuncErr) error
+	AfterDeletePromotion(context.Context, *Promotion, *AfterFuncErr) error
 }
 
 func RegisterPromotionSrvHandler(s server.Server, hdlr PromotionSrvHandler, opts ...server.HandlerOption) error {
@@ -131,6 +201,12 @@ func RegisterPromotionSrvHandler(s server.Server, hdlr PromotionSrvHandler, opts
 		CreatePromotion(ctx context.Context, in *Promotion, out *Promotion) error
 		UpdatePromotion(ctx context.Context, in *Promotion, out *Promotion) error
 		DeletePromotion(ctx context.Context, in *SearchId, out *AffectedCount) error
+		BeforeCreatePromotion(ctx context.Context, in *Promotion, out *ValidationErr) error
+		BeforeUpdatePromotion(ctx context.Context, in *Promotion, out *ValidationErr) error
+		BeforeDeletePromotion(ctx context.Context, in *Promotion, out *ValidationErr) error
+		AfterCreatePromotion(ctx context.Context, in *Promotion, out *AfterFuncErr) error
+		AfterUpdatePromotion(ctx context.Context, in *Promotion, out *AfterFuncErr) error
+		AfterDeletePromotion(ctx context.Context, in *Promotion, out *AfterFuncErr) error
 	}
 	type PromotionSrv struct {
 		promotionSrv
@@ -161,4 +237,28 @@ func (h *promotionSrvHandler) UpdatePromotion(ctx context.Context, in *Promotion
 
 func (h *promotionSrvHandler) DeletePromotion(ctx context.Context, in *SearchId, out *AffectedCount) error {
 	return h.PromotionSrvHandler.DeletePromotion(ctx, in, out)
+}
+
+func (h *promotionSrvHandler) BeforeCreatePromotion(ctx context.Context, in *Promotion, out *ValidationErr) error {
+	return h.PromotionSrvHandler.BeforeCreatePromotion(ctx, in, out)
+}
+
+func (h *promotionSrvHandler) BeforeUpdatePromotion(ctx context.Context, in *Promotion, out *ValidationErr) error {
+	return h.PromotionSrvHandler.BeforeUpdatePromotion(ctx, in, out)
+}
+
+func (h *promotionSrvHandler) BeforeDeletePromotion(ctx context.Context, in *Promotion, out *ValidationErr) error {
+	return h.PromotionSrvHandler.BeforeDeletePromotion(ctx, in, out)
+}
+
+func (h *promotionSrvHandler) AfterCreatePromotion(ctx context.Context, in *Promotion, out *AfterFuncErr) error {
+	return h.PromotionSrvHandler.AfterCreatePromotion(ctx, in, out)
+}
+
+func (h *promotionSrvHandler) AfterUpdatePromotion(ctx context.Context, in *Promotion, out *AfterFuncErr) error {
+	return h.PromotionSrvHandler.AfterUpdatePromotion(ctx, in, out)
+}
+
+func (h *promotionSrvHandler) AfterDeletePromotion(ctx context.Context, in *Promotion, out *AfterFuncErr) error {
+	return h.PromotionSrvHandler.AfterDeletePromotion(ctx, in, out)
 }

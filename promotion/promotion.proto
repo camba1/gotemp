@@ -9,10 +9,15 @@ import  "google/protobuf/timestamp.proto";
 service PromotionSrv {
     rpc GetPromotionById(SearchId) returns (Promotion) {}
     rpc GetPromotions(SearchParams) returns (Promotions) {}
-//    rpc GetPromotion(SearchParams) returns (Promotion) {}
     rpc CreatePromotion(Promotion) returns (Promotion) {}
     rpc UpdatePromotion(Promotion) returns (Promotion) {}
     rpc DeletePromotion(SearchId) returns (affectedCount) {}
+    rpc BeforeCreatePromotion(Promotion) returns (validationErr) {}
+    rpc BeforeUpdatePromotion(Promotion) returns (validationErr) {}
+    rpc BeforeDeletePromotion(Promotion) returns (validationErr) {}
+    rpc AfterCreatePromotion(Promotion) returns (AfterFuncErr) {}
+    rpc AfterUpdatePromotion(Promotion) returns (AfterFuncErr) {}
+    rpc AfterDeletePromotion(Promotion) returns (AfterFuncErr) {}
 }
 
 message Discount {
@@ -59,4 +64,12 @@ message SearchId {
 
 message affectedCount {
     int64 value = 1;
+}
+
+message validationErr {
+    repeated string failureDesc = 1;
+}
+
+message AfterFuncErr {
+    repeated string failureDesc = 1;
 }
