@@ -8,6 +8,8 @@ import (
 	"time"
 )
 
+const DateLayoutISO = "2006-01-02"
+
 //glErr: Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
