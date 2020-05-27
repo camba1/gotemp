@@ -7,11 +7,16 @@ import (
 )
 
 type ValidationError struct {
-	Source string
+	Source      string
+	FailureDesc []string
 }
 
 func (v *ValidationError) Error() string {
-	return fmt.Sprintf("validation error in %s\n ", v.Source)
+	var failureDesc string
+	for _, desc := range v.FailureDesc {
+		failureDesc += desc
+	}
+	return fmt.Sprintf("validation error in %s:\n %s ", v.Source, failureDesc)
 }
 
 type SrvError string

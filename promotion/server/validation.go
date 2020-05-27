@@ -65,7 +65,7 @@ func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *pb.Pro
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
 	if len(validationErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "BeforeCreatePromotion"}
+		return &globalerrors.ValidationError{Source: "BeforeCreatePromotion", FailureDesc: validationErr.FailureDesc}
 	}
 	return nil
 }
@@ -78,7 +78,7 @@ func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *pb.Pro
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
 	if len(validationErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "BeforeUpdatePromotion"}
+		return &globalerrors.ValidationError{Source: "BeforeUpdatePromotion", FailureDesc: validationErr.FailureDesc}
 	}
 	return nil
 }
@@ -89,7 +89,7 @@ func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *pb.Pro
 		validationErr.FailureDesc = append(validationErr.FailureDesc, promoErr.DelPromoNotInitialState())
 	}
 	if len(validationErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "BeforeDeletePromotion"}
+		return &globalerrors.ValidationError{Source: "BeforeDeletePromotion", FailureDesc: validationErr.FailureDesc}
 	}
 	return nil
 }
