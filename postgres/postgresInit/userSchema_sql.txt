@@ -1,0 +1,43 @@
+-- This file is used to create the app user tables in the appuser DB and it is called in userdb.sh.
+-- It does not have .sql extension to avoid postgres automatically running it against the default DB as well
+
+-- Create the primary key generator
+
+create sequence public.table_id_seq;
+
+CREATE OR REPLACE FUNCTION public.next_id(OUT result bigint) AS $$
+DECLARE
+    our_epoch bigint := 1314220021721;
+    seq_id bigint;
+    now_millis bigint;
+    shard_id int := 5;
+BEGIN
+    SELECT nextval('public.table_id_seq') % 1024 INTO seq_id;
+
+    SELECT FLOOR(EXTRACT(EPOCH FROM clock_timestamp()) * 1000) INTO now_millis;
+    result := (now_millis - our_epoch) << 23;
+    result := result | (shard_id << 10);
+    result := result | (seq_id);
+END;
+$$ LANGUAGE PLPGSQL;
+
+-- Create table for appusers
+
+CREATE TABLE "public"."appuser" (
+    id  bigint not null default next_id(),
+    firstname varchar(100) NOT NULL,
+    lastname varchar(100),
+    validfrom timestamp NOT NULL,
+    validthru timestamp NOT NULL,
+    active boolean DEFAULT false,
+    pwd varchar(50)  NOT NULL,
+    name varchar(200) GENERATED ALWAYS AS (firstname || lastname) STORED,
+    PRIMARY KEY (id)
+);
+
+
+-- Insert sample appuser data
+insert into appuser (firstname , lastname, validfrom, validthru, pwd )
+VALUES ('Super', 'Duck', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd'),
+       ('Mighty', 'Ant', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd'),
+       ('Awesome', 'Cow', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd')
