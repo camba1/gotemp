@@ -182,8 +182,8 @@ func UpdatePromotion(promotionClient pb.PromotionSrvService, promo *pb.Promotion
 	promo.Active = true
 	promo.CustomerId = 3308341401806443521
 	promo.Product = nil
-	promo.ApprovalStatus = 2
-	promo.PrevApprovalStatus = 1
+	promo.ApprovalStatus = 0
+	promo.PrevApprovalStatus = 0
 
 	//newPromo.Product =  append(newPromo.Product, prod1, prod2)
 
