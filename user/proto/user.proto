@@ -1,0 +1,60 @@
+syntax = "proto3";
+option go_package = "goTemp/user/proto";
+
+package user;
+
+import  "google/protobuf/timestamp.proto";
+
+
+service userSrv {
+    rpc GetuserById(SearchId) returns (user) {}
+    rpc Getusers(SearchParams) returns (users) {}
+    rpc Createuser(user) returns (user) {}
+    rpc Updateuser(user) returns (user) {}
+    rpc Deleteuser(SearchId) returns (affectedCount) {}
+    rpc BeforeCreateuser(user) returns (validationErr) {}
+    rpc BeforeUpdateuser(user) returns (validationErr) {}
+    rpc BeforeDeleteuser(user) returns (validationErr) {}
+    rpc AfterCreateuser(user) returns (AfterFuncErr) {}
+    rpc AfterUpdateuser(user) returns (AfterFuncErr) {}
+    rpc AfterDeleteuser(user) returns (AfterFuncErr) {}
+}
+
+
+message user {
+    int64 id =1;
+    string firstname =2;
+    string lastname =3;
+    google.protobuf.Timestamp validFrom = 4;
+    google.protobuf.Timestamp validThru = 5;
+    bool active = 6;
+    string pwd =7;
+    string name =8;
+}
+
+message users {
+    repeated user user =1;
+}
+
+message SearchParams {
+    int64 id = 1;
+    string fisrtname = 2;
+    string lastname = 3;
+    google.protobuf.Timestamp validDate = 5;
+}
+
+message SearchId {
+    int64 id = 1;
+}
+
+message affectedCount {
+    int64 value = 1;
+}
+
+message validationErr {
+    repeated string failureDesc = 1;
+}
+
+message AfterFuncErr {
+    repeated string failureDesc = 1;
+}
