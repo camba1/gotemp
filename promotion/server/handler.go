@@ -16,15 +16,19 @@ import (
 //glErr: Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//promoErr: Holds service specific errors
-var promoErr statements.PromoErr
-
 //Promotion: Main entry point for promotion related services
 type Promotion struct{}
+
+//promoErr: Holds service specific errors
+var promoErr statements.PromoErr
 
 //UpdatePromotion: Updates a promotion based on the is provided in the inPromotion. Returns updated promotion
 func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promotion, outPromotion *pb.Promotion) error {
 	_ = ctx
+
+	if errVal := p.BeforeUpdatePromotion(ctx, inPromotion, &pb.ValidationErr{}); errVal != nil {
+		return errVal
+	}
 
 	sqlStatement := statements.SqlUpdate.String()
 
@@ -66,12 +70,25 @@ func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promoti
 	}
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
+	if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &pb.AfterFuncErr{}); errVal != nil {
+		return errVal
+	}
+
 	return nil
 }
 
 //DeletePromotion: Delete a promotion based on the promotion id in the searchId.id field. Returns number of affected promotions which should be one always
 func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, affectedCount *pb.AffectedCount) error {
 	_ = ctx
+
+	outPromotion := pb.Promotion{}
+	if err := p.GetPromotionById(ctx, searchid, &outPromotion); err != nil {
+		return err
+	}
+	if errVal := p.BeforeDeletePromotion(ctx, &outPromotion, &pb.ValidationErr{}); errVal != nil {
+		return errVal
+	}
+
 	sqlStatement := statements.SqlDelete.String()
 	commandTag, err := conn.Exec(context.Background(), sqlStatement, searchid.Id)
 	if err != nil {
@@ -83,6 +100,11 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, 
 	}
 
 	affectedCount.Value = commandTag.RowsAffected()
+
+	if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &pb.AfterFuncErr{}); errVal != nil {
+		return errVal
+	}
+
 	return nil
 }
 
@@ -225,6 +247,10 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *pb.SearchId,
 func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *pb.Promotion, outPromotion *pb.Promotion) error {
 	_ = ctx
 
+	if errVal := p.BeforeCreatePromotion(ctx, inPromotion, &pb.ValidationErr{}); errVal != nil {
+		return errVal
+	}
+
 	convertedDates, err := globalUtils.TimeStampPPBToTime(inPromotion.GetValidFrom(), inPromotion.GetValidThru())
 	if err != nil {
 		return err
@@ -264,6 +290,10 @@ func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *pb.Promoti
 		return err
 	}
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
+
+	if errVal := p.AfterCreatePromotion(ctx, outPromotion, &pb.AfterFuncErr{}); errVal != nil {
+		return errVal
+	}
 
 	return nil
 }
