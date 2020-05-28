@@ -33,6 +33,11 @@ const (
 							from user`
 )
 
+//test statement
+const (
+	TestStatement usrSql = `select 1`
+)
+
 func (p usrSql) String() string {
 	return string(p)
 }
