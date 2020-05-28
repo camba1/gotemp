@@ -69,3 +69,15 @@ func GetNextYearTimeStamp() *timestamp.Timestamp {
 	myDates, _ := TimeToTimeStampPPB(time.Now().AddDate(1, 0, 0))
 	return myDates[0]
 }
+
+func TimeStringToTimestamp(dateStr string) (error, *timestamp.Timestamp) {
+	dateTime, err := time.Parse(DateLayoutISO, dateStr)
+	if err != nil {
+		log.Fatalf("Unable to Format date %v", dateStr)
+	}
+	dateTsProto, err := ptypes.TimestampProto(dateTime)
+	if err != nil {
+		log.Fatalf("Unable to convert time to timestamp %v", dateTime)
+	}
+	return err, dateTsProto
+}
