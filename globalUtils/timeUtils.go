@@ -64,3 +64,8 @@ func CheckValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Tim
 	}
 	return FailureDesc, nil
 }
+
+func GetNextYearTimeStamp() *timestamp.Timestamp {
+	myDates, _ := TimeToTimeStampPPB(time.Now().AddDate(1, 0, 0))
+	return myDates[0]
+}
