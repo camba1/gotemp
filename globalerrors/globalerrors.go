@@ -28,6 +28,8 @@ const (
 	dbNoConnectionStringTxt     SrvError = "Unable to find DB connection string. Please set environment variable %s \n"
 	dtProtoTimeStampToTimeStamp SrvError = "Unable to convert proto timestamp %v to timestamp. Error: %v \n"
 	dtTimeStampToProtoTimeStamp SrvError = "Unable to convert timestamp %v to proto timestamp. Error: %v \n"
+	dtInvalidValidityDates      SrvError = "The valid thru date (%v) must take place after the valid from date (%v)\n"
+	missingField                SrvError = "%s must not be empty\n"
 )
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
@@ -52,4 +54,12 @@ func (ge *SrvError) DtProtoTimeStampToTimeStamp(currTimeStamp *timestamp.Timesta
 
 func (ge *SrvError) DtTimeStampToProtoTimeStamp(currentTime time.Time, err error) string {
 	return fmt.Sprintf(string(dtTimeStampToProtoTimeStamp), currentTime, err)
+}
+
+func (ge *SrvError) MissingField(fieldName string) string {
+	return fmt.Sprintf(string(missingField), fieldName)
+}
+
+func (ge *SrvError) DtInvalidValidityDates(validFrom, validThru time.Time) string {
+	return fmt.Sprintf(string(dtInvalidValidityDates), validFrom, validThru)
 }

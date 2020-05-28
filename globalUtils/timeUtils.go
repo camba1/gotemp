@@ -41,3 +41,26 @@ func TimeToTimeStampPPB(times ...time.Time) ([]*timestamp.Timestamp, error) {
 	}
 	return returnStamps, nil
 }
+
+func CheckValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Timestamp) ([]string, error) {
+	var FailureDesc []string
+	validDates := true
+	if validFrom == nil {
+		FailureDesc = append(FailureDesc, glErr.MissingField("valid from"))
+		validDates = false
+	}
+	if validThru == nil {
+		FailureDesc = append(FailureDesc, glErr.MissingField("valid thru"))
+		validDates = false
+	}
+	if validDates {
+		vd, err := TimeStampPPBToTime(validFrom, validThru)
+		if err != nil {
+			return nil, err
+		}
+		if vd[0].After(vd[1]) || vd[1].Equal(vd[0]) {
+			FailureDesc = append(FailureDesc, glErr.DtInvalidValidityDates(vd[0], vd[1]))
+		}
+	}
+	return FailureDesc, nil
+}
