@@ -7,17 +7,17 @@ import  "google/protobuf/timestamp.proto";
 
 
 service userSrv {
-    rpc GetuserById(SearchId) returns (user) {}
-    rpc Getusers(SearchParams) returns (users) {}
-    rpc Createuser(user) returns (user) {}
-    rpc Updateuser(user) returns (user) {}
-    rpc Deleteuser(SearchId) returns (affectedCount) {}
-    rpc BeforeCreateuser(user) returns (validationErr) {}
-    rpc BeforeUpdateuser(user) returns (validationErr) {}
-    rpc BeforeDeleteuser(user) returns (validationErr) {}
-    rpc AfterCreateuser(user) returns (AfterFuncErr) {}
-    rpc AfterUpdateuser(user) returns (AfterFuncErr) {}
-    rpc AfterDeleteuser(user) returns (AfterFuncErr) {}
+    rpc GetUserById(SearchId) returns (user) {}
+    rpc GetUsers(SearchParams) returns (users) {}
+    rpc CreateUser(user) returns (user) {}
+    rpc UpdateUser(user) returns (user) {}
+    rpc DeleteUser(SearchId) returns (affectedCount) {}
+    rpc BeforeCreateUser(user) returns (validationErr) {}
+    rpc BeforeUpdateUser(user) returns (validationErr) {}
+    rpc BeforeDeleteUser(user) returns (validationErr) {}
+    rpc AfterCreateUser(user) returns (AfterFuncErr) {}
+    rpc AfterUpdateUser(user) returns (AfterFuncErr) {}
+    rpc AfterDeleteUser(user) returns (AfterFuncErr) {}
 }
 
 

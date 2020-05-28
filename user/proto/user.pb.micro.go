@@ -43,17 +43,17 @@ func NewUserSrvEndpoints() []*api.Endpoint {
 // Client API for UserSrv service
 
 type UserSrvService interface {
-	GetuserById(ctx context.Context, in *SearchId, opts ...client.CallOption) (*User, error)
-	Getusers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error)
-	Createuser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
-	Updateuser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
-	Deleteuser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error)
-	BeforeCreateuser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
-	BeforeUpdateuser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
-	BeforeDeleteuser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
-	AfterCreateuser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
-	AfterUpdateuser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
-	AfterDeleteuser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
+	GetUserById(ctx context.Context, in *SearchId, opts ...client.CallOption) (*User, error)
+	GetUsers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error)
+	CreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
+	UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
+	DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error)
+	BeforeCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
+	BeforeUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
+	BeforeDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
+	AfterCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
+	AfterUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
+	AfterDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
 }
 
 type userSrvService struct {
@@ -68,8 +68,8 @@ func NewUserSrvService(name string, c client.Client) UserSrvService {
 	}
 }
 
-func (c *userSrvService) GetuserById(ctx context.Context, in *SearchId, opts ...client.CallOption) (*User, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.GetuserById", in)
+func (c *userSrvService) GetUserById(ctx context.Context, in *SearchId, opts ...client.CallOption) (*User, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.GetUserById", in)
 	out := new(User)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -78,8 +78,8 @@ func (c *userSrvService) GetuserById(ctx context.Context, in *SearchId, opts ...
 	return out, nil
 }
 
-func (c *userSrvService) Getusers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.Getusers", in)
+func (c *userSrvService) GetUsers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.GetUsers", in)
 	out := new(Users)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -88,8 +88,8 @@ func (c *userSrvService) Getusers(ctx context.Context, in *SearchParams, opts ..
 	return out, nil
 }
 
-func (c *userSrvService) Createuser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.Createuser", in)
+func (c *userSrvService) CreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.CreateUser", in)
 	out := new(User)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -98,8 +98,8 @@ func (c *userSrvService) Createuser(ctx context.Context, in *User, opts ...clien
 	return out, nil
 }
 
-func (c *userSrvService) Updateuser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.Updateuser", in)
+func (c *userSrvService) UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.UpdateUser", in)
 	out := new(User)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -108,8 +108,8 @@ func (c *userSrvService) Updateuser(ctx context.Context, in *User, opts ...clien
 	return out, nil
 }
 
-func (c *userSrvService) Deleteuser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.Deleteuser", in)
+func (c *userSrvService) DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.DeleteUser", in)
 	out := new(AffectedCount)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -118,8 +118,8 @@ func (c *userSrvService) Deleteuser(ctx context.Context, in *SearchId, opts ...c
 	return out, nil
 }
 
-func (c *userSrvService) BeforeCreateuser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.BeforeCreateuser", in)
+func (c *userSrvService) BeforeCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.BeforeCreateUser", in)
 	out := new(ValidationErr)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -128,8 +128,8 @@ func (c *userSrvService) BeforeCreateuser(ctx context.Context, in *User, opts ..
 	return out, nil
 }
 
-func (c *userSrvService) BeforeUpdateuser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.BeforeUpdateuser", in)
+func (c *userSrvService) BeforeUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.BeforeUpdateUser", in)
 	out := new(ValidationErr)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -138,8 +138,8 @@ func (c *userSrvService) BeforeUpdateuser(ctx context.Context, in *User, opts ..
 	return out, nil
 }
 
-func (c *userSrvService) BeforeDeleteuser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.BeforeDeleteuser", in)
+func (c *userSrvService) BeforeDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.BeforeDeleteUser", in)
 	out := new(ValidationErr)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -148,8 +148,8 @@ func (c *userSrvService) BeforeDeleteuser(ctx context.Context, in *User, opts ..
 	return out, nil
 }
 
-func (c *userSrvService) AfterCreateuser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.AfterCreateuser", in)
+func (c *userSrvService) AfterCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.AfterCreateUser", in)
 	out := new(AfterFuncErr)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -158,8 +158,8 @@ func (c *userSrvService) AfterCreateuser(ctx context.Context, in *User, opts ...
 	return out, nil
 }
 
-func (c *userSrvService) AfterUpdateuser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.AfterUpdateuser", in)
+func (c *userSrvService) AfterUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.AfterUpdateUser", in)
 	out := new(AfterFuncErr)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -168,8 +168,8 @@ func (c *userSrvService) AfterUpdateuser(ctx context.Context, in *User, opts ...
 	return out, nil
 }
 
-func (c *userSrvService) AfterDeleteuser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error) {
-	req := c.c.NewRequest(c.name, "UserSrv.AfterDeleteuser", in)
+func (c *userSrvService) AfterDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.AfterDeleteUser", in)
 	out := new(AfterFuncErr)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -181,32 +181,32 @@ func (c *userSrvService) AfterDeleteuser(ctx context.Context, in *User, opts ...
 // Server API for UserSrv service
 
 type UserSrvHandler interface {
-	GetuserById(context.Context, *SearchId, *User) error
-	Getusers(context.Context, *SearchParams, *Users) error
-	Createuser(context.Context, *User, *User) error
-	Updateuser(context.Context, *User, *User) error
-	Deleteuser(context.Context, *SearchId, *AffectedCount) error
-	BeforeCreateuser(context.Context, *User, *ValidationErr) error
-	BeforeUpdateuser(context.Context, *User, *ValidationErr) error
-	BeforeDeleteuser(context.Context, *User, *ValidationErr) error
-	AfterCreateuser(context.Context, *User, *AfterFuncErr) error
-	AfterUpdateuser(context.Context, *User, *AfterFuncErr) error
-	AfterDeleteuser(context.Context, *User, *AfterFuncErr) error
+	GetUserById(context.Context, *SearchId, *User) error
+	GetUsers(context.Context, *SearchParams, *Users) error
+	CreateUser(context.Context, *User, *User) error
+	UpdateUser(context.Context, *User, *User) error
+	DeleteUser(context.Context, *SearchId, *AffectedCount) error
+	BeforeCreateUser(context.Context, *User, *ValidationErr) error
+	BeforeUpdateUser(context.Context, *User, *ValidationErr) error
+	BeforeDeleteUser(context.Context, *User, *ValidationErr) error
+	AfterCreateUser(context.Context, *User, *AfterFuncErr) error
+	AfterUpdateUser(context.Context, *User, *AfterFuncErr) error
+	AfterDeleteUser(context.Context, *User, *AfterFuncErr) error
 }
 
 func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server.HandlerOption) error {
 	type userSrv interface {
-		GetuserById(ctx context.Context, in *SearchId, out *User) error
-		Getusers(ctx context.Context, in *SearchParams, out *Users) error
-		Createuser(ctx context.Context, in *User, out *User) error
-		Updateuser(ctx context.Context, in *User, out *User) error
-		Deleteuser(ctx context.Context, in *SearchId, out *AffectedCount) error
-		BeforeCreateuser(ctx context.Context, in *User, out *ValidationErr) error
-		BeforeUpdateuser(ctx context.Context, in *User, out *ValidationErr) error
-		BeforeDeleteuser(ctx context.Context, in *User, out *ValidationErr) error
-		AfterCreateuser(ctx context.Context, in *User, out *AfterFuncErr) error
-		AfterUpdateuser(ctx context.Context, in *User, out *AfterFuncErr) error
-		AfterDeleteuser(ctx context.Context, in *User, out *AfterFuncErr) error
+		GetUserById(ctx context.Context, in *SearchId, out *User) error
+		GetUsers(ctx context.Context, in *SearchParams, out *Users) error
+		CreateUser(ctx context.Context, in *User, out *User) error
+		UpdateUser(ctx context.Context, in *User, out *User) error
+		DeleteUser(ctx context.Context, in *SearchId, out *AffectedCount) error
+		BeforeCreateUser(ctx context.Context, in *User, out *ValidationErr) error
+		BeforeUpdateUser(ctx context.Context, in *User, out *ValidationErr) error
+		BeforeDeleteUser(ctx context.Context, in *User, out *ValidationErr) error
+		AfterCreateUser(ctx context.Context, in *User, out *AfterFuncErr) error
+		AfterUpdateUser(ctx context.Context, in *User, out *AfterFuncErr) error
+		AfterDeleteUser(ctx context.Context, in *User, out *AfterFuncErr) error
 	}
 	type UserSrv struct {
 		userSrv
@@ -219,46 +219,46 @@ type userSrvHandler struct {
 	UserSrvHandler
 }
 
-func (h *userSrvHandler) GetuserById(ctx context.Context, in *SearchId, out *User) error {
-	return h.UserSrvHandler.GetuserById(ctx, in, out)
+func (h *userSrvHandler) GetUserById(ctx context.Context, in *SearchId, out *User) error {
+	return h.UserSrvHandler.GetUserById(ctx, in, out)
 }
 
-func (h *userSrvHandler) Getusers(ctx context.Context, in *SearchParams, out *Users) error {
-	return h.UserSrvHandler.Getusers(ctx, in, out)
+func (h *userSrvHandler) GetUsers(ctx context.Context, in *SearchParams, out *Users) error {
+	return h.UserSrvHandler.GetUsers(ctx, in, out)
 }
 
-func (h *userSrvHandler) Createuser(ctx context.Context, in *User, out *User) error {
-	return h.UserSrvHandler.Createuser(ctx, in, out)
+func (h *userSrvHandler) CreateUser(ctx context.Context, in *User, out *User) error {
+	return h.UserSrvHandler.CreateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) Updateuser(ctx context.Context, in *User, out *User) error {
-	return h.UserSrvHandler.Updateuser(ctx, in, out)
+func (h *userSrvHandler) UpdateUser(ctx context.Context, in *User, out *User) error {
+	return h.UserSrvHandler.UpdateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) Deleteuser(ctx context.Context, in *SearchId, out *AffectedCount) error {
-	return h.UserSrvHandler.Deleteuser(ctx, in, out)
+func (h *userSrvHandler) DeleteUser(ctx context.Context, in *SearchId, out *AffectedCount) error {
+	return h.UserSrvHandler.DeleteUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) BeforeCreateuser(ctx context.Context, in *User, out *ValidationErr) error {
-	return h.UserSrvHandler.BeforeCreateuser(ctx, in, out)
+func (h *userSrvHandler) BeforeCreateUser(ctx context.Context, in *User, out *ValidationErr) error {
+	return h.UserSrvHandler.BeforeCreateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) BeforeUpdateuser(ctx context.Context, in *User, out *ValidationErr) error {
-	return h.UserSrvHandler.BeforeUpdateuser(ctx, in, out)
+func (h *userSrvHandler) BeforeUpdateUser(ctx context.Context, in *User, out *ValidationErr) error {
+	return h.UserSrvHandler.BeforeUpdateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) BeforeDeleteuser(ctx context.Context, in *User, out *ValidationErr) error {
-	return h.UserSrvHandler.BeforeDeleteuser(ctx, in, out)
+func (h *userSrvHandler) BeforeDeleteUser(ctx context.Context, in *User, out *ValidationErr) error {
+	return h.UserSrvHandler.BeforeDeleteUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) AfterCreateuser(ctx context.Context, in *User, out *AfterFuncErr) error {
-	return h.UserSrvHandler.AfterCreateuser(ctx, in, out)
+func (h *userSrvHandler) AfterCreateUser(ctx context.Context, in *User, out *AfterFuncErr) error {
+	return h.UserSrvHandler.AfterCreateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) AfterUpdateuser(ctx context.Context, in *User, out *AfterFuncErr) error {
-	return h.UserSrvHandler.AfterUpdateuser(ctx, in, out)
+func (h *userSrvHandler) AfterUpdateUser(ctx context.Context, in *User, out *AfterFuncErr) error {
+	return h.UserSrvHandler.AfterUpdateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) AfterDeleteuser(ctx context.Context, in *User, out *AfterFuncErr) error {
-	return h.UserSrvHandler.AfterDeleteuser(ctx, in, out)
+func (h *userSrvHandler) AfterDeleteUser(ctx context.Context, in *User, out *AfterFuncErr) error {
+	return h.UserSrvHandler.AfterDeleteUser(ctx, in, out)
 }
