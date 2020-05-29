@@ -73,6 +73,8 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 
 	sqlStatement += sqlWhereClause
 
+	//log.Printf("sql: %s\n values: %v", sqlStatement, values)
+
 	rows, err := conn.Query(context.Background(), sqlStatement, values...)
 
 	if err != nil {
@@ -121,17 +123,17 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 
 	i := 1
 	if searchParms.GetId() != 0 {
-		sqlWhereClause += fmt.Sprintf(" AND user.id = $%d", i)
+		sqlWhereClause += fmt.Sprintf(" AND appuser.id = $%d", i)
 		values = append(values, searchParms.GetId())
 		i++
 	}
 	if searchParms.GetFisrtname() != "" {
-		sqlWhereClause += fmt.Sprintf(" AND user.firstname = $%d", i)
+		sqlWhereClause += fmt.Sprintf(" AND appuser.firstname = $%d", i)
 		values = append(values, searchParms.GetFisrtname())
 		i++
 	}
 	if searchParms.GetLastname() != "" {
-		sqlWhereClause += fmt.Sprintf(" AND user.lastname = $%d", i)
+		sqlWhereClause += fmt.Sprintf(" AND appuser.lastname = $%d", i)
 		values = append(values, searchParms.GetLastname())
 		i++
 	}
@@ -141,7 +143,7 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 			return "", nil, err
 		}
 		validFrom := convertedDates[0]
-		sqlWhereClause += fmt.Sprintf(" AND user.validfrom <= $%d AND user.validthru >= $%d", i, i)
+		sqlWhereClause += fmt.Sprintf(" AND appuser.validfrom <= $%d AND appuser.validthru >= $%d", i, i)
 		values = append(values, validFrom)
 		i++
 	}
@@ -171,7 +173,6 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		validThru,
 		inUser.GetActive(),
 		inUser.GetPwd(),
-		inUser.GetName(),
 	).
 		Scan(
 			&outUser.Id,
@@ -224,7 +225,6 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		validThru,
 		inUser.GetActive(),
 		inUser.GetPwd(),
-		inUser.GetName(),
 		inUser.GetId(),
 	).Scan(
 		&outUser.Id,
