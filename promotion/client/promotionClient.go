@@ -24,10 +24,6 @@ const dateLayoutISO = "2006-01-02"
 
 func GetPromotionById(promotionClient pb.PromotionSrvService, promoId *pb.SearchId) {
 
-	//searchId := pb.SearchId{
-	//	Id: 2312030045339653121,
-	//}
-
 	var promotion *pb.Promotion
 	var err error
 	if serverAddress != "" {
@@ -47,31 +43,6 @@ func GetPromotionById(promotionClient pb.PromotionSrvService, promoId *pb.Search
 	}
 
 }
-
-//func GetPromotion(promotionClient pb.PromotionSrvService) {
-//	_, searchDate := timeStringToTimestamp("2020-05-24")
-//
-//	searchParms := pb.SearchParams{
-//		Id:         2308345766332077057,
-//		Name:       "Promo1",
-//		ProductId:  7308345766332077057,
-//		CustomerId: 3308341401806443521,
-//		ValidDate:  searchDate,
-//	}
-//
-//	var promotion *pb.Promotion
-//	var err error
-//	if serverAddress != "" {
-//		promotion, err = promotionClient.GetPromotion(context.Background(), &searchParms, client.WithAddress(serverAddress))
-//	} else {
-//		promotion, err = promotionClient.GetPromotion(context.Background(), &searchParms)
-//	}
-//
-//	if err != nil {
-//		log.Fatalf("Unable to find promotion. Error: %v", err)
-//	}
-//	fmt.Printf("Pulled promotion %v\n", promotion)
-//}
 
 func GetPromotions(promotionClient pb.PromotionSrvService) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
@@ -234,8 +205,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 }
 
 func main() {
-	//serverAddress := os.Getenv(serverAddressEnvVar)
-	//_=serverAddress
+
 	service := micro.NewService(
 		micro.Name("promotion.client"),
 	)
@@ -251,6 +221,5 @@ func main() {
 	GetPromotionById(promotionClient, &searchId)
 	DeletePromotion(promotionClient, &searchId)
 	GetPromotionById(promotionClient, &searchId)
-	//GetPromotion(promotionClient)
 	GetPromotions(promotionClient)
 }
