@@ -8,12 +8,12 @@ composerestartpromocli:
 	docker-compose rm -fsv promotioncli
 	docker-compose up promotioncli
 docbuildpromosrv:
-	docker build -t promosrv -f /promotion/Dockerfile .
+	docker build -t promosrv -f promotion/Dockerfile .
 
 docrunpromosrv:
 	docker run -p 50051:50051 --name promosrvcont promosrv
 docbuildpromocli:
-	docker build -t promocli -f /promotion/DockerfileCli .
+	docker build -t promocli -f promotion/DockerfileCli .
 docrunpromocli:
 	docker run -p 50051:50051 --name promoclicont promocli
 
