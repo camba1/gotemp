@@ -56,3 +56,16 @@ services:
       - ./user/server:/go/src/goTemp/user/server
     ports:
       - "50053:50053"
+  usercli:
+    build:
+      context: .
+      dockerfile: ./user/DockerfileCli
+      target: Dev
+    container_name: userclicont
+    environment:
+      - MICRO_SERVER_ADDRESS=":50053"
+    entrypoint: CompileDaemon --build="go build -o userClient ./user/client/" --command=./userClient
+    volumes:
+      - ./user/client:/go/src/goTemp/user/client
+    ports:
+      - "50054:50051"
