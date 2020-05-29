@@ -40,3 +40,19 @@ services:
       - ./promotion/client:/go/src/goTemp/promotion/client
     ports:
       - "50052:50051"
+  usersrv:
+    build:
+      context: .
+      dockerfile: ./user/Dockerfile
+      target: Dev
+    depends_on:
+      - pgdb
+    container_name: usersrvcont
+    environment:
+      - MICRO_SERVER_ADDRESS=:50053
+    entrypoint: CompileDaemon --build="go build -o userServer ./user/server/" --command=./userServer
+    env_file: ./user/docker-compose.env
+    volumes:
+      - ./user/server:/go/src/goTemp/user/server
+    ports:
+      - "50053:50053"
