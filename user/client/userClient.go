@@ -116,9 +116,9 @@ func GetUsers(srvClient pb.UserSrvService) (*pb.Users, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
 	searchParms := pb.SearchParams{
-		Id:        1234,
-		Fisrtname: "Incredible",
-		Lastname:  "Green Guy",
+		//Id:        1234,
+		Fisrtname: "Super",
+		Lastname:  "Duck",
 		ValidDate: searchDate,
 	}
 
