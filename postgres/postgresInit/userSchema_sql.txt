@@ -31,7 +31,7 @@ CREATE TABLE "public"."appuser" (
     validthru timestamp NOT NULL,
     active boolean DEFAULT false,
     pwd varchar(50)  NOT NULL,
-    name varchar(200) GENERATED ALWAYS AS (firstname || lastname) STORED,
+    name varchar(200) GENERATED ALWAYS AS (firstname || ' ' || lastname) STORED,
     PRIMARY KEY (id)
 );
 
