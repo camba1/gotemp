@@ -30,6 +30,8 @@ message user {
     bool active = 6;
     string pwd =7;
     string name =8;
+    string email =9;
+    string company =10;
 }
 
 message users {

@@ -26,18 +26,20 @@ $$ LANGUAGE PLPGSQL;
 CREATE TABLE "public"."appuser" (
     id  bigint not null default next_id(),
     firstname varchar(100) NOT NULL,
-    lastname varchar(100),
+    lastname varchar(100) NOT NULL,
     validfrom timestamp NOT NULL,
     validthru timestamp NOT NULL,
     active boolean DEFAULT false,
     pwd varchar(50)  NOT NULL,
     name varchar(200) GENERATED ALWAYS AS (firstname || ' ' || lastname) STORED,
+    email varchar(255),
+    company varchar(255),
     PRIMARY KEY (id)
 );
 
 
 -- Insert sample appuser data
-insert into appuser (firstname , lastname, validfrom, validthru, pwd )
-VALUES ('Super', 'Duck', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd'),
-       ('Mighty', 'Ant', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd'),
-       ('Awesome', 'Cow', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd')
+insert into appuser (firstname , lastname, validfrom, validthru, pwd, email, company )
+VALUES ('Super', 'Duck', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd','duck@mymail.com', 'Duck Inc.'),
+       ('Mighty', 'Ant', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd', 'ant@mymail.com', 'Ant Corp'),
+       ('Awesome', 'Cow', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd', 'cow@mymail.com', 'Cow LLC')
