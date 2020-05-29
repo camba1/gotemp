@@ -4,11 +4,11 @@ type usrSql string
 
 // Create update delete statements
 const (
-	SqlInsert usrSql = `insert into user (firstname , lastname, validfrom, validthru, active, pwd) 
+	SqlInsert usrSql = `insert into appuser (firstname , lastname, validfrom, validthru, active, pwd) 
 						VALUES ($1, $2, $3, $4, $5, $6)
 						RETURNING id, firstname , lastname, validfrom, validthru, active, pwd, name`
 
-	SqlUpdate usrSql = ` update user set 
+	SqlUpdate usrSql = ` update appuser set 
 						 firstname = $1,
 						 lastname = $2,
 						 validfrom = $3,
@@ -18,19 +18,19 @@ const (
 						where id = $7
 						RETURNING id, firstname , lastname, validfrom, validthru, active, pwd, name`
 
-	SqlDelete usrSql = "delete from user where id = $1"
+	SqlDelete usrSql = "delete from appuser where id = $1"
 )
 
 // Select statements
 const (
 	SqlSelectById usrSql = `select 
 								id, firstname , lastname, validfrom, validthru, active, pwd, name 
-							from user 
+							from appuser 
 							where id = $1`
 
 	SqlSelectAll usrSql = ` select 
 								id, firstname , lastname, validfrom, validthru, active, pwd, name 
-							from user`
+							from appuser`
 )
 
 //test statement
