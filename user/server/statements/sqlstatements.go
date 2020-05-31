@@ -2,37 +2,40 @@ package statements
 
 type usrSql string
 
+var MaxRowsToFetch = 200
+
 // Create update delete statements
 const (
-	SqlInsert usrSql = `insert into appuser (firstname , lastname, validfrom, validthru, active, pwd, email, company) 
+	SqlInsert usrSql = `INSERT into appuser (firstname , lastname, validfrom, validthru, active, pwd, email, company) 
 						VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
 						RETURNING id, firstname , lastname, validfrom, validthru, active, pwd, name, email, company`
 
-	SqlUpdate usrSql = ` update appuser set 
+	SqlUpdate usrSql = ` UPDATE appuser SET 
 						 firstname = $1,
 						 lastname = $2,
 						 validfrom = $3,
 						 validthru = $4,
 						 active = $5,
 						 pwd = $6,
-						 email = %7,
+						 email = $7,
 						 company = $8
-						where id = $9
+						WHERE id = $9
 						RETURNING id, firstname , lastname, validfrom, validthru, active, pwd, name, email, company`
 
-	SqlDelete usrSql = "delete from appuser where id = $1"
+	SqlDelete usrSql = "DELETE FROM appuser WHERE id = $1"
 )
 
 // Select statements
 const (
-	SqlSelectById usrSql = `select 
+	SqlSelectById usrSql = `SELECT 
 								id, firstname , lastname, validfrom, validthru, active, pwd, name, email, company 
-							from appuser 
-							where id = $1`
+							FROM appuser 
+							WHERE id = $1`
 
-	SqlSelectAll usrSql = ` select 
+	SqlSelectAll usrSql = ` SELECT 
 								id, firstname , lastname, validfrom, validthru, active, pwd, name, email, company 
-							from appuser`
+							FROM appuser %s
+							FETCH FIRST %d ROWS ONLY`
 )
 
 //test statement
