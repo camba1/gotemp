@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
@@ -30,6 +31,15 @@ func checkMandatoryFields(user *pb.User) ([]string, error) {
 	return FailureDesc, nil
 }
 
+func checkEmail(ctx context.Context, user *pb.User, u *User, isInsert bool) (string, error) {
+	var usersWithSameEmail pb.Users
+	err := u.GetUsersByEmail(ctx, &pb.SearchString{Value: user.Email}, &usersWithSameEmail)
+	if err != nil {
+		return "", err
+	}
+	return checkEmailUnique(user, &usersWithSameEmail, isInsert), nil
+}
+
 func checkEmailUnique(user *pb.User, users *pb.Users, isInsert bool) string {
 
 	if users == nil {
@@ -40,6 +50,7 @@ func checkEmailUnique(user *pb.User, users *pb.Users, isInsert bool) string {
 		return userErr.InsertDupEmail()
 	}
 	if !isInsert && usersCount > 0 {
+		fmt.Printf("count: %d, ids: %v, id %v\n", usersCount, users.User[0].Id, user.Id)
 		if usersCount > 1 || (usersCount == 1 && users.User[0].Id != user.Id) {
 			return userErr.UpdateDupEmail()
 		}
@@ -63,12 +74,11 @@ func (u *User) BeforeCreateUser(ctx context.Context, user *pb.User, validationEr
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
 
-	var usersWithSameEmail pb.Users
-	err = u.GetUsersByEmail(ctx, &pb.SearchString{Value: user.Email}, &usersWithSameEmail)
-	if err != nil {
-		return err
+	dupEmail, err2 := checkEmail(ctx, user, u, true)
+	if err2 != nil {
+		return err2
 	}
-	if dupEmail := checkEmailUnique(user, &usersWithSameEmail, true); dupEmail != "" {
+	if dupEmail != "" {
 		validationErr.FailureDesc = append(validationErr.FailureDesc, dupEmail)
 	}
 
@@ -80,11 +90,21 @@ func (u *User) BeforeCreateUser(ctx context.Context, user *pb.User, validationEr
 
 func (u *User) BeforeUpdateUser(ctx context.Context, user *pb.User, validationErr *pb.ValidationErr) error {
 	_ = ctx
+
 	validation, err := checkMandatoryFields(user)
 	if err != nil {
 		return err
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
+
+	dupEmail, err2 := checkEmail(ctx, user, u, false)
+	if err2 != nil {
+		return err2
+	}
+	if dupEmail != "" {
+		validationErr.FailureDesc = append(validationErr.FailureDesc, dupEmail)
+	}
+
 	if len(validationErr.FailureDesc) > 0 {
 		return &globalerrors.ValidationError{Source: "BeforeUpdatePromotion", FailureDesc: validationErr.FailureDesc}
 	}

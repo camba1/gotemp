@@ -60,6 +60,7 @@ func UpdateUser(srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
 	user.Active = false
 	user.Pwd = "5678"
 	user.Email = "microbes@tiny.com"
+	//user.Email = "cow@mymail.com"
 	user.Company = "Tiny"
 
 	//if serverAddress != "" {
