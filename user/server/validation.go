@@ -18,6 +18,9 @@ func checkMandatoryFields(user *pb.User) ([]string, error) {
 	if user.GetPwd() == "" {
 		FailureDesc = append(FailureDesc, glErr.MissingField("password"))
 	}
+	if user.GetEmail() == "" {
+		FailureDesc = append(FailureDesc, glErr.MissingField("email"))
+	}
 	dateValidation, err := globalUtils.CheckValidityDates(user.ValidFrom, user.ValidThru)
 	if err != nil {
 		return nil, err
@@ -25,6 +28,24 @@ func checkMandatoryFields(user *pb.User) ([]string, error) {
 	FailureDesc = append(FailureDesc, dateValidation...)
 
 	return FailureDesc, nil
+}
+
+func checkEmailUnique(user *pb.User, users *pb.Users, isInsert bool) string {
+
+	if users == nil {
+		return ""
+	}
+	usersCount := len(users.User)
+	if isInsert && usersCount > 0 {
+		return userErr.InsertDupEmail()
+	}
+	if !isInsert && usersCount > 0 {
+		if usersCount > 1 || (usersCount == 1 && users.User[0].Id != user.Id) {
+			return userErr.UpdateDupEmail()
+		}
+	}
+	return ""
+
 }
 
 //func SetMandatoryFields(user *pb.User){
@@ -41,6 +62,16 @@ func (u *User) BeforeCreateUser(ctx context.Context, user *pb.User, validationEr
 		return err
 	}
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
+
+	var usersWithSameEmail pb.Users
+	err = u.GetUsersByEmail(ctx, &pb.SearchString{Value: user.Email}, &usersWithSameEmail)
+	if err != nil {
+		return err
+	}
+	if dupEmail := checkEmailUnique(user, &usersWithSameEmail, true); dupEmail != "" {
+		validationErr.FailureDesc = append(validationErr.FailureDesc, dupEmail)
+	}
+
 	if len(validationErr.FailureDesc) > 0 {
 		return &globalerrors.ValidationError{Source: "BeforeCreateUser", FailureDesc: validationErr.FailureDesc}
 	}

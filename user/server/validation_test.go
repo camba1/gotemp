@@ -122,11 +122,12 @@ func Test_checkMandatoryFields(t *testing.T) {
 		want    int
 		wantErr bool
 	}{
-		{name: "Empty User", args: args{testUsers["emptyUser"]}, want: 5, wantErr: false},
+		{name: "Empty User", args: args{testUsers["emptyUser"]}, want: 6, wantErr: false},
 		{name: "Good User", args: args{testUsers["goodUser"]}, want: 0, wantErr: false},
 		{name: "No Names", args: args{testUsers["noNamesUser"]}, want: 2, wantErr: false},
 		{name: "Bad dates ", args: args{testUsers["badDatesUser"]}, want: 1, wantErr: false},
 		{name: "No Password", args: args{testUsers["noPwdUser"]}, want: 1, wantErr: false},
+		{name: "No Email", args: args{testUsers["noEmailUser"]}, want: 1, wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -155,14 +156,18 @@ func getTestUsers() map[string]*pb.User {
 		ValidThru: nextYear,
 		Active:    false,
 		Pwd:       "xxxx",
+		Email:     "duck@duck.com",
+		Company:   "Duck R Us",
 		Name:      "Super Duck",
 	}
 	noNamesUser := pb.User{
-		Id:        12344,
+		Id:        12345,
 		ValidFrom: thisYear,
 		ValidThru: nextYear,
 		Active:    false,
 		Pwd:       "xxxx",
+		Email:     "duck@duck.com",
+		Company:   "Duck R Us",
 		Name:      "Super Duck",
 	}
 	badDatesUser := pb.User{
@@ -173,6 +178,8 @@ func getTestUsers() map[string]*pb.User {
 		ValidThru: thisYear,
 		Active:    false,
 		Pwd:       "xxxx",
+		Email:     "duck@duck.com",
+		Company:   "Duck R Us",
 		Name:      "Super Duck",
 	}
 	noPwdUser := pb.User{
@@ -182,6 +189,19 @@ func getTestUsers() map[string]*pb.User {
 		ValidFrom: thisYear,
 		ValidThru: nextYear,
 		Active:    false,
+		Email:     "duck@duck.com",
+		Company:   "Duck R Us",
+		Name:      "Super Duck",
+	}
+	noEmailUser := pb.User{
+		Id:        12344,
+		Firstname: "Super",
+		Lastname:  "Duck",
+		ValidFrom: thisYear,
+		ValidThru: nextYear,
+		Active:    false,
+		Pwd:       "xxxx",
+		Company:   "Duck R Us",
 		Name:      "Super Duck",
 	}
 
@@ -191,5 +211,58 @@ func getTestUsers() map[string]*pb.User {
 		"noNamesUser":  &noNamesUser,
 		"badDatesUser": &badDatesUser,
 		"noPwdUser":    &noPwdUser,
+		"noEmailUser":  &noEmailUser,
+	}
+}
+
+func Test_checkEmailUnique(t *testing.T) {
+	type args struct {
+		user     *pb.User
+		users    *pb.Users
+		isInsert bool
+	}
+
+	testUsers := getTestUsers()
+
+	insertErrTxt := userErr.InsertDupEmail()
+	updateErrTxt := userErr.UpdateDupEmail()
+
+	user := testUsers["goodUser"]
+	emptyUsers := &pb.Users{User: nil}
+	oneUser := &pb.Users{User: []*pb.User{
+		testUsers["goodUser"],
+	},
+	}
+	oneUserDiffId := &pb.Users{User: []*pb.User{
+		testUsers["noNamesUser"],
+	},
+	}
+	twoUsers := &pb.Users{User: []*pb.User{
+		testUsers["goodUser"],
+		testUsers["noNamesUser"],
+	},
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{name: "Nil user on insert", args: args{user: user, users: nil, isInsert: true}, want: ""},
+		{name: "No user on insert", args: args{user: user, users: emptyUsers, isInsert: true}, want: ""},
+		{name: "One user on insert", args: args{user: user, users: oneUser, isInsert: true}, want: insertErrTxt},
+		{name: "Nil user on update", args: args{user: user, users: nil, isInsert: false}, want: ""},
+		{name: "No user on update", args: args{user: user, users: emptyUsers, isInsert: false}, want: ""},
+		{name: "One user on update", args: args{user: user, users: oneUser, isInsert: false}, want: ""},
+		{name: "One user, incorrect id, on update", args: args{user: user, users: oneUserDiffId, isInsert: false}, want: updateErrTxt},
+		{name: "Two users on update", args: args{user: user, users: twoUsers, isInsert: false}, want: updateErrTxt},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := checkEmailUnique(tt.args.user, tt.args.users, tt.args.isInsert)
+			if got != tt.want {
+				t.Errorf("checkEmailUnique() got = %v, want %v", got, tt.want)
+			}
+		})
 	}
 }
