@@ -40,6 +40,8 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 			&outUser.Active,
 			&outUser.Pwd,
 			&outUser.Name,
+			&outUser.Email,
+			&outUser.Company,
 		)
 
 	if err != nil {
@@ -65,13 +67,10 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 
 	_ = ctx
 
-	sqlStatement := statements.SqlSelectAll.String()
-	sqlWhereClause, values, err2 := u.buildSearchWhereClause(searchParms)
+	values, sqlStatement, err2 := u.getSQLForSearch(searchParms)
 	if err2 != nil {
 		return err2
 	}
-
-	sqlStatement += sqlWhereClause
 
 	//log.Printf("sql: %s\n values: %v", sqlStatement, values)
 
@@ -96,6 +95,8 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 				&user.Active,
 				&user.Pwd,
 				&user.Name,
+				&user.Email,
+				&user.Company,
 			)
 		if err != nil {
 			log.Printf(userErr.SelectScanError(err))
@@ -112,6 +113,17 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 	}
 
 	return nil
+}
+
+func (u *User) getSQLForSearch(searchParms *pb.SearchParams) ([]interface{}, string, error) {
+	sql := statements.SqlSelectAll.String()
+	sqlWhereClause, values, err := u.buildSearchWhereClause(searchParms)
+	if err != nil {
+		return nil, "", err
+	}
+
+	sqlStatement := fmt.Sprintf(sql, sqlWhereClause, statements.MaxRowsToFetch)
+	return values, sqlStatement, nil
 }
 
 //buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
@@ -135,6 +147,16 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 	if searchParms.GetLastname() != "" {
 		sqlWhereClause += fmt.Sprintf(" AND appuser.lastname = $%d", i)
 		values = append(values, searchParms.GetLastname())
+		i++
+	}
+	if searchParms.GetEmail() != "" {
+		sqlWhereClause += fmt.Sprintf(" AND appuser.email = $%d", i)
+		values = append(values, searchParms.GetEmail())
+		i++
+	}
+	if searchParms.GetCompany() != "" {
+		sqlWhereClause += fmt.Sprintf(" AND appuser.company = $%d", i)
+		values = append(values, searchParms.GetCompany())
 		i++
 	}
 	if searchParms.GetValidDate() != nil {
@@ -173,6 +195,8 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		validThru,
 		inUser.GetActive(),
 		inUser.GetPwd(),
+		inUser.GetEmail(),
+		inUser.GetCompany(),
 	).
 		Scan(
 			&outUser.Id,
@@ -183,6 +207,8 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 			&outUser.Active,
 			&outUser.Pwd,
 			&outUser.Name,
+			&outUser.Email,
+			&outUser.Company,
 		)
 
 	if errIns != nil {
@@ -225,6 +251,8 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		validThru,
 		inUser.GetActive(),
 		inUser.GetPwd(),
+		inUser.GetEmail(),
+		inUser.GetCompany(),
 		inUser.GetId(),
 	).Scan(
 		&outUser.Id,
@@ -235,6 +263,8 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		&outUser.Active,
 		&outUser.Pwd,
 		&outUser.Name,
+		&outUser.Email,
+		&outUser.Company,
 	)
 	if err != nil {
 		log.Printf(userErr.UpdateError(err))
@@ -281,5 +311,35 @@ func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, affectedCo
 		return errVal
 	}
 
+	return nil
+}
+
+func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
+	_ = ctx
+
+	searchParams := pb.SearchParams{
+		Email: user.Email,
+		Pwd:   user.Pwd,
+	}
+	outUsers := pb.Users{}
+	if err := u.GetUsers(ctx, &searchParams, &outUsers); err != nil {
+		return err
+	}
+
+	// TODO: Change this
+	token.Token = "CHANGEME"
+	token.Valid = false
+
+	return nil
+}
+
+func (u *User) GetUsersByEmail(ctx context.Context, searchString *pb.SearchString, outUsers *pb.Users) error {
+	searchParams := pb.SearchParams{
+		Email: searchString.Value,
+	}
+	err := u.GetUsers(ctx, &searchParams, outUsers)
+	if err != nil {
+		return err
+	}
 	return nil
 }

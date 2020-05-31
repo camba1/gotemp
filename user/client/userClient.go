@@ -30,6 +30,8 @@ func CreateUser(srvClient pb.UserSrvService) (*pb.User, error) {
 		ValidThru: validThru,
 		Active:    true,
 		Pwd:       "1234",
+		Email:     "microbes@tiny.com",
+		Company:   "Tiny",
 	}
 
 	//if serverAddress != "" {
@@ -57,6 +59,8 @@ func UpdateUser(srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
 	user.ValidThru = validThru
 	user.Active = false
 	user.Pwd = "5678"
+	user.Email = "microbes@tiny.com"
+	user.Company = "Tiny"
 
 	//if serverAddress != "" {
 	//outUser, err = srvClient.UpdateUser(context.Background(), user, client.WithAddress(serverAddress))
@@ -120,6 +124,7 @@ func GetUsers(srvClient pb.UserSrvService) (*pb.Users, error) {
 		Fisrtname: "Super",
 		Lastname:  "Duck",
 		ValidDate: searchDate,
+		Email:     "duck@mymail.com",
 	}
 
 	var outUsers *pb.Users

@@ -19,13 +19,13 @@ func TestUser_buildSearchWhereClause(t *testing.T) {
 	sqlFullSearch := sqlEmptyWhereClause + " AND appuser.id = $1 AND appuser.firstname = $2 AND appuser.lastname = $3 AND appuser.validfrom <= $4 AND appuser.validthru >= $4"
 	sqlOnlyDateSearch := sqlEmptyWhereClause + " AND appuser.validfrom <= $1 AND appuser.validthru >= $1"
 	sqlOnlyFirstNameSearch := sqlEmptyWhereClause + " AND appuser.firstname = $1"
-	sqlTestSearch := sqlEmptyWhereClause + " AND appuser.id = $1 AND appuser.firstname = $2 AND appuser.lastname = $3 AND appuser.validfrom <= $4 AND appuser.validthru >= $4"
+	sqlTestSearch := sqlEmptyWhereClause + " AND appuser.id = $1 AND appuser.firstname = $2 AND appuser.lastname = $3 AND appuser.email = $4 AND appuser.company = $5 AND appuser.validfrom <= $6 AND appuser.validthru >= $6"
 
 	var intEmptySearch []interface{}
 	intFullSearch := []interface{}{int64(1), "Super", "Duck", convertedDates[0]}
 	intOnlyDateSearch := []interface{}{convertedDates[0]}
 	intOnlyFirstNameSearch := []interface{}{"Super"}
-	intTestSearch := []interface{}{int64(1234), "Incredible", "Green Guy", convertedDates[0]}
+	intTestSearch := []interface{}{int64(1234), "Incredible", "Green Guy", "igg@mymail.com", "igg & Associates", convertedDates[0]}
 
 	emptySearch := pb.SearchParams{}
 	fullSearch := pb.SearchParams{
@@ -43,6 +43,8 @@ func TestUser_buildSearchWhereClause(t *testing.T) {
 		Fisrtname: "Incredible",
 		Lastname:  "Green Guy",
 		ValidDate: dtForSearch,
+		Email:     "igg@mymail.com",
+		Company:   "igg & Associates",
 	}
 
 	tests := []struct {

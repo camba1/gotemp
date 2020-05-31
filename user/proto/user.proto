@@ -9,6 +9,7 @@ import  "google/protobuf/timestamp.proto";
 service userSrv {
     rpc GetUserById(SearchId) returns (user) {}
     rpc GetUsers(SearchParams) returns (users) {}
+    rpc GetUsersByEmail(SearchString) returns (users) {}
     rpc CreateUser(user) returns (user) {}
     rpc UpdateUser(user) returns (user) {}
     rpc DeleteUser(SearchId) returns (affectedCount) {}
@@ -18,6 +19,7 @@ service userSrv {
     rpc AfterCreateUser(user) returns (AfterFuncErr) {}
     rpc AfterUpdateUser(user) returns (AfterFuncErr) {}
     rpc AfterDeleteUser(user) returns (AfterFuncErr) {}
+    rpc Auth(user) returns (Token) {}
 }
 
 
@@ -43,6 +45,13 @@ message SearchParams {
     string fisrtname = 2;
     string lastname = 3;
     google.protobuf.Timestamp validDate = 5;
+    string email =9;
+    string company =10;
+    string pwd =11;
+}
+
+message SearchString {
+    string value = 1;
 }
 
 message SearchId {
@@ -59,4 +68,9 @@ message validationErr {
 
 message AfterFuncErr {
     repeated string failureDesc = 1;
+}
+
+message Token {
+    string token = 1;
+    bool valid = 2;
 }

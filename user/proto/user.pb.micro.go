@@ -45,6 +45,7 @@ func NewUserSrvEndpoints() []*api.Endpoint {
 type UserSrvService interface {
 	GetUserById(ctx context.Context, in *SearchId, opts ...client.CallOption) (*User, error)
 	GetUsers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error)
+	GetUsersByEmail(ctx context.Context, in *SearchString, opts ...client.CallOption) (*Users, error)
 	CreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error)
@@ -54,6 +55,7 @@ type UserSrvService interface {
 	AfterCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
 	AfterUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
 	AfterDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
+	Auth(ctx context.Context, in *User, opts ...client.CallOption) (*Token, error)
 }
 
 type userSrvService struct {
@@ -80,6 +82,16 @@ func (c *userSrvService) GetUserById(ctx context.Context, in *SearchId, opts ...
 
 func (c *userSrvService) GetUsers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error) {
 	req := c.c.NewRequest(c.name, "UserSrv.GetUsers", in)
+	out := new(Users)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userSrvService) GetUsersByEmail(ctx context.Context, in *SearchString, opts ...client.CallOption) (*Users, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.GetUsersByEmail", in)
 	out := new(Users)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
@@ -178,11 +190,22 @@ func (c *userSrvService) AfterDeleteUser(ctx context.Context, in *User, opts ...
 	return out, nil
 }
 
+func (c *userSrvService) Auth(ctx context.Context, in *User, opts ...client.CallOption) (*Token, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.Auth", in)
+	out := new(Token)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserSrv service
 
 type UserSrvHandler interface {
 	GetUserById(context.Context, *SearchId, *User) error
 	GetUsers(context.Context, *SearchParams, *Users) error
+	GetUsersByEmail(context.Context, *SearchString, *Users) error
 	CreateUser(context.Context, *User, *User) error
 	UpdateUser(context.Context, *User, *User) error
 	DeleteUser(context.Context, *SearchId, *AffectedCount) error
@@ -192,12 +215,14 @@ type UserSrvHandler interface {
 	AfterCreateUser(context.Context, *User, *AfterFuncErr) error
 	AfterUpdateUser(context.Context, *User, *AfterFuncErr) error
 	AfterDeleteUser(context.Context, *User, *AfterFuncErr) error
+	Auth(context.Context, *User, *Token) error
 }
 
 func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server.HandlerOption) error {
 	type userSrv interface {
 		GetUserById(ctx context.Context, in *SearchId, out *User) error
 		GetUsers(ctx context.Context, in *SearchParams, out *Users) error
+		GetUsersByEmail(ctx context.Context, in *SearchString, out *Users) error
 		CreateUser(ctx context.Context, in *User, out *User) error
 		UpdateUser(ctx context.Context, in *User, out *User) error
 		DeleteUser(ctx context.Context, in *SearchId, out *AffectedCount) error
@@ -207,6 +232,7 @@ func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server
 		AfterCreateUser(ctx context.Context, in *User, out *AfterFuncErr) error
 		AfterUpdateUser(ctx context.Context, in *User, out *AfterFuncErr) error
 		AfterDeleteUser(ctx context.Context, in *User, out *AfterFuncErr) error
+		Auth(ctx context.Context, in *User, out *Token) error
 	}
 	type UserSrv struct {
 		userSrv
@@ -225,6 +251,10 @@ func (h *userSrvHandler) GetUserById(ctx context.Context, in *SearchId, out *Use
 
 func (h *userSrvHandler) GetUsers(ctx context.Context, in *SearchParams, out *Users) error {
 	return h.UserSrvHandler.GetUsers(ctx, in, out)
+}
+
+func (h *userSrvHandler) GetUsersByEmail(ctx context.Context, in *SearchString, out *Users) error {
+	return h.UserSrvHandler.GetUsersByEmail(ctx, in, out)
 }
 
 func (h *userSrvHandler) CreateUser(ctx context.Context, in *User, out *User) error {
@@ -261,4 +291,8 @@ func (h *userSrvHandler) AfterUpdateUser(ctx context.Context, in *User, out *Aft
 
 func (h *userSrvHandler) AfterDeleteUser(ctx context.Context, in *User, out *AfterFuncErr) error {
 	return h.UserSrvHandler.AfterDeleteUser(ctx, in, out)
+}
+
+func (h *userSrvHandler) Auth(ctx context.Context, in *User, out *Token) error {
+	return h.UserSrvHandler.Auth(ctx, in, out)
 }

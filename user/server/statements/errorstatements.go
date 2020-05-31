@@ -17,7 +17,9 @@ type UserErr string
 var errTxtEn = map[string]UserErr{
 	"internalError":          "Internal error. Error: %v\n",
 	"insertError":            "Unable to create user. Error: %v\n",
+	"insertDupEmail":         "Email address already exists in the system\v",
 	"updateError":            "Unable to update user. Error: %v \n",
+	"updateDupEmail":         "This email address is already associated with another user in the system\v",
 	"deleteError":            "Unable to delete user %v. Error: %v\n",
 	"deleteRowNotFoundError": "row with id %d not found. Unable to delete the row",
 	"selectReadError":        "Unable to get rows from the DB. Error: %v \n",
@@ -29,7 +31,9 @@ var errTxtEn = map[string]UserErr{
 var errTxtES = map[string]UserErr{
 	"internalError":          "Error interno. Error: %v\n",
 	"insertError":            "No se pudo crear el usuario. Error: %v\n",
+	"insertDupEmail":         "Correo electornico ya existe en la base de datos\v",
 	"updateError":            "No se pudo actualizar el usuario. Error: %v \n",
+	"updateDupEmail":         "Este correo electornico ya esta associado con un usuario en el systema\v",
 	"deleteError":            "No se pudo borrar el usuario %v. Error: %v\n",
 	"deleteRowNotFoundError": "usuario %d no se pudo encontrar. No se pudo borrar el usuario",
 	"selectReadError":        "No su pudo leer datos de la base de datos. Error: %v \n",
@@ -87,4 +91,12 @@ func (ge *UserErr) SelectRowReadError(err error) string {
 
 func (ge *UserErr) DelUserActive() string {
 	return fmt.Sprintf(ge.getSqlTxt("delUserActive", language))
+}
+
+func (ge *UserErr) UpdateDupEmail() string {
+	return fmt.Sprintf(ge.getSqlTxt("updateDupEmail", language))
+}
+
+func (ge *UserErr) InsertDupEmail() string {
+	return fmt.Sprintf(ge.getSqlTxt("insertDupEmail", language))
 }
