@@ -77,8 +77,6 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 		return err2
 	}
 
-	//log.Printf("sql: %s\n values: %v", sqlStatement, values)
-
 	rows, err := conn.Query(context.Background(), sqlStatement, values...)
 
 	if err != nil {
