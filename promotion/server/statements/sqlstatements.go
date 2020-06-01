@@ -2,6 +2,8 @@ package statements
 
 type prmSql string
 
+var MaxRowsToFetch = 200
+
 // Create update delete statements
 const (
 	SqlInsert prmSql = `insert into promotion (name, description, validfrom, validthru, customerid, active, approvalstatus, prevapprovalstatus) 
@@ -34,7 +36,8 @@ const (
 	SqlSelectAll prmSql = ` select 
 								id, name, description, validfrom, validthru, 
 								customerid, active, approvalstatus,  prevapprovalstatus 
-							from promotion`
+							from promotion %s
+							FETCH FIRST %d ROWS ONLY`
 )
 
 func (p prmSql) String() string {

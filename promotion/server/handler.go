@@ -113,13 +113,13 @@ func (p *Promotion) GetPromotions(ctx context.Context, searchParms *pb.SearchPar
 
 	_ = ctx
 
-	sqlStatement := statements.SqlSelectAll.String()
+	sql := statements.SqlSelectAll.String()
 	sqlWhereClause, values, err2 := p.buildSearchWhereClause(searchParms)
 	if err2 != nil {
 		return err2
 	}
 
-	sqlStatement += sqlWhereClause
+	sqlStatement := fmt.Sprintf(sql, sqlWhereClause, statements.MaxRowsToFetch)
 
 	rows, err := conn.Query(context.Background(), sqlStatement, values...)
 
