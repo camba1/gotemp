@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
@@ -50,7 +49,6 @@ func checkEmailUnique(user *pb.User, users *pb.Users, isInsert bool) string {
 		return userErr.InsertDupEmail()
 	}
 	if !isInsert && usersCount > 0 {
-		fmt.Printf("count: %d, ids: %v, id %v\n", usersCount, users.User[0].Id, user.Id)
 		if usersCount > 1 || (usersCount == 1 && users.User[0].Id != user.Id) {
 			return userErr.UpdateDupEmail()
 		}
