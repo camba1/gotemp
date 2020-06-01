@@ -34,6 +34,8 @@ CREATE TABLE "public"."appuser" (
     name varchar(200) GENERATED ALWAYS AS (firstname || ' ' || lastname) STORED,
     email varchar(255),
     company varchar(255),
+    createdate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedate timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id)
 );
 

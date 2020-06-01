@@ -34,6 +34,8 @@ message user {
     string name =8;
     string email =9;
     string company =10;
+    google.protobuf.Timestamp createdate = 11;
+    google.protobuf.Timestamp updatedate = 12;
 }
 
 message users {
@@ -45,9 +47,9 @@ message SearchParams {
     string fisrtname = 2;
     string lastname = 3;
     google.protobuf.Timestamp validDate = 5;
-    string email =9;
-    string company =10;
-    string pwd =11;
+    string email =6;
+    string company =7;
+    string pwd =8;
 }
 
 message SearchString {

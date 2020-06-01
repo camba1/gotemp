@@ -27,6 +27,8 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 
 	var validFrom time.Time
 	var validThru time.Time
+	var createDate time.Time
+	var updateDate time.Time
 
 	sqlStatement := statements.SqlSelectById.String()
 	err := conn.QueryRow(context.Background(), sqlStatement,
@@ -42,6 +44,8 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 			&outUser.Name,
 			&outUser.Email,
 			&outUser.Company,
+			&createDate,
+			&updateDate,
 		)
 
 	if err != nil {
@@ -54,11 +58,12 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 
 	}
 
-	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru, createDate, updateDate)
 	if err != nil {
 		return err
 	}
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
+	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
 	return nil
 }
@@ -83,6 +88,9 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 
 	var validFrom time.Time
 	var validThru time.Time
+	var createDate time.Time
+	var updateDate time.Time
+
 	for rows.Next() {
 		var user pb.User
 		err := rows.
@@ -97,17 +105,20 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 				&user.Name,
 				&user.Email,
 				&user.Company,
+				&createDate,
+				&updateDate,
 			)
 		if err != nil {
 			log.Printf(userErr.SelectScanError(err))
 			return err
 		}
 
-		convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+		convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru, createDate, updateDate)
 		if err != nil {
 			return err
 		}
 		user.ValidFrom, user.ValidThru = convertedTimes[0], convertedTimes[1]
+		user.Createdate, user.Updatedate = convertedTimes[2], convertedTimes[3]
 
 		users.User = append(users.User, &user)
 	}
@@ -185,7 +196,8 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	}
 	validFrom, validThru := convertedDates[0], convertedDates[1]
 
-	//id, firstname , lastname, validfrom, validthru, active, pwd, name
+	var createDate time.Time
+	var updateDate time.Time
 
 	sqlStatement := statements.SqlInsert.String()
 	errIns := conn.QueryRow(context.Background(), sqlStatement,
@@ -209,6 +221,8 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 			&outUser.Name,
 			&outUser.Email,
 			&outUser.Company,
+			&createDate,
+			&updateDate,
 		)
 
 	if errIns != nil {
@@ -216,11 +230,12 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		return errIns
 	}
 
-	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru, createDate, updateDate)
 	if err != nil {
 		return err
 	}
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
+	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
 	if errVal := u.AfterCreateUser(ctx, outUser, &pb.AfterFuncErr{}); errVal != nil {
 		return errVal
@@ -244,6 +259,10 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	}
 	validFrom, validThru := convertedDates[0], convertedDates[1]
 
+	var createDate time.Time
+	updateDate := time.Now()
+	fmt.Printf("updatedate: %v\n", updateDate)
+
 	err = conn.QueryRow(context.Background(), sqlStatement,
 		inUser.GetFirstname(),
 		inUser.GetLastname(),
@@ -253,6 +272,7 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		inUser.GetPwd(),
 		inUser.GetEmail(),
 		inUser.GetCompany(),
+		updateDate,
 		inUser.GetId(),
 	).Scan(
 		&outUser.Id,
@@ -265,17 +285,20 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		&outUser.Name,
 		&outUser.Email,
 		&outUser.Company,
+		&createDate,
+		&updateDate,
 	)
 	if err != nil {
 		log.Printf(userErr.UpdateError(err))
 		return err
 	}
 
-	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru)
+	convertedTimes, err := globalUtils.TimeToTimeStampPPB(validFrom, validThru, createDate, updateDate)
 	if err != nil {
 		return err
 	}
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
+	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
 	if errVal := u.AfterUpdateUser(ctx, outUser, &pb.AfterFuncErr{}); errVal != nil {
 		return errVal
