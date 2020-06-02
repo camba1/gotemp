@@ -30,7 +30,7 @@ CREATE TABLE "public"."appuser" (
     validfrom timestamp NOT NULL,
     validthru timestamp NOT NULL,
     active boolean DEFAULT false,
-    pwd varchar(50)  NOT NULL,
+    pwd varchar(255)  NOT NULL,
     name varchar(200) GENERATED ALWAYS AS (firstname || ' ' || lastname) STORED,
     email varchar(255),
     company varchar(255),
