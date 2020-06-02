@@ -9,6 +9,7 @@ import (
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
 	"goTemp/user/server/statements"
+	"golang.org/x/crypto/bcrypt"
 	"log"
 	"time"
 )
@@ -188,14 +189,20 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 		return errVal
 	}
 
+	hashedPwd, err := u.hashpwd(inUser.GetPwd())
+	if err != nil {
+		return err
+	}
+	inUser.Pwd = hashedPwd
+
 	convertedDates, err := globalUtils.TimeStampPPBToTime(inUser.GetValidFrom(), inUser.GetValidThru())
 	if err != nil {
 		return err
 	}
 	validFrom, validThru := convertedDates[0], convertedDates[1]
 
-	var createDate time.Time
-	var updateDate time.Time
+	var createDate, updateDate time.Time
+	//var updateDate time.Time
 
 	sqlStatement := statements.SqlInsert.String()
 	errIns := conn.QueryRow(context.Background(), sqlStatement,
@@ -340,15 +347,24 @@ func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 
 	searchParams := pb.SearchParams{
 		Email: user.Email,
-		Pwd:   user.Pwd,
 	}
 	outUsers := pb.Users{}
 	if err := u.GetUsers(ctx, &searchParams, &outUsers); err != nil {
 		return err
 	}
 
+	if err := bcrypt.CompareHashAndPassword([]byte(outUsers.User[0].GetPwd()), []byte(user.GetPwd())); err != nil {
+		return err
+	}
+
+	ts := TokenService{}
+	tokenString, err := ts.Encode(user)
+	if err != nil {
+		return err
+	}
+
+	token.Token = tokenString
 	// TODO: Change this
-	token.Token = "CHANGEME"
 	token.Valid = false
 
 	return nil
@@ -363,4 +379,12 @@ func (u *User) GetUsersByEmail(ctx context.Context, searchString *pb.SearchStrin
 		return err
 	}
 	return nil
+}
+
+func (u *User) hashpwd(plainPwd string) (string, error) {
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(plainPwd), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPwd), err
 }

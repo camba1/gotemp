@@ -149,6 +149,19 @@ func GetUsers(srvClient pb.UserSrvService) (*pb.Users, error) {
 
 }
 
+func authUser(srvClient pb.UserSrvService, user *pb.User) (*pb.Token, error) {
+	token, err := srvClient.Auth(context.Background(), &pb.User{
+		Email: user.Email,
+		Pwd:   user.Pwd,
+	})
+	if err != nil {
+		log.Printf("Unable to find token. Error: %v\n", err)
+		return nil, err
+	}
+	fmt.Printf("Got token: %v\n", token)
+	return token, err
+}
+
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -171,6 +184,13 @@ func main() {
 	srvClient := pb.NewUserSrvService("user", service.Client())
 
 	createdUser, err := CreateUser(srvClient)
+	if err != nil {
+		return
+	}
+
+	_, err = authUser(srvClient, &pb.User{
+		Pwd:   "1234",
+		Email: createdUser.Email})
 	if err != nil {
 		return
 	}
