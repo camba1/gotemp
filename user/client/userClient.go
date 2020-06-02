@@ -6,6 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/metadata"
 	pb "goTemp/user/proto"
 	"log"
 	"time"
@@ -17,7 +18,7 @@ import (
 
 const dateLayoutISO = "2006-01-02"
 
-func CreateUser(srvClient pb.UserSrvService) (*pb.User, error) {
+func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, error) {
 	var outUser *pb.User
 	var err error
 
@@ -37,7 +38,7 @@ func CreateUser(srvClient pb.UserSrvService) (*pb.User, error) {
 	//if serverAddress != "" {
 	//	outUser, err = srvClient.CreateUser(context.Background(), &newUser, client.WithAddress(serverAddress))
 	//} else {
-	outUser, err = srvClient.CreateUser(context.Background(), &newUser)
+	outUser, err = srvClient.CreateUser(ctx, &newUser)
 	//}
 
 	if err != nil {
@@ -48,7 +49,7 @@ func CreateUser(srvClient pb.UserSrvService) (*pb.User, error) {
 	return outUser, nil
 }
 
-func UpdateUser(srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
+func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
 	var outUser *pb.User
 	var err error
 	_, validThru := timeStringToTimestamp("2021-06-26")
@@ -66,7 +67,7 @@ func UpdateUser(srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
 	//if serverAddress != "" {
 	//outUser, err = srvClient.UpdateUser(context.Background(), user, client.WithAddress(serverAddress))
 	//} else {
-	outUser, err = srvClient.UpdateUser(context.Background(), user)
+	outUser, err = srvClient.UpdateUser(ctx, user)
 	//}
 
 	if err != nil {
@@ -77,13 +78,13 @@ func UpdateUser(srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
 	return outUser, nil
 }
 
-func GetUserById(srvClient pb.UserSrvService, searchId *pb.SearchId) (*pb.User, error) {
+func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (*pb.User, error) {
 	var outUser *pb.User
 	var err error
 	//if serverAddress != "" {
 	//	outUser, err = srvClient.GetUserById(context.Background(), searchId, client.WithAddress(serverAddress))
 	//} else {
-	outUser, err = srvClient.GetUserById(context.Background(), searchId)
+	outUser, err = srvClient.GetUserById(ctx, searchId)
 	//}
 
 	if err != nil {
@@ -100,13 +101,13 @@ func GetUserById(srvClient pb.UserSrvService, searchId *pb.SearchId) (*pb.User, 
 	return outUser, nil
 }
 
-func DeleteUser(srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, error) {
+func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, error) {
 	var affectedCount *pb.AffectedCount
 	var err error
 	//if serverAddress != "" {
 	//affectedCount, err = srvClient.DeleteUser(context.Background(), searchId, client.WithAddress(serverAddress))
 	//} else {
-	affectedCount, err = srvClient.DeleteUser(context.Background(), searchId)
+	affectedCount, err = srvClient.DeleteUser(ctx, searchId)
 	//}
 
 	if err != nil {
@@ -117,7 +118,7 @@ func DeleteUser(srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, erro
 	return affectedCount.GetValue(), nil
 }
 
-func GetUsers(srvClient pb.UserSrvService) (*pb.Users, error) {
+func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
 	searchParms := pb.SearchParams{
@@ -133,7 +134,7 @@ func GetUsers(srvClient pb.UserSrvService) (*pb.Users, error) {
 	//if serverAddress != "" {
 	//	outUsers, err = srvClient.GetUsers(context.Background(), &searchParms, client.WithAddress(serverAddress))
 	//} else {
-	outUsers, err = srvClient.GetUsers(context.Background(), &searchParms)
+	outUsers, err = srvClient.GetUsers(ctx, &searchParms)
 	//}
 
 	if err != nil {
@@ -174,6 +175,22 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
+func loginUser(srvClient pb.UserSrvService) (context.Context, error) {
+	myUser := &pb.User{
+		Pwd:   "1234",
+		Email: "duck@mymail.com"}
+
+	authToken, err := authUser(srvClient, myUser)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := metadata.NewContext(context.Background(), map[string]string{
+		"token": authToken.Token,
+	})
+	return ctx, nil
+}
+
 func main() {
 
 	service := micro.NewService(
@@ -183,25 +200,23 @@ func main() {
 	fmt.Println("Client Running")
 	srvClient := pb.NewUserSrvService("user", service.Client())
 
-	createdUser, err := CreateUser(srvClient)
+	ctx, err := loginUser(srvClient)
+	if err != nil {
+		return
+	}
+	createdUser, err := CreateUser(ctx, srvClient)
 	if err != nil {
 		return
 	}
 
-	_, err = authUser(srvClient, &pb.User{
-		Pwd:   "1234",
-		Email: createdUser.Email})
-	if err != nil {
-		return
-	}
-	_, _ = UpdateUser(srvClient, createdUser)
+	_, _ = UpdateUser(ctx, srvClient, createdUser)
 
 	searchId := pb.SearchId{
 		Id: createdUser.Id,
 	}
 
-	_, _ = GetUserById(srvClient, &searchId)
-	_, _ = DeleteUser(srvClient, &searchId)
-	_, _ = GetUserById(srvClient, &searchId)
-	_, _ = GetUsers(srvClient)
+	_, _ = GetUserById(ctx, srvClient, &searchId)
+	_, _ = DeleteUser(ctx, srvClient, &searchId)
+	_, _ = GetUserById(ctx, srvClient, &searchId)
+	_, _ = GetUsers(ctx, srvClient)
 }
