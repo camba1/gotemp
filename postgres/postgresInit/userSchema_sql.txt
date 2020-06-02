@@ -42,6 +42,6 @@ CREATE TABLE "public"."appuser" (
 
 -- Insert sample appuser data
 insert into appuser (firstname , lastname, validfrom, validthru, pwd, email, company )
-VALUES ('Super', 'Duck', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd','duck@mymail.com', 'Duck Inc.'),
-       ('Mighty', 'Ant', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd', 'ant@mymail.com', 'Ant Corp'),
-       ('Awesome', 'Cow', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','mysuperpwd', 'cow@mymail.com', 'Cow LLC')
+VALUES ('Super', 'Duck', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','$2a$10$BNGbOtnCI6GD1boXDKyt1uYbweZyXc2473Q1VwRn/DzCTS4xWeGea','duck@mymail.com', 'Duck Inc.'),
+       ('Mighty', 'Ant', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','$2a$10$BNGbOtnCI6GD1boXDKyt1uYbweZyXc2473Q1VwRn/DzCTS4xWeGea', 'ant@mymail.com', 'Ant Corp'),
+       ('Awesome', 'Cow', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','$2a$10$BNGbOtnCI6GD1boXDKyt1uYbweZyXc2473Q1VwRn/DzCTS4xWeGea', 'cow@mymail.com', 'Cow LLC')
