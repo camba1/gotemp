@@ -30,6 +30,11 @@ const (
 	dtTimeStampToProtoTimeStamp SrvError = "Unable to convert timestamp %v to proto timestamp. Error: %v \n"
 	dtInvalidValidityDates      SrvError = "The valid thru date (%v) must take place after the valid from date (%v)\n"
 	missingField                SrvError = "%s must not be empty\n"
+	authNoMetaData              SrvError = "Unable to read meta-date for end point: %s\n"
+	authInvalidToken            SrvError = "invalid token\n"
+	authNilToken                SrvError = "Invalid nil user token\n"
+	authNilClaim                SrvError = "invalid nil %s claim\n"
+	authInvalidClaim            SrvError = "Invalid %s claim\n"
 )
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
@@ -62,4 +67,24 @@ func (ge *SrvError) MissingField(fieldName string) string {
 
 func (ge *SrvError) DtInvalidValidityDates(validFrom, validThru time.Time) string {
 	return fmt.Sprintf(string(dtInvalidValidityDates), validFrom, validThru)
+}
+
+func (ge *SrvError) AuthNoMetaData(endpoint string) string {
+	return fmt.Sprintf(string(authNoMetaData), endpoint)
+}
+
+func (ge *SrvError) AuthInvalidToken() string {
+	return fmt.Sprintf(string(authInvalidToken))
+}
+
+func (ge *SrvError) AuthNilToken() string {
+	return fmt.Sprintf(string(authNilToken))
+}
+
+func (ge *SrvError) AuthNilClaim(claimType string) string {
+	return fmt.Sprintf(string(authNilClaim), claimType)
+}
+
+func (ge *SrvError) AuthInvalidClaim(claimType string) string {
+	return fmt.Sprintf(string(authInvalidClaim), claimType)
 }
