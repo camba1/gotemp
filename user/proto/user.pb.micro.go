@@ -56,6 +56,7 @@ type UserSrvService interface {
 	AfterUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
 	AfterDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*AfterFuncErr, error)
 	Auth(ctx context.Context, in *User, opts ...client.CallOption) (*Token, error)
+	ValidateToken(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error)
 }
 
 type userSrvService struct {
@@ -200,6 +201,16 @@ func (c *userSrvService) Auth(ctx context.Context, in *User, opts ...client.Call
 	return out, nil
 }
 
+func (c *userSrvService) ValidateToken(ctx context.Context, in *Token, opts ...client.CallOption) (*Token, error) {
+	req := c.c.NewRequest(c.name, "UserSrv.ValidateToken", in)
+	out := new(Token)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for UserSrv service
 
 type UserSrvHandler interface {
@@ -216,6 +227,7 @@ type UserSrvHandler interface {
 	AfterUpdateUser(context.Context, *User, *AfterFuncErr) error
 	AfterDeleteUser(context.Context, *User, *AfterFuncErr) error
 	Auth(context.Context, *User, *Token) error
+	ValidateToken(context.Context, *Token, *Token) error
 }
 
 func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server.HandlerOption) error {
@@ -233,6 +245,7 @@ func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server
 		AfterUpdateUser(ctx context.Context, in *User, out *AfterFuncErr) error
 		AfterDeleteUser(ctx context.Context, in *User, out *AfterFuncErr) error
 		Auth(ctx context.Context, in *User, out *Token) error
+		ValidateToken(ctx context.Context, in *Token, out *Token) error
 	}
 	type UserSrv struct {
 		userSrv
@@ -295,4 +308,8 @@ func (h *userSrvHandler) AfterDeleteUser(ctx context.Context, in *User, out *Aft
 
 func (h *userSrvHandler) Auth(ctx context.Context, in *User, out *Token) error {
 	return h.UserSrvHandler.Auth(ctx, in, out)
+}
+
+func (h *userSrvHandler) ValidateToken(ctx context.Context, in *Token, out *Token) error {
+	return h.UserSrvHandler.ValidateToken(ctx, in, out)
 }
