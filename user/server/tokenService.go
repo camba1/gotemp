@@ -9,10 +9,12 @@ import (
 var key []byte
 
 const TokenValidityPeriod = time.Hour * 24
+const ClaimIssuer = "goTemp.usersrv"
 
 //getKeyFromVault: Checks to see if the key is populated and returns it.If key is empty, it is fetched from an external source
 func getKeyFromVault() ([]byte, error) {
 	if key == nil {
+		//TODO: read key from Vault
 		key = []byte("LOOKMEUPINEXTERNALSYSTEM")
 	}
 	return key, nil
@@ -36,7 +38,7 @@ func (ts *TokenService) Decode(tokenString string) (*MyCustomClaims, error) {
 		})
 
 	if token == nil {
-		return nil, jwt.NewValidationError("Invalid nil user token", jwt.ValidationErrorUnverifiable)
+		return nil, jwt.NewValidationError(glErr.AuthNilToken(), jwt.ValidationErrorUnverifiable)
 	}
 
 	if claims, ok := token.Claims.(*MyCustomClaims); ok && token.Valid {
@@ -57,7 +59,7 @@ func (ts *TokenService) Encode(user *pb.User) (string, error) {
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expireTime.Unix(),
 			IssuedAt:  currentTime.Unix(),
-			Issuer:    "goTemp.usersrv",
+			Issuer:    ClaimIssuer,
 		},
 	}
 
