@@ -358,13 +358,17 @@ func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 	}
 
 	ts := TokenService{}
-	tokenString, err := ts.Encode(user)
+	encodeUser := &pb.User{
+		Id:      outUsers.User[0].Id,
+		Active:  outUsers.User[0].Active,
+		Company: outUsers.User[0].Company,
+	}
+	tokenString, err := ts.Encode(encodeUser)
 	if err != nil {
 		return err
 	}
 
 	token.Token = tokenString
-	// TODO: Change this
 	token.Valid = false
 
 	return nil
@@ -387,4 +391,25 @@ func (u *User) hashpwd(plainPwd string) (string, error) {
 		return "", err
 	}
 	return string(hashedPwd), err
+}
+
+func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *pb.Token) error {
+	_ = ctx
+	ts := TokenService{}
+	claims, err := ts.Decode(inToken.Token)
+	if err != nil {
+		return err
+	}
+	if claims == nil {
+		return fmt.Errorf(glErr.AuthNilClaim(serviceName))
+	}
+	if claims.User.Id == 0 || claims.Issuer != ClaimIssuer {
+		//fmt.Printf("claim User %v", claims.User)
+		return fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+	}
+	//fmt.Printf("Claim User %v", claims.User)
+	outToken.Token = inToken.Token
+	outToken.Valid = true
+	return nil
+
 }
