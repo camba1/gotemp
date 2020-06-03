@@ -2,8 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/metadata"
+	"github.com/micro/go-micro/v2/server"
 	pb "goTemp/user/proto"
 	"log"
 	"os"
@@ -31,11 +34,44 @@ func getDBConnString() string {
 	return connString
 }
 
+//Authentication middleware
+func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
+	return func(ctx context.Context, req server.Request, resp interface{}) error {
+		//User login is excepted from authentication
+		if req.Endpoint() == "UserSrv.Auth" {
+			return fn(ctx, req, resp)
+		}
+		meta, ok := metadata.FromContext(ctx)
+		if !ok {
+			return fmt.Errorf(glErr.AuthNoMetaData(req.Endpoint()))
+		}
+
+		token := meta["Token"]
+		log.Printf("endpoint: %v", req.Endpoint())
+
+		var u User
+		outToken := &pb.Token{}
+		err := u.ValidateToken(ctx, &pb.Token{Token: token}, outToken)
+		//authClient := userService.NewAuthClient("shippy.user", srv.Client())
+		//_, err := authClient.ValidateToken(ctx, &userService.Token{
+		//	Token: token,
+		//})
+		if err != nil {
+			return err
+		}
+		if outToken.Valid != true {
+			return fmt.Errorf(glErr.AuthInvalidToken())
+		}
+		return fn(ctx, req, resp)
+	}
+}
+
 func main() {
 
 	//instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
+		micro.WrapHandler(AuthWrapper),
 	)
 	service.Init()
 	err := pb.RegisterUserSrvHandler(service.Server(), new(User))
