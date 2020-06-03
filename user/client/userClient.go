@@ -204,6 +204,7 @@ func main() {
 	if err != nil {
 		return
 	}
+
 	createdUser, err := CreateUser(ctx, srvClient)
 	if err != nil {
 		return
