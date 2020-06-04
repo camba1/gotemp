@@ -69,3 +69,9 @@ services:
       - ./user/client:/go/src/goTemp/user/client
     ports:
       - "50054:50051"
+  nats:
+    image: nats
+    ports:
+      - "8222:8222"
+      - "4222:4222"
+      - "6222:6222"

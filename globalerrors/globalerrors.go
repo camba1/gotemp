@@ -35,6 +35,11 @@ const (
 	authNilToken                SrvError = "Invalid nil user token\n"
 	authNilClaim                SrvError = "invalid nil %s claim\n"
 	authInvalidClaim            SrvError = "Invalid %s claim\n"
+	brkBadMarshall              SrvError = "Unable to marshall object %v. Error: %v\n"
+	brkNoMessageSent            SrvError = "Unable to send message to broker for topic %s. Error: %v\n"
+	brkNoConnection             SrvError = "Unable to connect to broker: Error: %v\n"
+	brkUnableToSetSubs          SrvError = "Unable to setup broker subscription for topic %s. Error: %v\n"
+	brkBadUnMarshall            SrvError = "Unable to unmarshall received object for topic %s. Message received: %v. Error: %v\n"
 )
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
@@ -87,4 +92,24 @@ func (ge *SrvError) AuthNilClaim(claimType string) string {
 
 func (ge *SrvError) AuthInvalidClaim(claimType string) string {
 	return fmt.Sprintf(string(authInvalidClaim), claimType)
+}
+
+func (ge *SrvError) BrkBadMarshall(objToMarshal string, err error) string {
+	return fmt.Sprintf(string(brkBadMarshall), objToMarshal, err)
+}
+
+func (ge *SrvError) BrkNoMessageSent(objToMarshal string, err error) string {
+	return fmt.Sprintf(string(brkNoMessageSent), objToMarshal, err)
+}
+
+func (ge *SrvError) BrkNoConnection(err error) string {
+	return fmt.Sprintf(string(brkNoConnection), err)
+}
+
+func (ge *SrvError) BrkUnableToSetSubs(topic string, err error) string {
+	return fmt.Sprintf(string(brkUnableToSetSubs), topic, err)
+}
+
+func (ge *SrvError) BrkBadUnMarshall(topic string, message []byte, err error) string {
+	return fmt.Sprintf(string(brkBadUnMarshall), topic, message, err)
 }
