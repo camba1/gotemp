@@ -24,11 +24,11 @@ func (mb *myBroker) sendMsg(user *pb.User, header map[string]string, topic strin
 	message.Header = header
 	message.Body = binUser
 
-	//err = br.Connect()
-	//if err != nil {
-	//	log.Printf("unable to connect: Error: %v" , err)
-	//	return err
-	//}
+	err = mb.br.Connect()
+	if err != nil {
+		//log.Printf("unable to connect to broker: Error: %v" , err)
+		return err
+	}
 
 	err = mb.br.Publish(topic, &message)
 	if err != nil {
