@@ -45,17 +45,18 @@ func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, err
 		log.Printf("Unable to create user. Error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("Created user %v\n", resp.User)
+	fmt.Printf("Created user %v\n", resp.GetUser())
 
 	if len(resp.GetValidationErr().GetFailureDesc()) > 0 {
 		fmt.Printf("Created user validations %v\n", resp.ValidationErr.FailureDesc)
 	}
-	return resp.User, nil
+	return resp.GetUser(), nil
 }
 
 func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
-	var outUser *pb.User
-	var err error
+	//var outUser *pb.User
+	//var err error
+
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
 	user.Firstname = "Incredible"
@@ -68,28 +69,24 @@ func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User)
 	//user.Email = "cow@mymail.com"
 	user.Company = "Tiny"
 
-	//if serverAddress != "" {
-	//outUser, err = srvClient.UpdateUser(context.Background(), user, client.WithAddress(serverAddress))
-	//} else {
-	outUser, err = srvClient.UpdateUser(ctx, user)
-	//}
+	resp, err := srvClient.UpdateUser(ctx, user)
 
 	if err != nil {
 		log.Printf("Unable to update user. Error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("Updated user %v\n", outUser)
-	return outUser, nil
+	fmt.Printf("Updated user %v\n", resp.GetUser())
+	if len(resp.GetValidationErr().GetFailureDesc()) > 0 {
+		fmt.Printf("Update user validations %v\n", resp.GetValidationErr().GetFailureDesc())
+	}
+	return resp.GetUser(), nil
 }
 
 func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (*pb.User, error) {
 	var outUser *pb.User
 	var err error
-	//if serverAddress != "" {
-	//	outUser, err = srvClient.GetUserById(context.Background(), searchId, client.WithAddress(serverAddress))
-	//} else {
+
 	outUser, err = srvClient.GetUserById(ctx, searchId)
-	//}
 
 	if err != nil {
 		log.Printf("Unable to find user by Id. Error: %v", err)
@@ -108,11 +105,8 @@ func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.
 func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, error) {
 	var affectedCount *pb.AffectedCount
 	var err error
-	//if serverAddress != "" {
-	//affectedCount, err = srvClient.DeleteUser(context.Background(), searchId, client.WithAddress(serverAddress))
-	//} else {
+
 	affectedCount, err = srvClient.DeleteUser(ctx, searchId)
-	//}
 
 	if err != nil {
 		log.Printf("Unable to find user by Id. Error: %v", err)
@@ -126,7 +120,6 @@ func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, erro
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
 	searchParms := pb.SearchParams{
-		//Id:        1234,
 		Fisrtname: "Super",
 		Lastname:  "Duck",
 		ValidDate: searchDate,
@@ -135,11 +128,8 @@ func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, erro
 
 	var outUsers *pb.Users
 	var err error
-	//if serverAddress != "" {
-	//	outUsers, err = srvClient.GetUsers(context.Background(), &searchParms, client.WithAddress(serverAddress))
-	//} else {
+
 	outUsers, err = srvClient.GetUsers(ctx, &searchParms)
-	//}
 
 	if err != nil {
 		log.Fatalf("Unable to find users. Error: %v", err)

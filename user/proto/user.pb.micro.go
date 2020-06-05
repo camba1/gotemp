@@ -47,7 +47,7 @@ type UserSrvService interface {
 	GetUsers(ctx context.Context, in *SearchParams, opts ...client.CallOption) (*Users, error)
 	GetUsersByEmail(ctx context.Context, in *SearchString, opts ...client.CallOption) (*Users, error)
 	CreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error)
-	UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error)
+	UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error)
 	DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error)
 	BeforeCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
 	BeforeUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
@@ -111,9 +111,9 @@ func (c *userSrvService) CreateUser(ctx context.Context, in *User, opts ...clien
 	return out, nil
 }
 
-func (c *userSrvService) UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*User, error) {
+func (c *userSrvService) UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error) {
 	req := c.c.NewRequest(c.name, "UserSrv.UpdateUser", in)
-	out := new(User)
+	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -218,7 +218,7 @@ type UserSrvHandler interface {
 	GetUsers(context.Context, *SearchParams, *Users) error
 	GetUsersByEmail(context.Context, *SearchString, *Users) error
 	CreateUser(context.Context, *User, *Response) error
-	UpdateUser(context.Context, *User, *User) error
+	UpdateUser(context.Context, *User, *Response) error
 	DeleteUser(context.Context, *SearchId, *AffectedCount) error
 	BeforeCreateUser(context.Context, *User, *ValidationErr) error
 	BeforeUpdateUser(context.Context, *User, *ValidationErr) error
@@ -236,7 +236,7 @@ func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server
 		GetUsers(ctx context.Context, in *SearchParams, out *Users) error
 		GetUsersByEmail(ctx context.Context, in *SearchString, out *Users) error
 		CreateUser(ctx context.Context, in *User, out *Response) error
-		UpdateUser(ctx context.Context, in *User, out *User) error
+		UpdateUser(ctx context.Context, in *User, out *Response) error
 		DeleteUser(ctx context.Context, in *SearchId, out *AffectedCount) error
 		BeforeCreateUser(ctx context.Context, in *User, out *ValidationErr) error
 		BeforeUpdateUser(ctx context.Context, in *User, out *ValidationErr) error
@@ -274,7 +274,7 @@ func (h *userSrvHandler) CreateUser(ctx context.Context, in *User, out *Response
 	return h.UserSrvHandler.CreateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) UpdateUser(ctx context.Context, in *User, out *User) error {
+func (h *userSrvHandler) UpdateUser(ctx context.Context, in *User, out *Response) error {
 	return h.UserSrvHandler.UpdateUser(ctx, in, out)
 }
 

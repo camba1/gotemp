@@ -242,14 +242,14 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
 	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
-	resp.User = outUser
-
 	afterFuncErr := &pb.AfterFuncErr{}
 	errVal := u.AfterCreateUser(ctx, outUser, afterFuncErr)
 	if errVal != nil {
 		//log.Printf("Error in aftercreate %v", errVal)
 		return errVal
 	}
+
+	resp.User = outUser
 	if len(afterFuncErr.FailureDesc) > 0 {
 		//log.Printf("Insert alerts: %v: ", afterFuncErr.FailureDesc)
 		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.FailureDesc}
@@ -258,9 +258,10 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	return nil
 }
 
-func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User) error {
+func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Response) error {
 	_ = ctx
 
+	outUser := &pb.User{}
 	if errVal := u.BeforeUpdateUser(ctx, inUser, &pb.ValidationErr{}); errVal != nil {
 		return errVal
 	}
@@ -314,8 +315,17 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
 	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
-	if errVal := u.AfterUpdateUser(ctx, outUser, &pb.AfterFuncErr{}); errVal != nil {
+	afterFuncErr := &pb.AfterFuncErr{}
+	errVal := u.AfterUpdateUser(ctx, outUser, afterFuncErr)
+	if errVal != nil {
 		return errVal
+	}
+
+	resp.User = outUser
+
+	if len(afterFuncErr.FailureDesc) > 0 {
+		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.FailureDesc}
+		//log.Printf("Update alerts: %v: ", resp.ValidationErr)
 	}
 
 	return nil

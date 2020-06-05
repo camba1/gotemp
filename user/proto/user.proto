@@ -11,7 +11,7 @@ service userSrv {
     rpc GetUsers(SearchParams) returns (users) {}
     rpc GetUsersByEmail(SearchString) returns (users) {}
     rpc CreateUser(user) returns (response) {}
-    rpc UpdateUser(user) returns (user) {}
+    rpc UpdateUser(user) returns (response) {}
     rpc DeleteUser(SearchId) returns (affectedCount) {}
     rpc BeforeCreateUser(user) returns (validationErr) {}
     rpc BeforeUpdateUser(user) returns (validationErr) {}
