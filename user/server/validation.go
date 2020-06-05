@@ -104,7 +104,7 @@ func (u *User) BeforeUpdateUser(ctx context.Context, user *pb.User, validationEr
 	}
 
 	if len(validationErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "BeforeUpdatePromotion", FailureDesc: validationErr.FailureDesc}
+		return &globalerrors.ValidationError{Source: "BeforeUpdateUser", FailureDesc: validationErr.FailureDesc}
 	}
 	return nil
 }
@@ -123,8 +123,16 @@ func (u *User) BeforeDeleteUser(ctx context.Context, user *pb.User, validationEr
 func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 	_ = user
+
+	topic := "usersrv.Audit"
+	userToSend := user
+	header := map[string]string{"Source": "AfterCreateUser", "type": "insert"}
+	err := mb.sendMsg(userToSend, header, topic)
+	if err != nil {
+		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, glErr.AudFailureSending("user insert", user.GetId(), err))
+	}
 	if len(afterFuncErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
+		return &globalerrors.ValidationError{Source: "AfterCreateUser", FailureDesc: afterFuncErr.FailureDesc}
 	}
 	return nil
 }
