@@ -40,6 +40,7 @@ const (
 	brkNoConnection             SrvError = "Unable to connect to broker: Error: %v\n"
 	brkUnableToSetSubs          SrvError = "Unable to setup broker subscription for topic %s. Error: %v\n"
 	brkBadUnMarshall            SrvError = "Unable to unmarshall received object for topic %s. Message received: %v. Error: %v\n"
+	audFailureSending           SrvError = "Unable to send %s audit information for record %d. Error: %v\n"
 )
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
@@ -112,4 +113,8 @@ func (ge *SrvError) BrkUnableToSetSubs(topic string, err error) string {
 
 func (ge *SrvError) BrkBadUnMarshall(topic string, message []byte, err error) string {
 	return fmt.Sprintf(string(brkBadUnMarshall), topic, message, err)
+}
+
+func (ge *SrvError) AudFailureSending(operation string, id int64, err error) string {
+	return fmt.Sprintf(string(audFailureSending), operation, id, err)
 }
