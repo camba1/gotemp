@@ -186,6 +186,7 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	_ = ctx
 
 	if errVal := u.BeforeCreateUser(ctx, inUser, &pb.ValidationErr{}); errVal != nil {
+		//log.Print("Error in beforecreate")
 		return errVal
 	}
 
@@ -243,6 +244,7 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
 	if errVal := u.AfterCreateUser(ctx, outUser, &pb.AfterFuncErr{}); errVal != nil {
+		//log.Printf("Error in aftercreate %v", errVal)
 		return errVal
 	}
 

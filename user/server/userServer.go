@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/metadata"
@@ -73,6 +74,7 @@ func main() {
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
 	)
+
 	service.Init()
 	err := pb.RegisterUserSrvHandler(service.Server(), new(User))
 	if err != nil {
@@ -86,9 +88,19 @@ func main() {
 	}
 	defer conn.Close(context.Background())
 
+	//setup the nats broker
+
+	mb.br = service.Options().Broker
+	//topic := "test"
+	//queueName := "test"
+	//_ = mb.subToMsg( getMsg, topic,queueName)
+	//userToSend := &pb.User{Id: 1234, Email: "werewq", ValidFrom: ptypes.TimestampNow()}
+	//header := map[string]string{"test": "Test"}
+	//_ = mb.sendMsg( userToSend,header, topic)
+
 	// Run Service
-	if err := service.Run(); err != nil {
+	err = service.Run()
+	if err != nil {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))
 	}
-
 }
