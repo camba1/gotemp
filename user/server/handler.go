@@ -182,11 +182,11 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 	return sqlWhereClause, values, nil
 }
 
-func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User) error {
+func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Response) error {
 	_ = ctx
+	outUser := &pb.User{}
 
 	if errVal := u.BeforeCreateUser(ctx, inUser, &pb.ValidationErr{}); errVal != nil {
-		//log.Print("Error in beforecreate")
 		return errVal
 	}
 
@@ -203,7 +203,6 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	validFrom, validThru := convertedDates[0], convertedDates[1]
 
 	var createDate, updateDate time.Time
-	//var updateDate time.Time
 
 	sqlStatement := statements.SqlInsert.String()
 	errIns := conn.QueryRow(context.Background(), sqlStatement,
@@ -243,9 +242,17 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, outUser *pb.User
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
 	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
-	if errVal := u.AfterCreateUser(ctx, outUser, &pb.AfterFuncErr{}); errVal != nil {
+	resp.User = outUser
+
+	afterFuncErr := &pb.AfterFuncErr{}
+	errVal := u.AfterCreateUser(ctx, outUser, afterFuncErr)
+	if errVal != nil {
 		//log.Printf("Error in aftercreate %v", errVal)
 		return errVal
+	}
+	if len(afterFuncErr.FailureDesc) > 0 {
+		//log.Printf("Insert alerts: %v: ", afterFuncErr.FailureDesc)
+		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.FailureDesc}
 	}
 
 	return nil

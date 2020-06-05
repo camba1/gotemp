@@ -10,7 +10,7 @@ service userSrv {
     rpc GetUserById(SearchId) returns (user) {}
     rpc GetUsers(SearchParams) returns (users) {}
     rpc GetUsersByEmail(SearchString) returns (users) {}
-    rpc CreateUser(user) returns (user) {}
+    rpc CreateUser(user) returns (response) {}
     rpc UpdateUser(user) returns (user) {}
     rpc DeleteUser(SearchId) returns (affectedCount) {}
     rpc BeforeCreateUser(user) returns (validationErr) {}
@@ -23,6 +23,10 @@ service userSrv {
     rpc ValidateToken(Token) returns (Token) {}
 }
 
+message response {
+    user user = 1;
+    validationErr validationErr = 2;
+}
 
 message user {
     int64 id =1;

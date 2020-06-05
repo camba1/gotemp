@@ -19,8 +19,8 @@ import (
 const dateLayoutISO = "2006-01-02"
 
 func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, error) {
-	var outUser *pb.User
-	var err error
+	//var outUser *pb.User
+	//var err error
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
 
@@ -38,15 +38,19 @@ func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, err
 	//if serverAddress != "" {
 	//	outUser, err = srvClient.CreateUser(context.Background(), &newUser, client.WithAddress(serverAddress))
 	//} else {
-	outUser, err = srvClient.CreateUser(ctx, &newUser)
+	resp, err := srvClient.CreateUser(ctx, &newUser)
 	//}
 
 	if err != nil {
 		log.Printf("Unable to create user. Error: %v", err)
 		return nil, err
 	}
-	fmt.Printf("Created user %v\n", outUser)
-	return outUser, nil
+	fmt.Printf("Created user %v\n", resp.User)
+
+	if len(resp.GetValidationErr().GetFailureDesc()) > 0 {
+		fmt.Printf("Created user validations %v\n", resp.ValidationErr.FailureDesc)
+	}
+	return resp.User, nil
 }
 
 func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {

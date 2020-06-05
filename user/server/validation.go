@@ -5,6 +5,7 @@ import (
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
+	"log"
 )
 
 func checkMandatoryFields(user *pb.User) ([]string, error) {
@@ -129,11 +130,12 @@ func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr 
 	header := map[string]string{"Source": "AfterCreateUser", "type": "insert"}
 	err := mb.sendMsg(userToSend, header, topic)
 	if err != nil {
+		log.Print(glErr.AudFailureSending("AfterCreateUser", user.GetId(), err))
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, glErr.AudFailureSending("user insert", user.GetId(), err))
 	}
-	if len(afterFuncErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "AfterCreateUser", FailureDesc: afterFuncErr.FailureDesc}
-	}
+	//if len(afterFuncErr.FailureDesc) > 0 {
+	//	return &globalerrors.ValidationError{Source: "AfterCreateUser", FailureDesc: afterFuncErr.FailureDesc}
+	//}
 	return nil
 }
 
