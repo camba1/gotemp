@@ -48,7 +48,7 @@ type UserSrvService interface {
 	GetUsersByEmail(ctx context.Context, in *SearchString, opts ...client.CallOption) (*Users, error)
 	CreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error)
 	UpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*Response, error)
-	DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error)
+	DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*Response, error)
 	BeforeCreateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
 	BeforeUpdateUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
 	BeforeDeleteUser(ctx context.Context, in *User, opts ...client.CallOption) (*ValidationErr, error)
@@ -121,9 +121,9 @@ func (c *userSrvService) UpdateUser(ctx context.Context, in *User, opts ...clien
 	return out, nil
 }
 
-func (c *userSrvService) DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*AffectedCount, error) {
+func (c *userSrvService) DeleteUser(ctx context.Context, in *SearchId, opts ...client.CallOption) (*Response, error) {
 	req := c.c.NewRequest(c.name, "UserSrv.DeleteUser", in)
-	out := new(AffectedCount)
+	out := new(Response)
 	err := c.c.Call(ctx, req, out, opts...)
 	if err != nil {
 		return nil, err
@@ -219,7 +219,7 @@ type UserSrvHandler interface {
 	GetUsersByEmail(context.Context, *SearchString, *Users) error
 	CreateUser(context.Context, *User, *Response) error
 	UpdateUser(context.Context, *User, *Response) error
-	DeleteUser(context.Context, *SearchId, *AffectedCount) error
+	DeleteUser(context.Context, *SearchId, *Response) error
 	BeforeCreateUser(context.Context, *User, *ValidationErr) error
 	BeforeUpdateUser(context.Context, *User, *ValidationErr) error
 	BeforeDeleteUser(context.Context, *User, *ValidationErr) error
@@ -237,7 +237,7 @@ func RegisterUserSrvHandler(s server.Server, hdlr UserSrvHandler, opts ...server
 		GetUsersByEmail(ctx context.Context, in *SearchString, out *Users) error
 		CreateUser(ctx context.Context, in *User, out *Response) error
 		UpdateUser(ctx context.Context, in *User, out *Response) error
-		DeleteUser(ctx context.Context, in *SearchId, out *AffectedCount) error
+		DeleteUser(ctx context.Context, in *SearchId, out *Response) error
 		BeforeCreateUser(ctx context.Context, in *User, out *ValidationErr) error
 		BeforeUpdateUser(ctx context.Context, in *User, out *ValidationErr) error
 		BeforeDeleteUser(ctx context.Context, in *User, out *ValidationErr) error
@@ -278,7 +278,7 @@ func (h *userSrvHandler) UpdateUser(ctx context.Context, in *User, out *Response
 	return h.UserSrvHandler.UpdateUser(ctx, in, out)
 }
 
-func (h *userSrvHandler) DeleteUser(ctx context.Context, in *SearchId, out *AffectedCount) error {
+func (h *userSrvHandler) DeleteUser(ctx context.Context, in *SearchId, out *Response) error {
 	return h.UserSrvHandler.DeleteUser(ctx, in, out)
 }
 

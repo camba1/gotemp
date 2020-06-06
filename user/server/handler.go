@@ -250,9 +250,9 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	}
 
 	resp.User = outUser
-	if len(afterFuncErr.FailureDesc) > 0 {
+	if len(afterFuncErr.GetFailureDesc()) > 0 {
 		//log.Printf("Insert alerts: %v: ", afterFuncErr.FailureDesc)
-		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.FailureDesc}
+		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
 	}
 
 	return nil
@@ -323,15 +323,15 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 
 	resp.User = outUser
 
-	if len(afterFuncErr.FailureDesc) > 0 {
-		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.FailureDesc}
+	if len(afterFuncErr.GetFailureDesc()) > 0 {
+		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
 		//log.Printf("Update alerts: %v: ", resp.ValidationErr)
 	}
 
 	return nil
 }
 
-func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, affectedCount *pb.AffectedCount) error {
+func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.Response) error {
 	_ = ctx
 
 	outUser := pb.User{}
@@ -352,10 +352,21 @@ func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, affectedCo
 		return fmt.Errorf(userErr.DeleteRowNotFoundError(searchid.Id))
 	}
 
-	affectedCount.Value = commandTag.RowsAffected()
+	resp.AffectedCount = commandTag.RowsAffected()
 
-	if errVal := u.AfterDeleteUser(ctx, &outUser, &pb.AfterFuncErr{}); errVal != nil {
+	//if errVal := u.AfterDeleteUser(ctx, &outUser, &pb.AfterFuncErr{}); errVal != nil {
+	//	return errVal
+	//}
+
+	afterFuncErr := &pb.AfterFuncErr{}
+	errVal := u.AfterDeleteUser(ctx, &outUser, afterFuncErr)
+	if errVal != nil {
 		return errVal
+	}
+
+	if len(afterFuncErr.GetFailureDesc()) > 0 {
+		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
+		log.Printf("delete alerts: %v: ", resp.GetValidationErr().GetFailureDesc())
 	}
 
 	return nil

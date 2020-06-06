@@ -12,7 +12,7 @@ service userSrv {
     rpc GetUsersByEmail(SearchString) returns (users) {}
     rpc CreateUser(user) returns (response) {}
     rpc UpdateUser(user) returns (response) {}
-    rpc DeleteUser(SearchId) returns (affectedCount) {}
+    rpc DeleteUser(SearchId) returns (response) {}
     rpc BeforeCreateUser(user) returns (validationErr) {}
     rpc BeforeUpdateUser(user) returns (validationErr) {}
     rpc BeforeDeleteUser(user) returns (validationErr) {}
@@ -25,7 +25,8 @@ service userSrv {
 
 message response {
     user user = 1;
-    validationErr validationErr = 2;
+    int64 affectedCount = 2;
+    validationErr validationErr = 3;
 }
 
 message user {
@@ -65,9 +66,9 @@ message SearchId {
     int64 id = 1;
 }
 
-message affectedCount {
-    int64 value = 1;
-}
+//message affectedCount {
+//    int64 value = 1;
+//}
 
 message validationErr {
     repeated string failureDesc = 1;

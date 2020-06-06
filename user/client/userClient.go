@@ -103,17 +103,20 @@ func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.
 }
 
 func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, error) {
-	var affectedCount *pb.AffectedCount
-	var err error
 
-	affectedCount, err = srvClient.DeleteUser(ctx, searchId)
+	resp, err := srvClient.DeleteUser(ctx, searchId)
 
 	if err != nil {
 		log.Printf("Unable to find user by Id. Error: %v", err)
 		return 0, err
 	}
-	fmt.Printf("Count of users deleted %d\n", affectedCount.Value)
-	return affectedCount.GetValue(), nil
+	fmt.Printf("Count of users deleted %d\n", resp.GetAffectedCount())
+
+	if len(resp.GetValidationErr().GetFailureDesc()) > 0 {
+		fmt.Printf("Delete user validations %v\n", resp.GetValidationErr().GetFailureDesc())
+	}
+
+	return resp.GetAffectedCount(), nil
 }
 
 func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, error) {
