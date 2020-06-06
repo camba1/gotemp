@@ -242,18 +242,26 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
 	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
-	afterFuncErr := &pb.AfterFuncErr{}
-	errVal := u.AfterCreateUser(ctx, outUser, afterFuncErr)
-	if errVal != nil {
-		//log.Printf("Error in aftercreate %v", errVal)
-		return errVal
-	}
+	//afterFuncErr := &pb.AfterFuncErr{}
+	//errVal := u.AfterCreateUser(ctx, outUser, afterFuncErr)
+	//if errVal != nil {
+	//	//log.Printf("Error in aftercreate %v", errVal)
+	//	return errVal
+	//}
+	//
+	//resp.User = outUser
+	//
+	//if len(afterFuncErr.GetFailureDesc()) > 0 {
+	//	//log.Printf("Insert alerts: %v: ", afterFuncErr.FailureDesc)
+	//	resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
+	//}
 
 	resp.User = outUser
-	if len(afterFuncErr.GetFailureDesc()) > 0 {
-		//log.Printf("Insert alerts: %v: ", afterFuncErr.FailureDesc)
-		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
+	failureDesc, err := u.getAfterAlerts(ctx, outUser)
+	if err != nil {
+		return err
 	}
+	resp.ValidationErr = &pb.ValidationErr{FailureDesc: failureDesc}
 
 	return nil
 }
@@ -315,18 +323,25 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	outUser.ValidFrom, outUser.ValidThru = convertedTimes[0], convertedTimes[1]
 	outUser.Createdate, outUser.Updatedate = convertedTimes[2], convertedTimes[3]
 
-	afterFuncErr := &pb.AfterFuncErr{}
-	errVal := u.AfterUpdateUser(ctx, outUser, afterFuncErr)
-	if errVal != nil {
-		return errVal
-	}
+	//afterFuncErr := &pb.AfterFuncErr{}
+	//errVal := u.AfterUpdateUser(ctx, outUser, afterFuncErr)
+	//if errVal != nil {
+	//	return errVal
+	//}
+	//
+	//resp.User = outUser
+	//
+	//if len(afterFuncErr.GetFailureDesc()) > 0 {
+	//	resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
+	//	//log.Printf("Update alerts: %v: ", resp.ValidationErr)
+	//}
 
 	resp.User = outUser
-
-	if len(afterFuncErr.GetFailureDesc()) > 0 {
-		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
-		//log.Printf("Update alerts: %v: ", resp.ValidationErr)
+	failureDesc, err := u.getAfterAlerts(ctx, outUser)
+	if err != nil {
+		return err
 	}
+	resp.ValidationErr = &pb.ValidationErr{FailureDesc: failureDesc}
 
 	return nil
 }
@@ -354,22 +369,38 @@ func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.R
 
 	resp.AffectedCount = commandTag.RowsAffected()
 
-	//if errVal := u.AfterDeleteUser(ctx, &outUser, &pb.AfterFuncErr{}); errVal != nil {
+	//afterFuncErr := &pb.AfterFuncErr{}
+	//errVal := u.AfterDeleteUser(ctx, &outUser, afterFuncErr)
+	//if errVal != nil {
 	//	return errVal
 	//}
+	//
+	//if len(afterFuncErr.GetFailureDesc()) > 0 {
+	//	resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
+	//	log.Printf("delete alerts: %v: ", resp.GetValidationErr().GetFailureDesc())
+	//}
 
+	failureDesc, err := u.getAfterAlerts(ctx, &outUser)
+	if err != nil {
+		return err
+	}
+	resp.ValidationErr = &pb.ValidationErr{FailureDesc: failureDesc}
+
+	return nil
+}
+
+func (u *User) getAfterAlerts(ctx context.Context, user *pb.User) ([]string, error) {
 	afterFuncErr := &pb.AfterFuncErr{}
-	errVal := u.AfterDeleteUser(ctx, &outUser, afterFuncErr)
+	errVal := u.AfterDeleteUser(ctx, user, afterFuncErr)
 	if errVal != nil {
-		return errVal
+		return []string{}, errVal
 	}
 
 	if len(afterFuncErr.GetFailureDesc()) > 0 {
-		resp.ValidationErr = &pb.ValidationErr{FailureDesc: afterFuncErr.GetFailureDesc()}
-		log.Printf("delete alerts: %v: ", resp.GetValidationErr().GetFailureDesc())
+		log.Printf("Alerts: %v: ", afterFuncErr.GetFailureDesc())
+		return afterFuncErr.GetFailureDesc(), nil
 	}
-
-	return nil
+	return []string{}, nil
 }
 
 func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
