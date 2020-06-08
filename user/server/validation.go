@@ -7,6 +7,7 @@ import (
 	pb "goTemp/user/proto"
 )
 
+//mb: Broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
 func checkMandatoryFields(user *pb.User) ([]string, error) {
