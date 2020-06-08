@@ -98,3 +98,4 @@ Temporary Items
 # Project specific folders and files
 /postgres/postgresDB
 /shellen.txt
+/timescaledb/timescaleDB/
