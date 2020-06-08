@@ -90,7 +90,7 @@ func main() {
 
 	//setup the nats broker
 
-	mb.br = service.Options().Broker
+	mb.Br = service.Options().Broker
 	//topic := "test"
 	//queueName := "test"
 	//_ = mb.subToMsg( getMsg, topic,queueName)

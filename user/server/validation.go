@@ -5,8 +5,9 @@ import (
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
-	"log"
 )
+
+var mb globalUtils.MyBroker
 
 func checkMandatoryFields(user *pb.User) ([]string, error) {
 	var FailureDesc []string
@@ -124,30 +125,42 @@ func (u *User) BeforeDeleteUser(ctx context.Context, user *pb.User, validationEr
 func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	topic := "usersrv.Audit"
-	userToSend := user
-	header := map[string]string{"Source": "AfterCreateUser", "type": "insert"}
-	err := mb.sendMsg(userToSend, header, topic)
-	if err != nil {
-		log.Print(glErr.AudFailureSending("AfterCreateUser", user.GetId(), err))
-		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, glErr.AudFailureSending("user insert", user.GetId(), err))
+	failureDesc := u.sendUserAudit(serviceName, "AfterCreateUser", "insert", user.GetId(), user.GetId(), user)
+	if len(failureDesc) > 0 {
+		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
+
 	//if len(afterFuncErr.FailureDesc) > 0 {
 	//	return &globalerrors.ValidationError{Source: "AfterCreateUser", FailureDesc: afterFuncErr.FailureDesc}
 	//}
 	return nil
 }
 
+func (u *User) sendUserAudit(serviceName, actionFunc, actionType string, performedBy, objectId int64, user *pb.User) string {
+	byteUser, err := mb.ProtoToByte(user)
+	if err != nil {
+		return glErr.AudFailureSending(actionType, objectId, err)
+	}
+	//TODO: Get the current user from validation token to paas as performedby
+
+	auditMsg, err := globalUtils.NewAuditMsg(serviceName, actionFunc, actionType, performedBy, objectId, byteUser)
+	if err != nil {
+		return glErr.AudFailureSending(actionType, objectId, err)
+	}
+
+	if err = mb.SendMsg(auditMsg.ObjectToSend(), auditMsg.Header(), auditMsg.Topic()); err != nil {
+		return glErr.AudFailureSending(actionType, objectId, err)
+	}
+	return ""
+
+}
+
 func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	topic := "usersrv.Audit"
-	userToSend := user
-	header := map[string]string{"Source": "AfterUpdateUser", "type": "Update"}
-	err := mb.sendMsg(userToSend, header, topic)
-	if err != nil {
-		//log.Print(glErr.AudFailureSending("AfterUpdateUser", user.GetId(), err))
-		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, glErr.AudFailureSending("Update user", user.GetId(), err))
+	failureDesc := u.sendUserAudit(serviceName, "AfterUpdateUser", "update", user.GetId(), user.GetId(), user)
+	if len(failureDesc) > 0 {
+		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
 	//if len(afterFuncErr.FailureDesc) > 0 {
@@ -159,13 +172,9 @@ func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr 
 func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	topic := "usersrv.Audit"
-	userToSend := user
-	header := map[string]string{"Source": "AfterDeleteUser", "type": "Delete"}
-	err := mb.sendMsg(userToSend, header, topic)
-	if err != nil {
-		//log.Print(glErr.AudFailureSending("AfterUpdateUser", user.GetId(), err))
-		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, glErr.AudFailureSending("delete user", user.GetId(), err))
+	failureDesc := u.sendUserAudit(serviceName, "AfterDeleteUser", "Delete", user.GetId(), user.GetId(), user)
+	if len(failureDesc) > 0 {
+		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
 	//if len(afterFuncErr.FailureDesc) > 0 {
