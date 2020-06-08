@@ -47,6 +47,7 @@ services:
       target: Dev
     depends_on:
       - pgdb
+      - nats
     container_name: usersrvcont
     environment:
       - MICRO_SERVER_ADDRESS=:50053
