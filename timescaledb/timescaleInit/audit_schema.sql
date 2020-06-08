@@ -32,24 +32,25 @@ $$ LANGUAGE PLPGSQL;
 -- Create table for promotions
 
 CREATE TABLE "public"."audit" (
-                                  time timestamp NOT NULL,
---                                       id  bigint not null default next_id(),
-                                  topic varchar(50) NOT NULL,
-                                  service varchar(50) NOT NULL,
-                                  actionFunc varchar(255) NOT NULL,
-                                  actionType varchar(50) NOT NULL,
-                                  objectName varchar(250) NOT NULL,
-                                  objectId bigint  NOT NULL,
-                                  performedBy bigint NOT NULL ,
-                                  objectDetail bytea NOT NULL
+                                  actiontime timestamp NOT NULL,     --Time the action took place in the original service
+--                                id  bigint not null default next_id(),
+                                  topic varchar(50) NOT NULL,        --Topic to which the change was published
+                                  service varchar(50) NOT NULL,      -- Name of service that caused the modification
+                                  actionFunc varchar(255) NOT NULL,  --Function in the service that caused the modification
+                                  actionType varchar(50) NOT NULL,   --Indicates what action was performed (Insert, delete, etc)
+                                  objectName varchar(250) NOT NULL,  --Name of object (table) to which the modified record belongs
+                                  objectId bigint  NOT NULL,         --Id of the record modified
+                                  performedBy bigint NOT NULL ,      --Id of user that did the change
+                                  recordedtime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,   --Time we recorded action in audit table
+                                  objectDetail bytea NOT NULL        -- Information of the record modified
 );
 
-CREATE INDEX ON "public"."audit" (objectName, objectId, time DESC);
+CREATE INDEX ON "public"."audit" (objectName, objectId, actiontime DESC);
 
 SELECT create_hypertable('audit', 'time');
 
 -- Insert sample  data
-insert into audit (time, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail )
+insert into audit (actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail )
 VALUES (TIMESTAMP '2000-01-01 00:00:00', 'audit', 'user', 'afterCreateUser','insert', 'user', '123456789', '2345678', '\\\\'::bytea),
        (TIMESTAMP '2000-02-01 00:00:00', 'audit', 'user', 'afterDeleteUser','delete', 'user', '12345678910', '2345678', '\\\\'::bytea),
        (TIMESTAMP '2000-03-01 00:00:00', 'audit', 'user', 'afterUpdateUser','update', 'user', '12345678911', '2345678', '\\\\'::bytea);
