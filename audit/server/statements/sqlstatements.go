@@ -6,7 +6,7 @@ var MaxRowsToFetch = 200
 
 // Create update delete statements
 const (
-	SqlInsert auditSql = `INSERT into audit (actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail) 
+	SqlInsert auditSql = `INSERT into audit (actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail)
 						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
 						RETURNING actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, recordedtime`
 
