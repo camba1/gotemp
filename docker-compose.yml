@@ -70,6 +70,23 @@ services:
       - ./user/client:/go/src/goTemp/user/client
     ports:
       - "50054:50051"
+  auditsrv:
+    build:
+      context: .
+      dockerfile: ./audit/Dockerfile
+      target: Dev
+    depends_on:
+      - timescaledb
+      - nats
+    container_name: auditsrvcont
+    environment:
+      - MICRO_SERVER_ADDRESS=:50055
+    entrypoint: CompileDaemon --build="go build -o auditServer ./audit/server/" --command=./auditServer
+    env_file: ./audit/docker-compose.env
+    volumes:
+      - ./audit/server:/go/src/goTemp/audit/server
+    ports:
+      - "50055:50055"
   nats:
     image: nats
     ports:
