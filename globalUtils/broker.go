@@ -39,7 +39,7 @@ func (mb *MyBroker) SendMsg(objectToSend []byte, header map[string]string, topic
 		log.Printf(glErr.BrkNoMessageSent(topic, err))
 		return err
 	}
-	log.Printf("sent message to topic %s. Message %v", topic, &header)
+	log.Printf("sent message to Topic %s. Message %v", topic, &header)
 	return nil
 }
 
@@ -66,14 +66,15 @@ func (mb *MyBroker) SubToMsg(subHandler broker.Handler, topic string, queueName 
 	return nil
 }
 
-func GetMsg(p broker.Event) error {
-	//receivedUser := pb.User{}
-	var receivedMsg proto.Message
-	err := proto.Unmarshal(p.Message().Body, receivedMsg)
-	if err != nil {
-		log.Printf(glErr.BrkBadUnMarshall(p.Topic(), p.Message().Body, err))
-		return err
-	}
-	fmt.Printf("Received message for subscription topic %s: %v\n", p.Topic(), &receivedMsg)
-	return nil
+func (mb *MyBroker) GetMsg(p broker.Event) (string, map[string]string, []byte, error) {
+	//var receivedMsg proto.Message
+	//log.Printf("unmarshalling message: %v", p.Message().Header)
+	//err := proto.Unmarshal(p.Message().Body, receivedMsg)
+	//if err != nil {
+	//	log.Printf(glErr.BrkBadUnMarshall(p.Topic(), p.Message().Body, err))
+	//	return "", nil, nil, err
+	//}
+	fmt.Printf("Received message for subscription Topic %s: %v\n", p.Topic(), p.Message().Header)
+	//return p.Topic(), p.Message().Header, &receivedMsg, nil
+	return p.Topic(), p.Message().Header, p.Message().Body, nil
 }
