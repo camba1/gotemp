@@ -126,7 +126,7 @@ func (u *User) BeforeDeleteUser(ctx context.Context, user *pb.User, validationEr
 func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	failureDesc := u.sendUserAudit(serviceName, "AfterCreateUser", "insert", user.GetId(), user.GetId(), user)
+	failureDesc := u.sendUserAudit(serviceName, "AfterCreateUser", "insert", user.GetId(), "user", user.GetId(), user)
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
@@ -137,14 +137,14 @@ func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr 
 	return nil
 }
 
-func (u *User) sendUserAudit(serviceName, actionFunc, actionType string, performedBy, objectId int64, user *pb.User) string {
+func (u *User) sendUserAudit(serviceName, actionFunc, actionType string, performedBy int64, objectName string, objectId int64, user *pb.User) string {
 	byteUser, err := mb.ProtoToByte(user)
 	if err != nil {
 		return glErr.AudFailureSending(actionType, objectId, err)
 	}
-	//TODO: Get the current user from validation token to paas as performedby
+	//TODO: Get the current user from validation token to pass as performedby
 
-	auditMsg, err := globalUtils.NewAuditMsg(serviceName, actionFunc, actionType, performedBy, objectId, byteUser)
+	auditMsg, err := globalUtils.NewAuditMsg(serviceName, actionFunc, actionType, performedBy, objectName, objectId, byteUser)
 	if err != nil {
 		return glErr.AudFailureSending(actionType, objectId, err)
 	}
@@ -159,7 +159,7 @@ func (u *User) sendUserAudit(serviceName, actionFunc, actionType string, perform
 func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	failureDesc := u.sendUserAudit(serviceName, "AfterUpdateUser", "update", user.GetId(), user.GetId(), user)
+	failureDesc := u.sendUserAudit(serviceName, "AfterUpdateUser", "update", user.GetId(), "user", user.GetId(), user)
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
@@ -173,7 +173,7 @@ func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr 
 func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	failureDesc := u.sendUserAudit(serviceName, "AfterDeleteUser", "Delete", user.GetId(), user.GetId(), user)
+	failureDesc := u.sendUserAudit(serviceName, "AfterDeleteUser", "Delete", user.GetId(), "user", user.GetId(), user)
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
