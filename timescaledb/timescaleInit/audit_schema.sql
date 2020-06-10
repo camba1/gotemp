@@ -47,7 +47,7 @@ CREATE TABLE "public"."audit" (
 
 CREATE INDEX ON "public"."audit" (objectName, objectId, actiontime DESC);
 
-SELECT create_hypertable('audit', 'time');
+SELECT create_hypertable('audit', 'actiontime');
 
 -- Insert sample  data
 insert into audit (actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail )
