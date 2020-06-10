@@ -8,10 +8,13 @@ import (
 )
 
 const (
-	AuditTopic       = "Audit"
+	//AuditTopic: Topic to be used when publishing and subscribing to audit related message in the broker
+	AuditTopic = "Audit"
+	//AuditQueueInsert: Queue to be used when retrieve audit messages from the broker via a subscription to allow multiple instances processing messages in parallel
 	AuditQueueInsert = "Audit.Insert"
 )
 
+//auditMsg: Structure of the audit messages to be sent to the broker
 type auditMsg struct {
 	topic        string
 	objectToSend []byte
@@ -30,8 +33,10 @@ func (a auditMsg) Topic() string {
 	return a.topic
 }
 
+//AuditMsgHeader: structure of the header portion of the audit message to be sent to the broker
 type AuditMsgHeader map[string]string
 
+//Struct version of the AuditMsgHeader (map) to allow for easier handling
 type AuditMsgHeaderStruct struct {
 	ServiceName string
 	ActionFunc  string
@@ -70,6 +75,7 @@ func (a *AuditMsgHeaderStruct) GetServiceName() string {
 	return a.ServiceName
 }
 
+//NewAuditMsg: Validate and create a new Audit message that is ready to be sent out to the broker
 func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, objectName string, objectId int64, objectToSend []byte) (*auditMsg, error) {
 	var missingFields string
 	if serviceName == "" {
@@ -111,6 +117,7 @@ func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, 
 	return &aud, nil
 }
 
+//AuditMsgHeaderToStruct: convert the AuditMsgHeader to its struct based counterpart AuditMsgHeaderStruct
 func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error) {
 	if header == nil {
 		return nil, fmt.Errorf("message header cannot be nil when trying to convert to struct")

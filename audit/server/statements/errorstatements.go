@@ -6,25 +6,30 @@ import (
 	"log"
 )
 
+// language: Language in which the application messages will be presented
 var language = globalUtils.LangEN
 
+//SetLanguage: Populates the language variable to set in which language the message will be displayed
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
+//UserErr: String based type that relates service specific errors
 type UserErr string
 
+//errTxtEn: Error messages in english map
 var errTxtEn = map[string]UserErr{
 	"internalError":          "Internal error. Error: %v\n",
 	"insertError":            "Unable to create user. Error: %v\n",
 	"updateError":            "Unable to update user. Error: %v \n",
 	"deleteError":            "Unable to delete user %v. Error: %v\n",
-	"deleteRowNotFoundError": "row with id %d not found. Unable to delete the row",
+	"deleteRowNotFoundError": "row with id %d not found. Unable to delete the row\n",
 	"selectReadError":        "Unable to get rows from the DB. Error: %v \n",
 	"selectScanError":        "Unable to read the user rows returned from the Db. Error: %v\n",
 	"selectRowReadError":     "Unable to get row from the DB. Error: %v \n",
 }
 
+//errTxtES: Error Messages in spanish
 var errTxtES = map[string]UserErr{
 	"internalError":          "Error interno. Error: %v\n",
 	"insertError":            "No se pudo crear la auditoria. Error: %v\n",
@@ -36,6 +41,7 @@ var errTxtES = map[string]UserErr{
 	"selectRowReadError":     "No se pudo leer la auditoria de la base de datos. Error: %v \n",
 }
 
+//getSqlTxt: Returns the error message based on the error map key and the selected language
 func (ge *UserErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
 	var returnstr string
 	switch myLanguage {
@@ -44,12 +50,17 @@ func (ge *UserErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) st
 	case globalUtils.LangES:
 		returnstr = string(errTxtES[errKey])
 	case globalUtils.LangFR:
-		log.Fatalf("%s language not implemented for users", myLanguage)
+		log.Fatalf("%s language not implemented for audit", myLanguage)
 	default:
-		log.Fatalf("%s language not implemented for users", myLanguage)
+		log.Fatalf("%s language not implemented for audit", myLanguage)
 	}
 	return returnstr
 }
+
+/*
+The following functions return the appripriate error to the client. it also interpolates the passed arguments
+to the returned message
+*/
 
 func (ge *UserErr) internalError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("internalError", language), err)

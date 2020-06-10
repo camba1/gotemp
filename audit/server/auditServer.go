@@ -12,6 +12,7 @@ import (
 //glErr: Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
+//serviceName: Name of this service and which will be used for service discovery and registration
 const serviceName = "audit"
 
 const (
@@ -88,14 +89,16 @@ func main() {
 	defer conn.Close(context.Background())
 
 	//setup the nats broker
-
 	mb.Br = service.Options().Broker
+
 	//topic := "test"
 	//queueName := "test"
 	//_ = mb.subToMsg( getMsg, topic,queueName)
 	//userToSend := &pb.User{Id: 1234, Email: "werewq", ValidFrom: ptypes.TimestampNow()}
 	//header := map[string]string{"test": "Test"}
 	//_ = mb.sendMsg( userToSend,header, topic)
+
+	//setup broker subscription
 	var aud AuditSrv
 	err = aud.SubsToBrokerInsertMsg()
 	if err != nil {

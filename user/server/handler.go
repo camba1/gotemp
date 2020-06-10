@@ -23,6 +23,7 @@ type User struct{}
 //promoErr: Holds service specific errors
 var userErr statements.UserErr
 
+//GetUserById: Get User from DB based on a given ID
 func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *pb.User) error {
 	_ = ctx
 
@@ -69,6 +70,7 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 	return nil
 }
 
+//GetUsers: Search the Users table in the DB based in a set of search parameters
 func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users *pb.Users) error {
 
 	_ = ctx
@@ -125,6 +127,8 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 	return nil
 }
 
+//getSQLForSearch: Combine the where clause built in the buildSearchWhereClause method with the rest of the sql
+//statement to return the final search for users sql statement
 func (u *User) getSQLForSearch(searchParms *pb.SearchParams) ([]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
 	sqlWhereClause, values, err := u.buildSearchWhereClause(searchParms)
@@ -182,6 +186,8 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 	return sqlWhereClause, values, nil
 }
 
+//CreateUser: Creates a user in the Database, including hashing their password before saving it. Calls before and after create functions
+//for validations and sending record to the audit service via the broker
 func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Response) error {
 	_ = ctx
 	outUser := &pb.User{}
@@ -252,6 +258,8 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	return nil
 }
 
+//UpdateUser: Update a user in the Database. Calls before and after create functions
+//for validations and sending record to the audit service via the broker
 func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Response) error {
 	_ = ctx
 
@@ -319,6 +327,8 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	return nil
 }
 
+//DeleteUser: Delete a user in the Database based on the user ID. Calls before and after create functions
+//for validations and sending record to the audit service via the broker
 func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.Response) error {
 	_ = ctx
 
@@ -351,6 +361,8 @@ func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.R
 	return nil
 }
 
+//getAfterAlerts: Call the appropriate after create/update/delete function and return the alert validation erros
+//These alerts  are logged, but do not cause the record processing to fail
 func (u *User) getAfterAlerts(ctx context.Context, user *pb.User, operation string) ([]string, error) {
 	afterFuncErr := &pb.AfterFuncErr{}
 	var errVal error
@@ -374,6 +386,7 @@ func (u *User) getAfterAlerts(ctx context.Context, user *pb.User, operation stri
 	return []string{}, nil
 }
 
+//Auth: Authenticate user and return a new JWT token
 func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 	_ = ctx
 
@@ -406,6 +419,7 @@ func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 	return nil
 }
 
+//GetUsersByEmail: Get a user given an email address. Internally just calls GetUsers.
 func (u *User) GetUsersByEmail(ctx context.Context, searchString *pb.SearchString, outUsers *pb.Users) error {
 	searchParams := pb.SearchParams{
 		Email: searchString.Value,
@@ -417,6 +431,7 @@ func (u *User) GetUsersByEmail(ctx context.Context, searchString *pb.SearchStrin
 	return nil
 }
 
+//hashpwd: Hash a plan text string
 func (u *User) hashpwd(plainPwd string) (string, error) {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(plainPwd), bcrypt.DefaultCost)
 	if err != nil {
@@ -425,6 +440,7 @@ func (u *User) hashpwd(plainPwd string) (string, error) {
 	return string(hashedPwd), err
 }
 
+//ValidateToken: Validate token to ensure user is authenticated
 func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *pb.Token) error {
 	_ = ctx
 	ts := TokenService{}

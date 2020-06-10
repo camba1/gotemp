@@ -1,10 +1,12 @@
 package statements
 
+//auditSql: String based type that relates service specific sql statements
 type auditSql string
 
+//MaxRowsToFetch: Maximum number of rows to return from the database in one select
 var MaxRowsToFetch = 200
 
-// Create update delete statements
+// Create, update, delete statements
 const (
 	SqlInsert auditSql = `INSERT into audit (actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail)
 						VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
@@ -26,6 +28,7 @@ const (
 	TestStatement auditSql = `select 1`
 )
 
+//String: Return sql statement
 func (p auditSql) String() string {
 	return string(p)
 }

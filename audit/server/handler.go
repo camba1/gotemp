@@ -24,6 +24,7 @@ func (a *AuditSrv) SubsToBrokerInsertMsg() error {
 	return nil
 }
 
+//processBrokerMessage: extract the topic, header and message payload from the message received from the broker
 func (a *AuditSrv) processBrokerMessage(p broker.Event) error {
 	log.Printf("Extracting received message")
 	topic, header, message, err := mb.GetMsg(p)
@@ -44,6 +45,7 @@ func (a *AuditSrv) processBrokerMessage(p broker.Event) error {
 	return nil
 }
 
+//createAudit: Insert audit information into the database
 func (a *AuditSrv) createAudit(topic string, headerStruct *globalUtils.AuditMsgHeaderStruct, message []byte) error {
 
 	//actiontime, topic, service, actionFunc, actionType, objectName, objectId, performedBy, objectDetail

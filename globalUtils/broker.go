@@ -7,12 +7,12 @@ import (
 	"log"
 )
 
+//MyBroker: Struct type that contains all the broker functionality
 type MyBroker struct {
 	Br broker.Broker
 }
 
-//var mb MyBroker
-
+//ProtoToByte: Convert a proto message to a byte slice so that it can be sent out to the broker
 func (mb *MyBroker) ProtoToByte(protoMsg proto.Message) ([]byte, error) {
 	byteUser, err := proto.Marshal(protoMsg)
 	if err != nil {
@@ -22,6 +22,7 @@ func (mb *MyBroker) ProtoToByte(protoMsg proto.Message) ([]byte, error) {
 	return byteUser, nil
 }
 
+//SendMsg: send message to broker so that is canbe picked up by a subscription at some point. This is setup to be fire and forget
 func (mb *MyBroker) SendMsg(objectToSend []byte, header map[string]string, topic string) error {
 
 	var message broker.Message
@@ -43,6 +44,8 @@ func (mb *MyBroker) SendMsg(objectToSend []byte, header map[string]string, topic
 	return nil
 }
 
+//SubToMsg: Subscribe to a message in the broker. to pick up all messages, leave the queueName empty, otherwise
+// message will be sent to just one of subscribers with that queueName
 func (mb *MyBroker) SubToMsg(subHandler broker.Handler, topic string, queueName string) error {
 
 	err := mb.Br.Connect()
@@ -50,8 +53,6 @@ func (mb *MyBroker) SubToMsg(subHandler broker.Handler, topic string, queueName 
 		log.Printf(glErr.BrkNoConnection(err))
 		return err
 	}
-
-	//var subs broker.Subscriber
 
 	if queueName != "" {
 		_, err = mb.Br.Subscribe(topic, subHandler, broker.Queue(queueName))
@@ -66,6 +67,7 @@ func (mb *MyBroker) SubToMsg(subHandler broker.Handler, topic string, queueName 
 	return nil
 }
 
+//GetMsg: Break the message from the borker into its three component parts
 func (mb *MyBroker) GetMsg(p broker.Event) (string, map[string]string, []byte, error) {
 	//var receivedMsg proto.Message
 	//log.Printf("unmarshalling message: %v", p.Message().Header)

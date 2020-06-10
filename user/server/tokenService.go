@@ -6,9 +6,13 @@ import (
 	"time"
 )
 
+//key: Encoding key
 var key []byte
 
+//TokenValidityPeriod: Length of time a token can be used
 const TokenValidityPeriod = time.Hour * 24
+
+//ClaimIssuer: String representing the claim issuer
 const ClaimIssuer = "goTemp.usersrv"
 
 //getKeyFromVault: Checks to see if the key is populated and returns it.If key is empty, it is fetched from an external source
@@ -20,13 +24,16 @@ func getKeyFromVault() ([]byte, error) {
 	return key, nil
 }
 
+//MyCustomClaims: structure of the claim to be used for the token
 type MyCustomClaims struct {
 	User *pb.User
 	jwt.StandardClaims
 }
 
+//TokenService: holds all methods related to tokens
 type TokenService struct{}
 
+//Decode a token and check its validity
 func (ts *TokenService) Decode(tokenString string) (*MyCustomClaims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &MyCustomClaims{},
 		func(token *jwt.Token) (interface{}, error) {
@@ -48,6 +55,7 @@ func (ts *TokenService) Decode(tokenString string) (*MyCustomClaims, error) {
 	}
 }
 
+//Encode: create a new token based on a custom claim and return the signed string
 func (ts *TokenService) Encode(user *pb.User) (string, error) {
 
 	// Build Claim

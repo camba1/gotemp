@@ -35,7 +35,7 @@ func getDBConnString() string {
 	return connString
 }
 
-//Authentication middleware
+//AuthWrapper: Authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		//User login is excepted from authentication

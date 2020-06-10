@@ -6,11 +6,13 @@ import (
 	"time"
 )
 
+//ValidationError: Custom error type Used to compile multiple validations errors as one error
 type ValidationError struct {
 	Source      string
 	FailureDesc []string
 }
 
+//Error: Combine all the message stored in the ValidationError.FailureDesc slice and return it as one
 func (v *ValidationError) Error() string {
 	var failureDesc string
 	for _, desc := range v.FailureDesc {
@@ -19,6 +21,7 @@ func (v *ValidationError) Error() string {
 	return fmt.Sprintf("validation error in %s:\n %s ", v.Source, failureDesc)
 }
 
+//SrvError: String type relating to all the global errors
 type SrvError string
 
 const (
@@ -42,6 +45,10 @@ const (
 	brkBadUnMarshall            SrvError = "Unable to unmarshall received object for topic %s. Message received: %v. Error: %v\n"
 	audFailureSending           SrvError = "Unable to send %s audit information for record %d. Error: %v\n"
 )
+
+/*
+Functions that return the error message formatted with the information passed in as arguments to the individual functions
+*/
 
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
 	return fmt.Sprintf(string(srvNoStartTxt), serviceName, err)
