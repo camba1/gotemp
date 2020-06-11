@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/metadata"
@@ -11,6 +10,7 @@ import (
 	pb "goTemp/user/proto"
 	"log"
 	"os"
+	"time"
 )
 
 //serviceName: service identifier
@@ -67,6 +67,34 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
+//connectToDB: Try to connect to the DB. Return true if connection was successful, false otherwise
+func connectToDB() (bool, error) {
+	var err error
+	conn, err = pgx.Connect(context.Background(), getDBConnString())
+	if err != nil {
+		log.Printf(glErr.DbNoConnection(dbName, err))
+		return false, err
+	}
+	return true, nil
+}
+
+//connectToDBWithRetry: Attempts to connect to the DB every 3s for up to maxRetries in case of connection failure
+func connectToDBWithRetry() {
+	maxRetries := 5
+	for i := 1; i <= maxRetries; i++ {
+		connected, err := connectToDB()
+		if !connected {
+			if i >= maxRetries {
+				log.Fatalf(glErr.DbNoConnection(dbName, err))
+			}
+			log.Printf("Attempting to connect to DB again. Retry number: %d. Previous error: %v", i, err)
+			time.Sleep(3 * time.Second)
+		} else {
+			break
+		}
+	}
+}
+
 func main() {
 
 	//instantiate service
@@ -81,11 +109,8 @@ func main() {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
 
-	// Connect to DB
-	conn, err = pgx.Connect(context.Background(), getDBConnString())
-	if err != nil {
-		log.Fatalf(glErr.DbNoConnection(dbName, err))
-	}
+	//Connect to DB
+	connectToDBWithRetry()
 	defer conn.Close(context.Background())
 
 	//setup the nats broker
