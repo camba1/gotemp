@@ -22,7 +22,7 @@ func (mb *MyBroker) ProtoToByte(protoMsg proto.Message) ([]byte, error) {
 	return byteUser, nil
 }
 
-//SendMsg: send message to broker so that is canbe picked up by a subscription at some point. This is setup to be fire and forget
+//SendMsg: send message to broker so that is can be picked up by a subscription at some point. This is setup to be fire and forget
 func (mb *MyBroker) SendMsg(objectToSend []byte, header map[string]string, topic string) error {
 
 	var message broker.Message
