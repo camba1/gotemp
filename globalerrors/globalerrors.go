@@ -29,6 +29,7 @@ const (
 	srvNoHandlerTxt             SrvError = "Unable to register service handler. Error: %v"
 	dbNoConnectionTxt           SrvError = "Unable to connect to DB %s. Error: %v\n"
 	dbNoConnectionStringTxt     SrvError = "Unable to find DB connection string. Please set environment variable %s \n"
+	dbConnectRetry              SrvError = "Attempting to connect to DB again. Retry number: %d. Previous error: %v\n"
 	dtProtoTimeStampToTimeStamp SrvError = "Unable to convert proto timestamp %v to timestamp. Error: %v \n"
 	dtTimeStampToProtoTimeStamp SrvError = "Unable to convert timestamp %v to proto timestamp. Error: %v \n"
 	dtInvalidValidityDates      SrvError = "The valid thru date (%v) must take place after the valid from date (%v)\n"
@@ -60,6 +61,10 @@ func (ge *SrvError) DbNoConnection(dbName string, err error) string {
 
 func (ge *SrvError) DbNoConnectionString(envVarName string) string {
 	return fmt.Sprintf(string(dbNoConnectionStringTxt), envVarName)
+}
+
+func (ge *SrvError) DbConnectRetry(RetryNum int, err error) string {
+	return fmt.Sprintf(string(dbConnectRetry), RetryNum, err)
 }
 
 func (ge *SrvError) SrvNoHandler(err error) string {

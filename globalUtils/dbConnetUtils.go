@@ -33,7 +33,7 @@ func (p *PgxDBConnect) ConnectToDBWithRetry(databaseName string, connectionStrin
 				log.Printf(glErr.DbNoConnection(databaseName, err))
 				return nil, err
 			} else {
-				log.Printf("Attempting to connect to DB again. Retry number: %d. Previous error: %v", i, err)
+				log.Printf(glErr.DbConnectRetry(i, err))
 				time.Sleep(3 * time.Second)
 			}
 		} else {
