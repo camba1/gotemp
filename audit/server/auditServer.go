@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
+	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	"log"
 	"os"
@@ -65,6 +66,14 @@ func getDBConnString() string {
 //		return fn(ctx, req, resp)
 //	}
 //}
+func connectToDB() *pgx.Conn {
+	var pgxConnect globalUtils.PgxDBConnect
+	dbConn, err := pgxConnect.ConnectToDBWithRetry(dbName, getDBConnString())
+	if err != nil {
+		log.Fatalf(glErr.DbNoConnection(dbName, err))
+	}
+	return dbConn
+}
 
 func main() {
 
@@ -80,12 +89,8 @@ func main() {
 	//	log.Fatalf(glErr.SrvNoHandler(err))
 	//}
 
-	// Connect to DB
-	var err error
-	conn, err = pgx.Connect(context.Background(), getDBConnString())
-	if err != nil {
-		log.Fatalf(glErr.DbNoConnection(dbName, err))
-	}
+	//Connect to DB
+	conn = connectToDB()
 	defer conn.Close(context.Background())
 
 	//setup the nats broker
@@ -100,7 +105,7 @@ func main() {
 
 	//setup broker subscription
 	var aud AuditSrv
-	err = aud.SubsToBrokerInsertMsg()
+	err := aud.SubsToBrokerInsertMsg()
 	if err != nil {
 		log.Printf("Error subscribing to message: Error: %v\n", err)
 	}

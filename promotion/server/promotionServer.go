@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
+	"goTemp/globalUtils"
 	pb "goTemp/promotion"
 	"log"
 	"os"
@@ -31,6 +32,15 @@ func getDBConnString() string {
 	return connString
 }
 
+func connectToDB() *pgx.Conn {
+	var pgxConnect globalUtils.PgxDBConnect
+	dbConn, err := pgxConnect.ConnectToDBWithRetry(dbName, getDBConnString())
+	if err != nil {
+		log.Fatalf(glErr.DbNoConnection(dbName, err))
+	}
+	return dbConn
+}
+
 func main() {
 
 	//testwhere()
@@ -45,11 +55,8 @@ func main() {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
 
-	// Connect to DB
-	conn, err = pgx.Connect(context.Background(), getDBConnString())
-	if err != nil {
-		log.Fatalf(glErr.DbNoConnection(dbName, err))
-	}
+	//Connect to DB
+	conn = connectToDB()
 	defer conn.Close(context.Background())
 
 	// Run Service
