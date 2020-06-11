@@ -14,6 +14,10 @@ In it current incarnation (this is wip), this mono-repo uses the following stack
 - `Docker` for creating images
 - `Docker-compose` to run the services
 
+Below is a diagram that dsiplays the overall setup of the application:
+
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram.png)
+
 #### Repo organization
 
 The project is organized in a way that each folder represents either a service, a database or a shared library package.
