@@ -67,7 +67,7 @@ func (mb *MyBroker) SubToMsg(subHandler broker.Handler, topic string, queueName 
 	return nil
 }
 
-//GetMsg: Break the message from the borker into its three component parts
+//GetMsg: Break the message from the broker into its three component parts
 func (mb *MyBroker) GetMsg(p broker.Event) (string, map[string]string, []byte, error) {
 	//var receivedMsg proto.Message
 	//log.Printf("unmarshalling message: %v", p.Message().Header)
