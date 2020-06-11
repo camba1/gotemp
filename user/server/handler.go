@@ -20,7 +20,7 @@ var glErr globalerrors.SrvError
 //Promotion: Main entry point for promotion related services
 type User struct{}
 
-//promoErr: Holds service specific errors
+//userErr: Holds service specific errors
 var userErr statements.UserErr
 
 //GetUserById: Get User from DB based on a given ID
