@@ -32,6 +32,7 @@ Currently, we have the following:
 - `user`: User and authentication service
 
 Additionally, we have the following files in the root directory as well:
+
 - `.dockerignore`: Files to be ignored when building service images
 - `.gitignore`: Files to be ignored by git
 - `docker-compose.env` environment variables used when using the pormotions service. Should be eventually moved to the correct folder

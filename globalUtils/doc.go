@@ -6,5 +6,6 @@ It is compose of the following files:
 - languageUtils: keeps track of the languages that have implemented in the application. Currently that just refers to the
 	service error messages.
 - timeUtils: Useful time conversion methods
+- dbConnectUtils: Handles connecting to the databases, including setting up retries in case of connection failure
 */
 package globalUtils
