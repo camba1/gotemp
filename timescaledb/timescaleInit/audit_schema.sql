@@ -42,10 +42,12 @@ CREATE TABLE "public"."audit" (
                                   objectId bigint  NOT NULL,         --Id of the record modified
                                   performedBy bigint NOT NULL ,      --Id of user that did the change
                                   recordedtime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,   --Time we recorded action in audit table
-                                  objectDetail bytea NOT NULL        -- Information of the record modified
+                                  objectDetail bytea NOT NULL,        -- Information of the record modified
+                                  id  bigint not null default next_id()
 );
 
 CREATE INDEX ON "public"."audit" (objectName, objectId, actiontime DESC);
+CREATE INDEX ON "public"."audit" (id, actiontime DESC);
 
 SELECT create_hypertable('audit', 'actiontime');
 
