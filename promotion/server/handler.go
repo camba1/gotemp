@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
-	pb "goTemp/promotion"
+	"goTemp/promotion/proto"
 	"goTemp/promotion/server/statements"
 	"log"
 	"time"
@@ -23,10 +23,10 @@ type Promotion struct{}
 var promoErr statements.PromoErr
 
 //UpdatePromotion: Updates a promotion based on the is provided in the inPromotion. Returns updated promotion
-func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promotion, outPromotion *pb.Promotion) error {
+func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *proto.Promotion, outPromotion *proto.Promotion) error {
 	_ = ctx
 
-	if errVal := p.BeforeUpdatePromotion(ctx, inPromotion, &pb.ValidationErr{}); errVal != nil {
+	if errVal := p.BeforeUpdatePromotion(ctx, inPromotion, &proto.ValidationErr{}); errVal != nil {
 		return errVal
 	}
 
@@ -70,7 +70,7 @@ func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promoti
 	}
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
-	if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &pb.AfterFuncErr{}); errVal != nil {
+	if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
 		return errVal
 	}
 
@@ -78,14 +78,14 @@ func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *pb.Promoti
 }
 
 //DeletePromotion: Delete a promotion based on the promotion id in the searchId.id field. Returns number of affected promotions which should be one always
-func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, affectedCount *pb.AffectedCount) error {
+func (p *Promotion) DeletePromotion(ctx context.Context, searchid *proto.SearchId, affectedCount *proto.AffectedCount) error {
 	_ = ctx
 
-	outPromotion := pb.Promotion{}
+	outPromotion := proto.Promotion{}
 	if err := p.GetPromotionById(ctx, searchid, &outPromotion); err != nil {
 		return err
 	}
-	if errVal := p.BeforeDeletePromotion(ctx, &outPromotion, &pb.ValidationErr{}); errVal != nil {
+	if errVal := p.BeforeDeletePromotion(ctx, &outPromotion, &proto.ValidationErr{}); errVal != nil {
 		return errVal
 	}
 
@@ -101,7 +101,7 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, 
 
 	affectedCount.Value = commandTag.RowsAffected()
 
-	if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &pb.AfterFuncErr{}); errVal != nil {
+	if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &proto.AfterFuncErr{}); errVal != nil {
 		return errVal
 	}
 
@@ -109,7 +109,7 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *pb.SearchId, 
 }
 
 //GetPromotions: Returns a promotion slice based on the search parameters provided
-func (p *Promotion) GetPromotions(ctx context.Context, searchParms *pb.SearchParams, promotions *pb.Promotions) error {
+func (p *Promotion) GetPromotions(ctx context.Context, searchParms *proto.SearchParams, promotions *proto.Promotions) error {
 
 	_ = ctx
 
@@ -131,7 +131,7 @@ func (p *Promotion) GetPromotions(ctx context.Context, searchParms *pb.SearchPar
 	var validFrom time.Time
 	var validThru time.Time
 	for rows.Next() {
-		var promo pb.Promotion
+		var promo proto.Promotion
 		err := rows.
 			Scan(
 				&promo.Id,
@@ -164,7 +164,7 @@ func (p *Promotion) GetPromotions(ctx context.Context, searchParms *pb.SearchPar
 //buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
 //slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
 //for the date lookup which is done  as a contains clause
-func (p *Promotion) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []interface{}, error) {
+func (p *Promotion) buildSearchWhereClause(searchParms *proto.SearchParams) (string, []interface{}, error) {
 	sqlWhereClause := " where 1=1"
 	var values []interface{}
 
@@ -203,7 +203,7 @@ func (p *Promotion) buildSearchWhereClause(searchParms *pb.SearchParams) (string
 }
 
 //GetPromotionById: Get a promotion for the given promotion id provided in searchId.id
-func (p *Promotion) GetPromotionById(ctx context.Context, searchId *pb.SearchId, outPromotion *pb.Promotion) error {
+func (p *Promotion) GetPromotionById(ctx context.Context, searchId *proto.SearchId, outPromotion *proto.Promotion) error {
 	_ = ctx
 
 	var validFrom time.Time
@@ -244,10 +244,10 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *pb.SearchId,
 }
 
 //CreatePromotion: Creates a promotion based on the promotion passed in the inPromotion argument
-func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *pb.Promotion, outPromotion *pb.Promotion) error {
+func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *proto.Promotion, outPromotion *proto.Promotion) error {
 	_ = ctx
 
-	if errVal := p.BeforeCreatePromotion(ctx, inPromotion, &pb.ValidationErr{}); errVal != nil {
+	if errVal := p.BeforeCreatePromotion(ctx, inPromotion, &proto.ValidationErr{}); errVal != nil {
 		return errVal
 	}
 
@@ -291,7 +291,7 @@ func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *pb.Promoti
 	}
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
-	if errVal := p.AfterCreatePromotion(ctx, outPromotion, &pb.AfterFuncErr{}); errVal != nil {
+	if errVal := p.AfterCreatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
 		return errVal
 	}
 

@@ -5,7 +5,7 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
-	pb "goTemp/promotion"
+	"goTemp/promotion/proto"
 )
 
 func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Timestamp) ([]string, error) {
@@ -31,7 +31,7 @@ func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Tim
 	return FailureDesc, nil
 }
 
-func checkMandatoryFields(promo *pb.Promotion) ([]string, error) {
+func checkMandatoryFields(promo *proto.Promotion) ([]string, error) {
 	var FailureDesc []string
 	if promo.GetName() == "" {
 		FailureDesc = append(FailureDesc, promoErr.MissingField("name"))
@@ -57,7 +57,7 @@ func checkMandatoryFields(promo *pb.Promotion) ([]string, error) {
 //	promo.ValidThru = validThru[0]
 //}
 
-func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *pb.Promotion, validationErr *pb.ValidationErr) error {
+func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(promotion)
 	if err != nil {
@@ -70,7 +70,7 @@ func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *pb.Pro
 	return nil
 }
 
-func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *pb.Promotion, validationErr *pb.ValidationErr) error {
+func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(promotion)
 	if err != nil {
@@ -83,7 +83,7 @@ func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *pb.Pro
 	return nil
 }
 
-func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *pb.Promotion, validationErr *pb.ValidationErr) error {
+func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	if promotion.ApprovalStatus > 0 {
 		validationErr.FailureDesc = append(validationErr.FailureDesc, promoErr.DelPromoNotInitialState())
@@ -94,7 +94,7 @@ func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *pb.Pro
 	return nil
 }
 
-func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *pb.Promotion, afterFuncErr *pb.AfterFuncErr) error {
+func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 	_ = promotion
 	if len(afterFuncErr.FailureDesc) > 0 {
@@ -103,7 +103,7 @@ func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *pb.Prom
 	return nil
 }
 
-func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *pb.Promotion, afterFuncErr *pb.AfterFuncErr) error {
+func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 	_ = promotion
 	if len(afterFuncErr.FailureDesc) > 0 {
@@ -112,7 +112,7 @@ func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *pb.Prom
 	return nil
 }
 
-func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *pb.Promotion, afterFuncErr *pb.AfterFuncErr) error {
+func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 	_ = promotion
 	if len(afterFuncErr.FailureDesc) > 0 {

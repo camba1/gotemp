@@ -5,7 +5,7 @@ import (
 	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2"
 	"goTemp/globalUtils"
-	pb "goTemp/promotion"
+	"goTemp/promotion/proto"
 	"log"
 	"os"
 )
@@ -50,7 +50,7 @@ func main() {
 		micro.Name(serviceName),
 	)
 	service.Init()
-	err := pb.RegisterPromotionSrvHandler(service.Server(), new(Promotion))
+	err := proto.RegisterPromotionSrvHandler(service.Server(), new(Promotion))
 	if err != nil {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}

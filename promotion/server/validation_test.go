@@ -6,7 +6,7 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
-	pb "goTemp/promotion"
+	"goTemp/promotion/proto"
 	"testing"
 	"time"
 )
@@ -14,9 +14,9 @@ import (
 func Test_checkMandatoryFields(t *testing.T) {
 	nextYear := getNextYear()
 	type args struct {
-		promo *pb.Promotion
+		promo *proto.Promotion
 	}
-	emptyPromo := pb.Promotion{
+	emptyPromo := proto.Promotion{
 		Id:                 0,
 		Name:               "",
 		Description:        "",
@@ -28,7 +28,7 @@ func Test_checkMandatoryFields(t *testing.T) {
 		ApprovalStatus:     0,
 		PrevApprovalStatus: 0,
 	}
-	goodPromo := pb.Promotion{
+	goodPromo := proto.Promotion{
 		Id:                 0,
 		Name:               "test",
 		Description:        "test",
@@ -40,7 +40,7 @@ func Test_checkMandatoryFields(t *testing.T) {
 		ApprovalStatus:     0,
 		PrevApprovalStatus: 0,
 	}
-	noNamePromo := pb.Promotion{
+	noNamePromo := proto.Promotion{
 		Id:                 0,
 		Name:               "",
 		Description:        "",
@@ -52,7 +52,7 @@ func Test_checkMandatoryFields(t *testing.T) {
 		ApprovalStatus:     0,
 		PrevApprovalStatus: 0,
 	}
-	noCustomerPromo := pb.Promotion{
+	noCustomerPromo := proto.Promotion{
 		Id:                 0,
 		Name:               "Test",
 		Description:        "",
@@ -133,11 +133,11 @@ func TestPromotion_BeforeDeletePromotion(t *testing.T) {
 	nextYear := getNextYear()
 	type args struct {
 		ctx           context.Context
-		promotion     *pb.Promotion
-		validationErr *pb.ValidationErr
+		promotion     *proto.Promotion
+		validationErr *proto.ValidationErr
 	}
 	ctx := context.Background()
-	otherStatePromo := pb.Promotion{
+	otherStatePromo := proto.Promotion{
 		Id:                 0,
 		Name:               "Test",
 		Description:        "",
@@ -149,7 +149,7 @@ func TestPromotion_BeforeDeletePromotion(t *testing.T) {
 		ApprovalStatus:     1,
 		PrevApprovalStatus: 0,
 	}
-	goodPromo := pb.Promotion{
+	goodPromo := proto.Promotion{
 		Id:                 0,
 		Name:               "test",
 		Description:        "test",
@@ -166,8 +166,8 @@ func TestPromotion_BeforeDeletePromotion(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{name: "Promo in initial State", args: args{ctx: ctx, promotion: &goodPromo, validationErr: &pb.ValidationErr{FailureDesc: []string{}}}, wantErr: false},
-		{name: "Promo not in initial State", args: args{ctx: ctx, promotion: &otherStatePromo, validationErr: &pb.ValidationErr{FailureDesc: []string{}}}, wantErr: true},
+		{name: "Promo in initial State", args: args{ctx: ctx, promotion: &goodPromo, validationErr: &proto.ValidationErr{FailureDesc: []string{}}}, wantErr: false},
+		{name: "Promo not in initial State", args: args{ctx: ctx, promotion: &otherStatePromo, validationErr: &proto.ValidationErr{FailureDesc: []string{}}}, wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

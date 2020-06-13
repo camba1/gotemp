@@ -7,11 +7,10 @@ import (
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/client"
+	"goTemp/promotion/proto"
 	"log"
 	"os"
 	"time"
-
-	pb "goTemp/promotion"
 )
 
 //const serverAddress = "127.0.0.1:50051"
@@ -22,9 +21,9 @@ var serverAddress = os.Getenv(serverAddressEnvVar)
 
 const dateLayoutISO = "2006-01-02"
 
-func GetPromotionById(promotionClient pb.PromotionSrvService, promoId *pb.SearchId) {
+func GetPromotionById(promotionClient proto.PromotionSrvService, promoId *proto.SearchId) {
 
-	var promotion *pb.Promotion
+	var promotion *proto.Promotion
 	var err error
 	if serverAddress != "" {
 		promotion, err = promotionClient.GetPromotionById(context.Background(), promoId, client.WithAddress(serverAddress))
@@ -44,10 +43,10 @@ func GetPromotionById(promotionClient pb.PromotionSrvService, promoId *pb.Search
 
 }
 
-func GetPromotions(promotionClient pb.PromotionSrvService) {
+func GetPromotions(promotionClient proto.PromotionSrvService) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
-	searchParms := pb.SearchParams{
+	searchParms := proto.SearchParams{
 		//Id:         2308345766332077057,
 		Name: "Promo1",
 		//Name: 		"Super Promo",
@@ -56,7 +55,7 @@ func GetPromotions(promotionClient pb.PromotionSrvService) {
 		ValidDate:  searchDate,
 	}
 
-	var promotion *pb.Promotions
+	var promotion *proto.Promotions
 	var err error
 	if serverAddress != "" {
 		promotion, err = promotionClient.GetPromotions(context.Background(), &searchParms, client.WithAddress(serverAddress))
@@ -75,31 +74,31 @@ func GetPromotions(promotionClient pb.PromotionSrvService) {
 
 }
 
-func CreatePromotion(promotionClient pb.PromotionSrvService) *pb.Promotion {
+func CreatePromotion(promotionClient proto.PromotionSrvService) *proto.Promotion {
 
-	var promo *pb.Promotion
+	var promo *proto.Promotion
 	var err error
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
 
-	disc := &pb.Discount{
+	disc := &proto.Discount{
 		Id:          123456789,
 		Value:       0.59,
 		Type:        0,
 		Description: "Good customer",
 	}
-	prod1 := &pb.Product{
+	prod1 := &proto.Product{
 		Id:      7308345766332077057,
 		UpcCode: "prod1a",
 	}
 	prod1.Discount = append(prod1.Discount, disc)
-	prod2 := &pb.Product{
+	prod2 := &proto.Product{
 		Id:      8308345766441128962,
 		UpcCode: "prod1",
 	}
 	prod2.Discount = append(prod1.Discount, disc)
 
-	newPromo := pb.Promotion{
+	newPromo := proto.Promotion{
 		Id:                 6308345766332077057,
 		Name:               "Super Promo",
 		Description:        "Super Promo",
@@ -126,7 +125,7 @@ func CreatePromotion(promotionClient pb.PromotionSrvService) *pb.Promotion {
 	return promo
 }
 
-func UpdatePromotion(promotionClient pb.PromotionSrvService, promo *pb.Promotion) {
+func UpdatePromotion(promotionClient proto.PromotionSrvService, promo *proto.Promotion) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
 	//disc := &pb.Discount{
@@ -158,7 +157,7 @@ func UpdatePromotion(promotionClient pb.PromotionSrvService, promo *pb.Promotion
 
 	//newPromo.Product =  append(newPromo.Product, prod1, prod2)
 
-	var outPromo *pb.Promotion
+	var outPromo *proto.Promotion
 	var err error
 	if serverAddress != "" {
 		outPromo, err = promotionClient.UpdatePromotion(context.Background(), promo, client.WithAddress(serverAddress))
@@ -172,13 +171,13 @@ func UpdatePromotion(promotionClient pb.PromotionSrvService, promo *pb.Promotion
 	fmt.Printf("Updated promotion %v\n", outPromo)
 }
 
-func DeletePromotion(promotionClient pb.PromotionSrvService, promoId *pb.SearchId) {
+func DeletePromotion(promotionClient proto.PromotionSrvService, promoId *proto.SearchId) {
 
 	//searchId := pb.SearchId{
 	//	Id: 2312030045339653121,
 	//}
 
-	var affectedCount *pb.AffectedCount
+	var affectedCount *proto.AffectedCount
 	var err error
 	if serverAddress != "" {
 		affectedCount, err = promotionClient.DeletePromotion(context.Background(), promoId, client.WithAddress(serverAddress))
@@ -211,11 +210,11 @@ func main() {
 	)
 	service.Init()
 	fmt.Println("Client Running")
-	promotionClient := pb.NewPromotionSrvService("promotion", service.Client())
+	promotionClient := proto.NewPromotionSrvService("promotion", service.Client())
 
 	createdPromo := CreatePromotion(promotionClient)
 	UpdatePromotion(promotionClient, createdPromo)
-	searchId := pb.SearchId{
+	searchId := proto.SearchId{
 		Id: createdPromo.Id,
 	}
 	GetPromotionById(promotionClient, &searchId)
