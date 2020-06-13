@@ -35,7 +35,6 @@ Additionally, we have the following files in the root directory as well:
 
 - `.dockerignore`: Files to be ignored when building service images
 - `.gitignore`: Files to be ignored by git
-- `docker-compose.env` environment variables used when using the pormotions service. Should be eventually moved to the correct folder
 - `docker-compose`: Compose file that controls the building of the different services and their dependencies
 - `go.mod and go.sum`: Go modules control
 - `main.go`: Not used for service yet
