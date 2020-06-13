@@ -5,7 +5,7 @@ services:
     image: postgres
     restart: always
     container_name: pgdb
-    env_file: docker-compose.env
+    env_file: ./postgres/docker-compose.env
     volumes:
       - ./postgres/postgresDB:/var/lib/postgresql/data
       - ./postgres/postgresInit:/docker-entrypoint-initdb.d
@@ -19,10 +19,8 @@ services:
     depends_on:
       - pgdb
     container_name: promotionsrvcont
-    environment:
-      - MICRO_SERVER_ADDRESS=:50051
     entrypoint: CompileDaemon --build="go build -o promotionServer ./promotion/server/" --command=./promotionServer
-    env_file: docker-compose.env
+    env_file: ./promotion/docker-compose.env
     volumes:
       - ./promotion/server:/go/src/goTemp/promotion/server
     ports:
@@ -49,8 +47,6 @@ services:
       - pgdb
       - nats
     container_name: usersrvcont
-    environment:
-      - MICRO_SERVER_ADDRESS=:50053
     entrypoint: CompileDaemon --build="go build -o userServer ./user/server/" --command=./userServer
     env_file: ./user/docker-compose.env
     volumes:
@@ -79,8 +75,6 @@ services:
       - timescaledb
       - nats
     container_name: auditsrvcont
-    environment:
-      - MICRO_SERVER_ADDRESS=:50055
     entrypoint: CompileDaemon --build="go build -o auditServer ./audit/server/" --command=./auditServer
     env_file: ./audit/docker-compose.env
     volumes:
