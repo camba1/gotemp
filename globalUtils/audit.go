@@ -38,13 +38,23 @@ type AuditMsgHeader map[string]string
 
 //Struct version of the AuditMsgHeader (map) to allow for easier handling
 type AuditMsgHeaderStruct struct {
-	ServiceName string
-	ActionFunc  string
-	ActionType  string
-	ObjectId    int64
-	PerformedBy int64
-	ActionTime  time.Time
-	ObjectName  string
+	ServiceName  string
+	ActionFunc   string
+	ActionType   string
+	ObjectId     int64
+	PerformedBy  int64
+	ActionTime   time.Time
+	ObjectName   string
+	RecordedTime time.Time
+	Id           int64
+}
+
+func (a *AuditMsgHeaderStruct) GetId() int64 {
+	return a.Id
+}
+
+func (a *AuditMsgHeaderStruct) GetRecordedTime() time.Time {
+	return a.RecordedTime
 }
 
 func (a *AuditMsgHeaderStruct) GetObjectName() string {
@@ -73,6 +83,24 @@ func (a *AuditMsgHeaderStruct) GetActionFunc() string {
 
 func (a *AuditMsgHeaderStruct) GetServiceName() string {
 	return a.ServiceName
+}
+
+//Struct version of the AuditMsgHeader (map) to allow for easier handling
+type AuditMsgHeaderStructs struct {
+	Header []AuditMsgHeaderStruct
+}
+
+//AuditSearchParams: Parameters to search for audit records
+type AuditSearchParams struct {
+	ObjectName      string
+	ObjectId        int64
+	ActionTimeStart time.Time
+	ActionTimeEnd   time.Time
+}
+
+//SearchId: Parameter used to search audit records by id
+type AuditSearchId struct {
+	Id int64
 }
 
 //NewAuditMsg: Validate and create a new Audit message that is ready to be sent out to the broker
