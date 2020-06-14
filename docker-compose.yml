@@ -18,6 +18,7 @@ services:
       target: Dev
     depends_on:
       - pgdb
+      - nats
     container_name: promotionsrvcont
     entrypoint: CompileDaemon --build="go build -o promotionServer ./promotion/server/" --command=./promotionServer
     env_file: ./promotion/docker-compose.env
