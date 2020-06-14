@@ -11,6 +11,7 @@ import (
 	pb "goTemp/user/proto"
 	"log"
 	"os"
+	"strconv"
 )
 
 //serviceName: service identifier
@@ -42,6 +43,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		if req.Endpoint() == "UserSrv.Auth" {
 			return fn(ctx, req, resp)
 		}
+
 		meta, ok := metadata.FromContext(ctx)
 		if !ok {
 			return fmt.Errorf(glErr.AuthNoMetaData(req.Endpoint()))
@@ -50,20 +52,25 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		token := meta["Token"]
 		log.Printf("endpoint: %v", req.Endpoint())
 
+		//Validate token
 		var u User
 		outToken := &pb.Token{}
 		err := u.ValidateToken(ctx, &pb.Token{Token: token}, outToken)
-		//authClient := userService.NewAuthClient("shippy.user", srv.Client())
-		//_, err := authClient.ValidateToken(ctx, &userService.Token{
-		//	Token: token,
-		//})
 		if err != nil {
 			return err
 		}
 		if outToken.Valid != true {
 			return fmt.Errorf(glErr.AuthInvalidToken())
 		}
-		return fn(ctx, req, resp)
+
+		//Add current user to context to use in saving audit records
+		userId, err := u.userIdFromToken(ctx, outToken)
+		if err != nil {
+			return fmt.Errorf("unable to get user id from token for endpoint %v\n", req.Endpoint())
+		}
+		ctx2 := metadata.Set(ctx, "userid", strconv.FormatInt(userId, 10))
+
+		return fn(ctx2, req, resp)
 	}
 }
 
