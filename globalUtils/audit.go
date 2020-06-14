@@ -1,6 +1,7 @@
 package globalUtils
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"strconv"
@@ -173,4 +174,26 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 	}
 
 	return headerStruct, nil
+}
+
+//sendUserAudit: Convert a user to a byte array, compose an audit message and send that message to the broker for
+//forwarding to the audit service
+func AuditSend(ctx context.Context, mb MyBroker, serviceName, actionFunc, actionType string, objectName string, objectId int64, byteMessage []byte) string {
+
+	var auth authUtils
+	performedBy, err := auth.GetCurrentUserFromContext(ctx)
+	if err != nil {
+		return "unable to get user from metadata"
+	}
+
+	auditMsg, err := NewAuditMsg(serviceName, actionFunc, actionType, performedBy, objectName, objectId, byteMessage)
+	if err != nil {
+		return glErr.AudFailureSending(actionType, objectId, err)
+	}
+
+	if err = mb.SendMsg(auditMsg.ObjectToSend(), auditMsg.Header(), auditMsg.Topic()); err != nil {
+		return glErr.AudFailureSending(actionType, objectId, err)
+	}
+	return ""
+
 }

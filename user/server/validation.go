@@ -2,13 +2,9 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"github.com/micro/go-micro/v2/metadata"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
-	"log"
-	"strconv"
 )
 
 //mb: Broker instance to send/receive message from pub/sub system
@@ -187,36 +183,7 @@ func (u *User) sendUserAudit(ctx context.Context, serviceName, actionFunc, actio
 	if err != nil {
 		return glErr.AudFailureSending(actionType, objectId, err)
 	}
-	//TODO: Get the current user from validation token to pass as performedby
 
-	performedBy, err := u.getCurrentUserFromContext(ctx)
-	if err != nil {
-		return "unable to get user from metadata"
-	}
+	return globalUtils.AuditSend(ctx, mb, serviceName, actionFunc, actionType, objectName, objectId, byteUser)
 
-	auditMsg, err := globalUtils.NewAuditMsg(serviceName, actionFunc, actionType, performedBy, objectName, objectId, byteUser)
-	if err != nil {
-		return glErr.AudFailureSending(actionType, objectId, err)
-	}
-
-	if err = mb.SendMsg(auditMsg.ObjectToSend(), auditMsg.Header(), auditMsg.Topic()); err != nil {
-		return glErr.AudFailureSending(actionType, objectId, err)
-	}
-	return ""
-
-}
-
-//getCurrentUserFromContext: User is added to the context during authentication. this function extracts it so
-//that it can be used sending audit records to the broker
-func (u *User) getCurrentUserFromContext(ctx context.Context) (int64, error) {
-	meta, ok := metadata.FromContext(ctx)
-	if !ok {
-		return 0, fmt.Errorf("unable to get user from metadata")
-	}
-	userId, err := strconv.ParseInt(meta["Userid"], 10, 64)
-	if err != nil {
-		return 0, err
-	}
-	log.Printf("userid from metadata: %d\n", userId)
-	return userId, nil
 }
