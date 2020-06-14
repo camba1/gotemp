@@ -461,3 +461,22 @@ func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *p
 	return nil
 
 }
+
+//userIdFromToken: Return the user id from the token
+func (u *User) userIdFromToken(ctx context.Context, inToken *pb.Token) (int64, error) {
+	_ = ctx
+	if inToken.Valid == false {
+		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+	}
+	ts := TokenService{}
+	claims, err := ts.Decode(inToken.Token)
+	if err != nil {
+		return 0, err
+	}
+	if claims.User.Id == 0 {
+		//fmt.Printf("claim User %v", claims.User)
+		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+	}
+	return claims.User.Id, nil
+
+}

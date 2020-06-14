@@ -2,9 +2,13 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"github.com/micro/go-micro/v2/metadata"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
+	"log"
+	"strconv"
 )
 
 //mb: Broker instance to send/receive message from pub/sub system
@@ -135,7 +139,7 @@ func (u *User) BeforeDeleteUser(ctx context.Context, user *pb.User, validationEr
 func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	failureDesc := u.sendUserAudit(serviceName, "AfterCreateUser", "insert", user.GetId(), "user", user.GetId(), user)
+	failureDesc := u.sendUserAudit(ctx, serviceName, "AfterCreateUser", "insert", "user", user.GetId(), user)
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
@@ -150,7 +154,7 @@ func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr 
 func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	failureDesc := u.sendUserAudit(serviceName, "AfterUpdateUser", "update", user.GetId(), "user", user.GetId(), user)
+	failureDesc := u.sendUserAudit(ctx, serviceName, "AfterUpdateUser", "update", "user", user.GetId(), user)
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
@@ -165,7 +169,7 @@ func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr 
 func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
-	failureDesc := u.sendUserAudit(serviceName, "AfterDeleteUser", "Delete", user.GetId(), "user", user.GetId(), user)
+	failureDesc := u.sendUserAudit(ctx, serviceName, "AfterDeleteUser", "Delete", "user", user.GetId(), user)
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
@@ -178,12 +182,17 @@ func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr 
 
 //sendUserAudit: Convert a user to a byte array, compose an audit message and send that message to the broker for
 //forwarding to the audit service
-func (u *User) sendUserAudit(serviceName, actionFunc, actionType string, performedBy int64, objectName string, objectId int64, user *pb.User) string {
+func (u *User) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId int64, user *pb.User) string {
 	byteUser, err := mb.ProtoToByte(user)
 	if err != nil {
 		return glErr.AudFailureSending(actionType, objectId, err)
 	}
 	//TODO: Get the current user from validation token to pass as performedby
+
+	performedBy, err := u.getCurrentUserFromContext(ctx)
+	if err != nil {
+		return "unable to get user from metadata"
+	}
 
 	auditMsg, err := globalUtils.NewAuditMsg(serviceName, actionFunc, actionType, performedBy, objectName, objectId, byteUser)
 	if err != nil {
@@ -195,4 +204,19 @@ func (u *User) sendUserAudit(serviceName, actionFunc, actionType string, perform
 	}
 	return ""
 
+}
+
+//getCurrentUserFromContext: User is added to the context during authentication. this function extracts it so
+//that it can be used sending audit records to the broker
+func (u *User) getCurrentUserFromContext(ctx context.Context) (int64, error) {
+	meta, ok := metadata.FromContext(ctx)
+	if !ok {
+		return 0, fmt.Errorf("unable to get user from metadata")
+	}
+	userId, err := strconv.ParseInt(meta["Userid"], 10, 64)
+	if err != nil {
+		return 0, err
+	}
+	log.Printf("userid from metadata: %d\n", userId)
+	return userId, nil
 }
