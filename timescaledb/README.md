@@ -7,7 +7,7 @@ This message is then picked up by the audit service and stored in TimescaleDB
 There are two folders in this directory:
 
 - `timescaleDB`: Persists container data to the host. All data in the container is deleted if this folder is deleted.
-- `timesacleInit`: Contains scripts to creates tables, hypertables and seed data that runs the first time the DB is initialized
+- `timesacleInit`: Contains scripts to create tables, hypertables and seed data that runs the first time the DB is initialized
 
 Due to the way the official TimescaleDB image is built, in order to populate the DB with our scripts, it is necessary to:
 
