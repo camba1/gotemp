@@ -23,8 +23,10 @@ type Promotion struct{}
 var promoErr statements.PromoErr
 
 //UpdatePromotion: Updates a promotion based on the is provided in the inPromotion. Returns updated promotion
-func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *proto.Promotion, outPromotion *proto.Promotion) error {
+func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *proto.Promotion, resp *proto.Response) error {
 	_ = ctx
+
+	outPromotion := &proto.Promotion{}
 
 	if errVal := p.BeforeUpdatePromotion(ctx, inPromotion, &proto.ValidationErr{}); errVal != nil {
 		return errVal
@@ -69,16 +71,23 @@ func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *proto.Prom
 		return err
 	}
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
+	resp.Promotion = outPromotion
 
-	if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
-		return errVal
+	failureDesc, err := p.getAfterAlerts(ctx, outPromotion, "AfterUpdatePromotion")
+	if err != nil {
+		return err
 	}
+	resp.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
+
+	//if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
+	//	return errVal
+	//}
 
 	return nil
 }
 
 //DeletePromotion: Delete a promotion based on the promotion id in the searchId.id field. Returns number of affected promotions which should be one always
-func (p *Promotion) DeletePromotion(ctx context.Context, searchid *proto.SearchId, affectedCount *proto.AffectedCount) error {
+func (p *Promotion) DeletePromotion(ctx context.Context, searchid *proto.SearchId, resp *proto.Response) error {
 	_ = ctx
 
 	outPromotion := proto.Promotion{}
@@ -99,11 +108,17 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *proto.SearchI
 		return fmt.Errorf(promoErr.DeleteRowNotFoundError(searchid.Id))
 	}
 
-	affectedCount.Value = commandTag.RowsAffected()
+	resp.AffectedCount = commandTag.RowsAffected()
 
-	if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &proto.AfterFuncErr{}); errVal != nil {
-		return errVal
+	failureDesc, err := p.getAfterAlerts(ctx, &outPromotion, "AfterDeletePromotion")
+	if err != nil {
+		return err
 	}
+	resp.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
+
+	//if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &proto.AfterFuncErr{}); errVal != nil {
+	//	return errVal
+	//}
 
 	return nil
 }
@@ -244,8 +259,10 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *proto.Search
 }
 
 //CreatePromotion: Creates a promotion based on the promotion passed in the inPromotion argument
-func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *proto.Promotion, outPromotion *proto.Promotion) error {
+func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *proto.Promotion, resp *proto.Response) error {
 	_ = ctx
+
+	outPromotion := &proto.Promotion{}
 
 	if errVal := p.BeforeCreatePromotion(ctx, inPromotion, &proto.ValidationErr{}); errVal != nil {
 		return errVal
@@ -291,30 +308,41 @@ func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *proto.Prom
 	}
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
-	if errVal := p.AfterCreatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
-		return errVal
+	resp.Promotion = outPromotion
+	failureDesc, err := p.getAfterAlerts(ctx, outPromotion, "AfterCreatePromotion")
+	if err != nil {
+		return err
 	}
+	resp.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
+	//
+	//if errVal := p.AfterCreatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
+	//	return errVal
+	//}
 
 	return nil
 }
 
-//func testwhere() {
-//	var p Promotion
-//
-//	priceVTtime, _ := time.Parse("2006-01-02", "2021-05-24")
-//	validDate, _ := ptypes.TimestampProto(priceVTtime)
-//	search := pb.SearchParams{
-//		Id:         123,
-//		Name:       "123",
-//		ProductId:  123,
-//		CustomerId: 123,
-//		ValidDate:  validDate,
-//	}
-//	a,b,err := p.buildSearchWhereClause(&search)
-//	if err != nil {
-//		fmt.Printf("error: %v\n", err)
-//	}
-//	fmt.Printf("sql: %s\n", a)
-//	fmt.Printf("values: %v\n", b)
-//
-//}
+//getAfterAlerts: Call the appropriate after create/update/delete function and return the alert validation errors
+//These alerts  are logged, but do not cause the record processing to fail
+func (p *Promotion) getAfterAlerts(ctx context.Context, promotion *proto.Promotion, operation string) ([]string, error) {
+	afterFuncErr := &proto.AfterFuncErr{}
+	var errVal error
+	if operation == "AfterDeletePromotion" {
+		errVal = p.AfterDeletePromotion(ctx, promotion, afterFuncErr)
+	}
+	if operation == "AfterCreatePromotion" {
+		errVal = p.AfterCreatePromotion(ctx, promotion, afterFuncErr)
+	}
+	if operation == "AfterUpdatePromotion" {
+		errVal = p.AfterUpdatePromotion(ctx, promotion, afterFuncErr)
+	}
+	if errVal != nil {
+		return []string{}, errVal
+	}
+
+	if len(afterFuncErr.GetFailureDesc()) > 0 {
+		log.Printf("Alerts: %v: ", afterFuncErr.GetFailureDesc())
+		return afterFuncErr.GetFailureDesc(), nil
+	}
+	return []string{}, nil
+}
