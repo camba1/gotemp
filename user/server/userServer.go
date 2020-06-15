@@ -27,15 +27,6 @@ const (
 // conn: Database connection
 var conn *pgx.Conn
 
-//getDBConnString: Get the connection string to the DB
-func getDBConnString() string {
-	connString := os.Getenv(dbConStrEnvVarName)
-	if connString == "" {
-		log.Fatalf(glErr.DbNoConnectionString(dbConStrEnvVarName))
-	}
-	return connString
-}
-
 //AuthWrapper: Authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
@@ -74,6 +65,17 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
+//getDBConnString: Get the connection string to the DB
+func getDBConnString() string {
+	connString := os.Getenv(dbConStrEnvVarName)
+	if connString == "" {
+		log.Fatalf(glErr.DbNoConnectionString(dbConStrEnvVarName))
+	}
+	return connString
+}
+
+//connectToDB: Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
+//before giving up and throwing an error
 func connectToDB() *pgx.Conn {
 	var pgxConnect globalUtils.PgxDBConnect
 	dbConn, err := pgxConnect.ConnectToDBWithRetry(dbName, getDBConnString())

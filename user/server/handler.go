@@ -361,7 +361,7 @@ func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.R
 	return nil
 }
 
-//getAfterAlerts: Call the appropriate after create/update/delete function and return the alert validation erros
+//getAfterAlerts: Call the appropriate after create/update/delete function and return the alert validation errors
 //These alerts  are logged, but do not cause the record processing to fail
 func (u *User) getAfterAlerts(ctx context.Context, user *pb.User, operation string) ([]string, error) {
 	afterFuncErr := &pb.AfterFuncErr{}

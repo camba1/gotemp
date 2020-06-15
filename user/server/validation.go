@@ -176,8 +176,7 @@ func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr 
 	return nil
 }
 
-//sendUserAudit: Convert a user to a byte array, compose an audit message and send that message to the broker for
-//forwarding to the audit service
+//sendUserAudit: Convert a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (u *User) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId int64, user *pb.User) string {
 	byteUser, err := mb.ProtoToByte(user)
 	if err != nil {
