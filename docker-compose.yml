@@ -99,3 +99,13 @@ services:
       - ./timescaledb/timescaleDB:/var/lib/postgresql/data
     ports:
       - "5433:5432"
+  arangodb:
+    image: arangodb:3.6.4
+    container_name: arangodbcont
+    env_file: ./arangodb/docker-compose.env
+    ports:
+      - "8529:8529"
+    volumes:
+      - ./arangodb/db:/var/lib/arangodb3
+      - ./arangodb/apps_db_system:/var/lib/arangodb3-apps/_db/
+      - ./arangodb/arangodbinit:/docker-entrypoint-initdb.d
