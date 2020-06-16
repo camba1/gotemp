@@ -2,8 +2,8 @@
 FROM golang AS Dev
 
 ENV SRVDIR=audit
-ENV SRVNAME=auditServer
 
+ENV SRVNAME=${SRVDIR}Server
 WORKDIR /go/src/goTemp
 RUN go get github.com/githubnemo/CompileDaemon
 ENV GO111MODULE=on
@@ -21,17 +21,17 @@ CMD ./$SRVNAME
 FROM Dev AS alpBuild
 
 ENV SRVDIR=audit
-ENV SRVNAME=auditServerAlp
 
+ENV SRVNAME=${SRVDIR}ServerAlp
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o $SRVNAME ./$SRVDIR/server/
 
 # Build the Alpine image
 FROM alpine
 
-ENV SRVNAME=auditServerAlp
+ENV SRVDIR=audit
 
+ENV SRVNAME=${SRVDIR}ServerAlp
 RUN apk --no-cache add ca-certificates
 WORKDIR /goTemp
 COPY --from=alpBuild /go/src/goTemp/$SRVNAME $SRVNAME
-#CMD ["./promotionServerAlp"]
 CMD ./$SRVNAME
