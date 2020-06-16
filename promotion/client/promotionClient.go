@@ -6,7 +6,10 @@ import (
 	"github.com/golang/protobuf/ptypes"
 	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/micro/go-micro/v2"
+	"github.com/micro/go-micro/v2/client"
+	"github.com/micro/go-micro/v2/metadata"
 	"goTemp/promotion/proto"
+	userSrv "goTemp/user/proto"
 	"log"
 	"time"
 )
@@ -15,14 +18,14 @@ const serverAddressEnvVar = "SERVERADDRESS"
 
 const dateLayoutISO = "2006-01-02"
 
-func GetPromotionById(promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (*proto.Promotion, error) {
+func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (*proto.Promotion, error) {
 
 	//var promotion *proto.Promotion
 	//var err error
 	//if serverAddress != "" {
 	//	promotion, err = promotionClient.GetPromotionById(context.Background(), promoId, client.WithAddress(serverAddress))
 	//} else {
-	promotion, err := promotionClient.GetPromotionById(context.Background(), promoId)
+	promotion, err := promotionClient.GetPromotionById(ctx, promoId)
 	//}
 
 	if err != nil {
@@ -39,7 +42,7 @@ func GetPromotionById(promotionClient proto.PromotionSrvService, promoId *proto.
 
 }
 
-func GetPromotions(promotionClient proto.PromotionSrvService) (*proto.Promotions, error) {
+func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotions, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
 	searchParms := proto.SearchParams{
@@ -59,7 +62,7 @@ func GetPromotions(promotionClient proto.PromotionSrvService) (*proto.Promotions
 	//	promotion, err = promotionClient.GetPromotions(context.Background(), &searchParms)
 	//}
 
-	promotions, err := promotionClient.GetPromotions(context.Background(), &searchParms)
+	promotions, err := promotionClient.GetPromotions(ctx, &searchParms)
 
 	if err != nil {
 		log.Printf("Unable to find promotions. Error: %v", err)
@@ -75,7 +78,7 @@ func GetPromotions(promotionClient proto.PromotionSrvService) (*proto.Promotions
 
 }
 
-func CreatePromotion(promotionClient proto.PromotionSrvService) (*proto.Promotion, error) {
+func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotion, error) {
 
 	//var promo *proto.Promotion
 	//var err error
@@ -119,7 +122,7 @@ func CreatePromotion(promotionClient proto.PromotionSrvService) (*proto.Promotio
 	//	promo, err = promotionClient.CreatePromotion(context.Background(), &newPromo)
 	//}
 
-	resp, err := promotionClient.CreatePromotion(context.Background(), &newPromo)
+	resp, err := promotionClient.CreatePromotion(ctx, &newPromo)
 
 	if err != nil {
 		log.Printf("Unable to create promotion. Error: %v", err)
@@ -133,7 +136,7 @@ func CreatePromotion(promotionClient proto.PromotionSrvService) (*proto.Promotio
 	return resp.GetPromotion(), nil
 }
 
-func UpdatePromotion(promotionClient proto.PromotionSrvService, promo *proto.Promotion) (*proto.Promotion, error) {
+func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promo *proto.Promotion) (*proto.Promotion, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
 	//disc := &pb.Discount{
@@ -163,15 +166,7 @@ func UpdatePromotion(promotionClient proto.PromotionSrvService, promo *proto.Pro
 	promo.ApprovalStatus = 0
 	promo.PrevApprovalStatus = 0
 
-	//var outPromo *proto.Promotion
-	//var err error
-	//if serverAddress != "" {
-	//	outPromo, err = promotionClient.UpdatePromotion(context.Background(), promo, client.WithAddress(serverAddress))
-	//} else {
-	//	outPromo, err = promotionClient.UpdatePromotion(context.Background(), promo)
-	//}
-
-	resp, err := promotionClient.UpdatePromotion(context.Background(), promo)
+	resp, err := promotionClient.UpdatePromotion(ctx, promo)
 
 	if err != nil {
 		log.Printf("Unable to update promotion. Error: %v", err)
@@ -186,7 +181,7 @@ func UpdatePromotion(promotionClient proto.PromotionSrvService, promo *proto.Pro
 	return resp.GetPromotion(), nil
 }
 
-func DeletePromotion(promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (int64, error) {
+func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (int64, error) {
 
 	//searchId := pb.SearchId{
 	//	Id: 2312030045339653121,
@@ -200,7 +195,7 @@ func DeletePromotion(promotionClient proto.PromotionSrvService, promoId *proto.S
 	//	affectedCount, err = promotionClient.DeletePromotion(context.Background(), promoId)
 	//}
 
-	resp, err := promotionClient.DeletePromotion(context.Background(), promoId)
+	resp, err := promotionClient.DeletePromotion(ctx, promoId)
 
 	if err != nil {
 		log.Printf("Unable to find promotion by Id. Error: %v", err)
@@ -226,6 +221,37 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
+//authUser: Call the user service and authenticate a user. receive a jwt token if successful
+func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.Token, error) {
+	token, err := srvClient.Auth(context.Background(), &userSrv.User{
+		Email: user.Email,
+		Pwd:   user.Pwd,
+	})
+	if err != nil {
+		log.Printf("Unable to find token. Error: %v\n", err)
+		return nil, err
+	}
+	fmt.Printf("Got token: %v\n", token)
+	return token, err
+}
+
+//loginUser: Call authUser to get an authentication token and store it in the context for use on other tasks
+func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
+	myUser := &userSrv.User{
+		Pwd:   "1234",
+		Email: "duck@mymail.com"}
+
+	authToken, err := authUser(srvClient, myUser)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx := metadata.NewContext(context.Background(), map[string]string{
+		"token": authToken.Token,
+	})
+	return ctx, nil
+}
+
 func main() {
 
 	service := micro.NewService(
@@ -233,20 +259,27 @@ func main() {
 	)
 	service.Init()
 	fmt.Println("Client Running")
-	promotionClient := proto.NewPromotionSrvService("promotion", service.Client())
 
-	createdPromo, err := CreatePromotion(promotionClient)
+	// send requests
+	ctx, err := loginUser(userSrv.NewUserSrvService("user", client.DefaultClient))
 	if err != nil {
 		return
 	}
 
-	_, _ = UpdatePromotion(promotionClient, createdPromo)
+	promotionClient := proto.NewPromotionSrvService("promotion", service.Client())
+
+	createdPromo, err := CreatePromotion(ctx, promotionClient)
+	if err != nil {
+		return
+	}
+
+	_, _ = UpdatePromotion(ctx, promotionClient, createdPromo)
 
 	searchId := proto.SearchId{
 		Id: createdPromo.Id,
 	}
-	_, _ = GetPromotionById(promotionClient, &searchId)
-	_, _ = DeletePromotion(promotionClient, &searchId)
-	_, _ = GetPromotionById(promotionClient, &searchId)
-	_, _ = GetPromotions(promotionClient)
+	_, _ = GetPromotionById(ctx, promotionClient, &searchId)
+	_, _ = DeletePromotion(ctx, promotionClient, &searchId)
+	_, _ = GetPromotionById(ctx, promotionClient, &searchId)
+	_, _ = GetPromotions(ctx, promotionClient)
 }
