@@ -24,6 +24,7 @@ services:
     env_file: ./promotion/docker-compose.env
     volumes:
       - ./promotion/server:/go/src/goTemp/promotion/server
+      - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50051:50051"
   promotioncli:
@@ -80,6 +81,7 @@ services:
     env_file: ./audit/docker-compose.env
     volumes:
       - ./audit/server:/go/src/goTemp/audit/server
+      - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50055:50055"
   nats:
