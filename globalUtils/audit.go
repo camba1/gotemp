@@ -138,7 +138,7 @@ func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, 
 			"actionType":  actionType,
 			"objectId":    strconv.FormatInt(objectId, 10),
 			"performedBy": strconv.FormatInt(performedBy, 10),
-			"actionTime":  time.Now().Format(DateLayoutISO),
+			"actionTime":  time.Now().Format(time.RFC3339),
 			"objectName":  objectName,
 		},
 	}
@@ -159,9 +159,10 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 	if err != nil {
 		return nil, err
 	}
-	actionTime, err := time.Parse(DateLayoutISO, header["actionTime"])
+	actionTime, err := time.Parse(time.RFC3339, header["actionTime"])
 	if err != nil {
-		log.Printf("Unable to Format date %v\n", header["actionTime"])
+		log.Printf("Unable to Format date %v, Error: %v\n", header["actionTime"], err)
+		return nil, err
 	}
 	headerStruct := &AuditMsgHeaderStruct{
 		ServiceName: header["service"],
