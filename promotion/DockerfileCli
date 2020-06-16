@@ -1,18 +1,52 @@
+#FROM golang AS Dev
+#WORKDIR /go/src/goTemp
+#RUN go get github.com/githubnemo/CompileDaemon
+#ENV GO111MODULE=on
+#COPY ./promotion ./promotion
+#COPY ./go.mod ./go.sum ./
+#RUN go get -d  -v ./...
+#RUN go build -o promotionClient ./promotion/client/
+#RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o promotionClientAlp ./promotion/client/
+#EXPOSE 50051
+#CMD ["./promotionClient"]
+#
+#
+#FROM alpine
+#RUN apk --no-cache add ca-certificates
+#WORKDIR /goTemp
+#COPY --from=Dev /go/src/goTemp/promotionClientAlp promotionClientAlp
+#CMD ["./promotionClientAlp"]
+
+# Build DEv image with hot rebuild
 FROM golang AS Dev
+ENV CLIDIR=promotion
+ENV CLINAME=promotionClient
+
 WORKDIR /go/src/goTemp
 RUN go get github.com/githubnemo/CompileDaemon
 ENV GO111MODULE=on
-COPY ./promotion ./promotion
+COPY ./$CLIDIR ./$CLIDIR
+COPY ./user/proto ./user/proto
 COPY ./go.mod ./go.sum ./
 RUN go get -d  -v ./...
-RUN go build -o promotionClient ./promotion/client/
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o promotionClientAlp ./promotion/client/
+RUN go build -o $CLINAME ./$CLIDIR/client/
 EXPOSE 50051
-CMD ["./promotionClient"]
+#CMD ["./userClient"]
+CMD ./$CLINAME
 
+# Compile the Alpine version of the application
+FROM Dev AS AlpBuild
+ENV CLIDIR=promotion
+ENV CLINAME=promotionClientAlp
 
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o $CLINAME ./$CLIDIR/client/
+
+# Build the Alpine image
 FROM alpine
+ENV CLINAME=promotionClientAlp
+
 RUN apk --no-cache add ca-certificates
 WORKDIR /goTemp
-COPY --from=Dev /go/src/goTemp/promotionClientAlp promotionClientAlp
-CMD ["./promotionClientAlp"]
+COPY --from=AlpBuild /go/src/goTemp/$CLINAME $CLINAME
+#CMD ["./userClientAlp"]
+CMD ./$CLINAME
