@@ -155,6 +155,7 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 	if err != nil {
 		return nil, err
 	}
+	//performedBy, err := euidToId(header["performedBy"])
 	performedBy, err := strconv.ParseInt(header["performedBy"], 10, 64)
 	if err != nil {
 		return nil, err

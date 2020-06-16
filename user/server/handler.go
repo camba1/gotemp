@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"github.com/jackc/pgx/v4"
@@ -11,6 +12,7 @@ import (
 	"goTemp/user/server/statements"
 	"golang.org/x/crypto/bcrypt"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -456,27 +458,31 @@ func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *p
 		return fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
 	}
 	//fmt.Printf("Claim User %v", claims.User)
+	//TODO: Check that userid is a valid user in db
+
 	outToken.Token = inToken.Token
 	outToken.Valid = true
+	outToken.EUid = base64.StdEncoding.EncodeToString([]byte(strconv.FormatInt(claims.User.Id, 10)))
+
 	return nil
 
 }
 
 //userIdFromToken: Return the user id from the token
-func (u *User) userIdFromToken(ctx context.Context, inToken *pb.Token) (int64, error) {
-	_ = ctx
-	if inToken.Valid == false {
-		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
-	}
-	ts := TokenService{}
-	claims, err := ts.Decode(inToken.Token)
-	if err != nil {
-		return 0, err
-	}
-	if claims.User.Id == 0 {
-		//fmt.Printf("claim User %v", claims.User)
-		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
-	}
-	return claims.User.Id, nil
-
-}
+//func (u *User) userIdFromToken(ctx context.Context, inToken *pb.Token) (int64, error) {
+//	_ = ctx
+//	if inToken.Valid == false {
+//		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+//	}
+//	ts := TokenService{}
+//	claims, err := ts.Decode(inToken.Token)
+//	if err != nil {
+//		return 0, err
+//	}
+//	if claims.User.Id == 0 {
+//		//fmt.Printf("claim User %v", claims.User)
+//		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+//	}
+//	return claims.User.Id, nil
+//
+//}

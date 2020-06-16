@@ -81,4 +81,5 @@ message AfterFuncErr {
 message Token {
     string token = 1;
     bool valid = 2;
+    string eUid = 3;
 }

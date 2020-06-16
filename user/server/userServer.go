@@ -11,7 +11,6 @@ import (
 	pb "goTemp/user/proto"
 	"log"
 	"os"
-	"strconv"
 )
 
 //serviceName: service identifier
@@ -55,11 +54,16 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		}
 
 		//Add current user to context to use in saving audit records
-		userId, err := u.userIdFromToken(ctx, outToken)
-		if err != nil {
+		//userId, err := u.userIdFromToken(ctx, outToken)
+		//if err != nil {
+		//	return fmt.Errorf("unable to get user id from token for endpoint %v\n", req.Endpoint())
+		//}
+		//ctx2 := metadata.Set(ctx, "userid", strconv.FormatInt(userId, 10))
+
+		if outToken.EUid == "" {
 			return fmt.Errorf("unable to get user id from token for endpoint %v\n", req.Endpoint())
 		}
-		ctx2 := metadata.Set(ctx, "userid", strconv.FormatInt(userId, 10))
+		ctx2 := metadata.Set(ctx, "userid", outToken.EUid)
 
 		return fn(ctx2, req, resp)
 	}
