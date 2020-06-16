@@ -19,6 +19,7 @@ services:
     depends_on:
       - pgdb
       - nats
+      - usersrv
     container_name: promotionsrvcont
     entrypoint: CompileDaemon --build="go build -o promotionServer ./promotion/server/" --command=./promotionServer
     env_file: ./promotion/docker-compose.env
@@ -32,6 +33,8 @@ services:
       context: .
       dockerfile: ./promotion/DockerfileCli
       target: Dev
+    depends_on:
+      - usersrv
     container_name: promotionclicont
     environment:
       - MICRO_SERVER_ADDRESS=":50051"
@@ -53,6 +56,7 @@ services:
     env_file: ./user/docker-compose.env
     volumes:
       - ./user/server:/go/src/goTemp/user/server
+      - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50053:50053"
   usercli:
