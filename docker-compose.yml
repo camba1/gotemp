@@ -36,8 +36,7 @@ services:
     depends_on:
       - usersrv
     container_name: promotionclicont
-    environment:
-      - MICRO_SERVER_ADDRESS=":50051"
+    env_file: ./promotion/docker-compose-cli.env
     entrypoint: CompileDaemon --build="go build -o promotionClient ./promotion/client/" --command=./promotionClient
     volumes:
       - ./promotion/client:/go/src/goTemp/promotion/client
@@ -65,8 +64,7 @@ services:
       dockerfile: ./user/DockerfileCli
       target: Dev
     container_name: userclicont
-    environment:
-      - MICRO_SERVER_ADDRESS=":50053"
+    env_file: ./user/docker-compose-cli.env
     entrypoint: CompileDaemon --build="go build -o userClient ./user/client/" --command=./userClient
     volumes:
       - ./user/client:/go/src/goTemp/user/client
@@ -89,7 +87,11 @@ services:
     ports:
       - "50055:50055"
   nats:
-    image: nats
+#    image: nats
+#    command: --config nats-server.conf --user ${NATS_USER} --pass ${NATS_PWD}
+    build:
+      context: ./nats
+      dockerfile: Dockerfile
     ports:
       - "8222:8222"
       - "4222:4222"
