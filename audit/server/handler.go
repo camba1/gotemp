@@ -184,7 +184,7 @@ func (a *AuditSrv) validateSearchParams(searchParms *globalUtils.AuditSearchPara
 	if searchParms.ObjectName == "" {
 		FailureDesc = append(FailureDesc, glErr.MissingField("Object name"))
 	}
-	if searchParms.ObjectId == 0 {
+	if searchParms.ObjectId == "" {
 		FailureDesc = append(FailureDesc, glErr.MissingField("Object id"))
 	}
 	if searchParms.ActionTimeStart.IsZero() {
@@ -228,7 +228,7 @@ func (a *AuditSrv) buildSearchWhereClause(searchParms *globalUtils.AuditSearchPa
 		values = append(values, searchParms.ObjectName)
 		i++
 	}
-	if searchParms.ObjectId != 0 {
+	if searchParms.ObjectId != "" {
 		sqlWhereClause += fmt.Sprintf(" AND audit.objectid = $%d", i)
 		values = append(values, searchParms.ObjectId)
 		i++

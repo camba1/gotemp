@@ -20,11 +20,11 @@ func TestAuditSrv_GetAudit(t *testing.T) {
 
 	validIdArg := args{
 		ctx:      ctx,
-		searchId: &globalUtils.AuditSearchId{Id: 2330739450113430529},
+		searchId: &globalUtils.AuditSearchId{Id: int64(2337386998504887299)},
 	}
 	inValidIdArg := args{
 		ctx:      ctx,
-		searchId: &globalUtils.AuditSearchId{Id: 12345},
+		searchId: &globalUtils.AuditSearchId{Id: int64(12345)},
 	}
 	conn = connectToDB()
 	defer conn.Close(context.Background())
@@ -89,13 +89,13 @@ func TestAuditSrv_GetAudits(t *testing.T) {
 		name    string
 		args    args
 		want    int
-		wantid  int64
+		wantid  string
 		wantErr bool
 	}{
-		{name: "Empty search", args: args{ctx, emptySearch}, want: 0, wantid: 0, wantErr: true},
+		{name: "Empty search", args: args{ctx, emptySearch}, want: 0, wantid: "", wantErr: true},
 		{name: "Full search", args: args{ctx, fullSearch}, want: 1, wantid: fullSearch.ObjectId, wantErr: false},
-		{name: "Only date search", args: args{ctx, onlyDateSearch}, want: 0, wantid: 0, wantErr: true},
-		{name: "Only object Id search", args: args{ctx, onlyObjectIdSearch}, want: 0, wantid: 0, wantErr: true},
+		{name: "Only date search", args: args{ctx, onlyDateSearch}, want: 0, wantid: "", wantErr: true},
+		{name: "Only object Id search", args: args{ctx, onlyObjectIdSearch}, want: 0, wantid: "", wantErr: true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -142,9 +142,9 @@ func TestAuditSrv_getSQLForSearch(t *testing.T) {
 	sqlOnlyObjectIdSearchFinal := fmt.Sprintf(sql, sqlOnlyObjectIdSearch, statements.MaxRowsToFetch)
 
 	var intEmptySearch []interface{}
-	intFullSearch := []interface{}{"user", int64(123456789), dtForSearch, dtForSearchEnd}
+	intFullSearch := []interface{}{"user", "123456789", dtForSearch, dtForSearchEnd}
 	intOnlyDateSearch := []interface{}{dtForSearch, dtForSearchEnd}
-	intOnlyObjectIdSearch := []interface{}{int64(123456789)}
+	intOnlyObjectIdSearch := []interface{}{"123456789"}
 
 	data := getSearchParmsData(dtForSearch, dtForSearchEnd)
 
@@ -229,7 +229,7 @@ func getSearchParmsData(dtForSearch time.Time, dtForSearchEnd time.Time) map[str
 	data["emptySearch"] = &globalUtils.AuditSearchParams{}
 	data["fullSearch"] = &globalUtils.AuditSearchParams{
 		ObjectName:      "user",
-		ObjectId:        123456789,
+		ObjectId:        "123456789",
 		ActionTimeStart: dtForSearch,
 		ActionTimeEnd:   dtForSearchEnd,
 	}
@@ -237,7 +237,7 @@ func getSearchParmsData(dtForSearch time.Time, dtForSearchEnd time.Time) map[str
 		ActionTimeStart: dtForSearch,
 		ActionTimeEnd:   dtForSearchEnd,
 	}
-	data["onlyObjectIdSearch"] = &globalUtils.AuditSearchParams{ObjectId: 123456789}
+	data["onlyObjectIdSearch"] = &globalUtils.AuditSearchParams{ObjectId: "123456789"}
 
 	return data
 }
