@@ -7,7 +7,7 @@ It is compose of the following files:
 	service error messages.
 - timeUtils: Useful time conversion methods
 - dbConnectUtils: Handles connecting to the databases, including setting up retries in case of connection failure
-- authUtils: Useful auth based functions
+- AuthUtils: Useful auth based functions
 
 */
 package globalUtils
