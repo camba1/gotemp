@@ -7,11 +7,13 @@ ENV SRVNAME=${SRVDIR}Server
 WORKDIR /go/src/goTemp
 RUN go get github.com/githubnemo/CompileDaemon
 ENV GO111MODULE=on
+COPY ./go.mod ./go.sum ./
+RUN go mod download
 COPY ./$SRVDIR ./$SRVDIR
 COPY ./globalerrors ./globalerrors
 COPY ./globalUtils ./globalUtils
-COPY ./go.mod ./go.sum ./
-RUN go get -d  -v ./...
+#COPY ./go.mod ./go.sum ./
+#RUN go get -d  -v ./...
 RUN go build -o $SRVNAME ./$SRVDIR/server/
 EXPOSE 50051
 #CMD ["./promotionServer"]

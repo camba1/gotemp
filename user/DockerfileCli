@@ -7,12 +7,13 @@ ENV CLINAME=${CLIDIR}Client
 WORKDIR /go/src/goTemp
 RUN go get github.com/githubnemo/CompileDaemon
 ENV GO111MODULE=on
-COPY ./$CLIDIR ./$CLIDIR
 COPY ./go.mod ./go.sum ./
-RUN go get -d  -v ./...
+RUN go mod download
+COPY ./$CLIDIR ./$CLIDIR
+#COPY ./go.mod ./go.sum ./
+#RUN go get -d  -v ./...
 RUN go build -o $CLINAME ./$CLIDIR/client/
 EXPOSE 50051
-#CMD ["./userClient"]
 CMD ./$CLINAME
 
 # Compile the Alpine version of the application
