@@ -42,7 +42,7 @@ type AuditMsgHeaderStruct struct {
 	ServiceName  string
 	ActionFunc   string
 	ActionType   string
-	ObjectId     int64
+	ObjectId     string
 	PerformedBy  int64
 	ActionTime   time.Time
 	ObjectName   string
@@ -70,7 +70,7 @@ func (a *AuditMsgHeaderStruct) GetPerformedBy() int64 {
 	return a.PerformedBy
 }
 
-func (a *AuditMsgHeaderStruct) GetObjectId() int64 {
+func (a *AuditMsgHeaderStruct) GetObjectId() string {
 	return a.ObjectId
 }
 
@@ -94,7 +94,7 @@ type AuditMsgHeaderStructs struct {
 //AuditSearchParams: Parameters to search for audit records
 type AuditSearchParams struct {
 	ObjectName      string
-	ObjectId        int64
+	ObjectId        string
 	ActionTimeStart time.Time
 	ActionTimeEnd   time.Time
 }
@@ -105,7 +105,7 @@ type AuditSearchId struct {
 }
 
 //NewAuditMsg: Validate and create a new Audit message that is ready to be sent out to the broker
-func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, objectName string, objectId int64, objectToSend []byte) (*auditMsg, error) {
+func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, objectName string, objectId string, objectToSend []byte) (*auditMsg, error) {
 	var missingFields string
 	if serviceName == "" {
 		missingFields += " serviceName,"
@@ -119,7 +119,7 @@ func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, 
 	if performedBy == 0 {
 		missingFields += " performedBy,"
 	}
-	if objectId == 0 {
+	if objectId == "" {
 		missingFields += " objectId,"
 	}
 	if objectToSend == nil {
@@ -136,7 +136,7 @@ func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, 
 			"service":     serviceName,
 			"actionFunc":  actionFunc,
 			"actionType":  actionType,
-			"objectId":    strconv.FormatInt(objectId, 10),
+			"objectId":    objectId,
 			"performedBy": strconv.FormatInt(performedBy, 10),
 			"actionTime":  time.Now().Format(time.RFC3339),
 			"objectName":  objectName,
@@ -151,10 +151,10 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 	if header == nil {
 		return nil, fmt.Errorf("message header cannot be nil when trying to convert to struct")
 	}
-	objectId, err := strconv.ParseInt(header["objectId"], 10, 64)
-	if err != nil {
-		return nil, err
-	}
+	//objectId, err := strconv.ParseInt(header["objectId"], 10, 64)
+	//if err != nil {
+	//	return nil, err
+	//}
 	//performedBy, err := euidToId(header["performedBy"])
 	performedBy, err := strconv.ParseInt(header["performedBy"], 10, 64)
 	if err != nil {
@@ -169,7 +169,7 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 		ServiceName: header["service"],
 		ActionFunc:  header["actionFunc"],
 		ActionType:  header["actionType"],
-		ObjectId:    objectId,
+		ObjectId:    header["objectId"],
 		PerformedBy: performedBy,
 		ActionTime:  actionTime,
 		ObjectName:  header["objectName"],
@@ -180,9 +180,9 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 
 //sendUserAudit: Convert a user to a byte array, compose an audit message and send that message to the broker for
 //forwarding to the audit service
-func AuditSend(ctx context.Context, mb MyBroker, serviceName, actionFunc, actionType string, objectName string, objectId int64, byteMessage []byte) string {
+func AuditSend(ctx context.Context, mb MyBroker, serviceName, actionFunc, actionType string, objectName string, objectId string, byteMessage []byte) string {
 
-	var auth authUtils
+	var auth AuthUtils
 	performedBy, err := auth.GetCurrentUserFromContext(ctx)
 	if err != nil {
 		return "unable to get user from metadata"

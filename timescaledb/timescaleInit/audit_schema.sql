@@ -1,14 +1,3 @@
--- topic:        topic,
--- 		objectToSend: objectToSend,
--- 		header: auditMsgHeader{
--- 			"service":		serviceName,
--- 			"actionFunc":  actionFunc,
--- 			"actionType":  actionType,
--- 			"objectId":    string(objectId),
--- 			"performedBy": string(performedBy),
--- 		},
-
-
 -- Create the primary key generator
 
 create sequence public.table_id_seq;
@@ -39,7 +28,7 @@ CREATE TABLE "public"."audit" (
                                   actionFunc varchar(255) NOT NULL,  --Function in the service that caused the modification
                                   actionType varchar(50) NOT NULL,   --Indicates what action was performed (Insert, delete, etc)
                                   objectName varchar(250) NOT NULL,  --Name of object (table) to which the modified record belongs
-                                  objectId bigint  NOT NULL,         --Id of the record modified
+                                  objectId varchar(50)  NOT NULL,         --Id of the record modified
                                   performedBy bigint NOT NULL ,      --Id of user that did the change
                                   recordedtime timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,   --Time we recorded action in audit table
                                   objectDetail bytea NOT NULL,        -- Information of the record modified
