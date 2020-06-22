@@ -9,11 +9,11 @@ import (
 	"strconv"
 )
 
-type authUtils struct{}
+type AuthUtils struct{}
 
 //getCurrentUserFromContext: User is added to the context during authentication. this function extracts it so
 //that it can be used sending audit records to the broker
-func (a *authUtils) GetCurrentUserFromContext(ctx context.Context) (int64, error) {
+func (a *AuthUtils) GetCurrentUserFromContext(ctx context.Context) (int64, error) {
 	meta, ok := metadata.FromContext(ctx)
 	if !ok {
 		return 0, fmt.Errorf("unable to get user from metadata")
