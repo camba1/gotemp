@@ -7,6 +7,7 @@ import (
 	"goTemp/globalerrors"
 	"goTemp/promotion/proto"
 	"log"
+	"strconv"
 )
 
 //mb: Broker instance to send/receive message from pub/sub system
@@ -151,7 +152,8 @@ func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.P
 }
 
 //sendAudit: Convert a promotion to a byte array, and call AuditUtil to send message with updated promotion to audit service
-func (p *Promotion) sendAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId int64, promotion *proto.Promotion) string {
+func (p *Promotion) sendAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, iObjectId int64, promotion *proto.Promotion) string {
+	objectId := strconv.FormatInt(iObjectId, 10)
 	byteUser, err := mb.ProtoToByte(promotion)
 	if err != nil {
 		return glErr.AudFailureSending(actionType, objectId, err)

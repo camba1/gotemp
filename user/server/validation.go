@@ -5,6 +5,7 @@ import (
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	pb "goTemp/user/proto"
+	"strconv"
 )
 
 //mb: Broker instance to send/receive message from pub/sub system
@@ -177,7 +178,8 @@ func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr 
 }
 
 //sendUserAudit: Convert a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
-func (u *User) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId int64, user *pb.User) string {
+func (u *User) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, iObjectId int64, user *pb.User) string {
+	objectId := strconv.FormatInt(iObjectId, 10)
 	byteUser, err := mb.ProtoToByte(user)
 	if err != nil {
 		return glErr.AudFailureSending(actionType, objectId, err)
