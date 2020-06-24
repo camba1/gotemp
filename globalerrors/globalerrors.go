@@ -39,12 +39,13 @@ const (
 	authNilToken                SrvError = "Invalid nil user token\n"
 	authNilClaim                SrvError = "invalid nil %s claim\n"
 	authInvalidClaim            SrvError = "Invalid %s claim\n"
+	authNoUserInToken           SrvError = "unable to get logged in user from metadata. Error: %v\n"
 	brkBadMarshall              SrvError = "Unable to marshall object %v. Error: %v\n"
 	brkNoMessageSent            SrvError = "Unable to send message to broker for topic %s. Error: %v\n"
 	brkNoConnection             SrvError = "Unable to connect to broker: Error: %v\n"
 	brkUnableToSetSubs          SrvError = "Unable to setup broker subscription for topic %s. Error: %v\n"
 	brkBadUnMarshall            SrvError = "Unable to unmarshall received object for topic %s. Message received: %v. Error: %v\n"
-	audFailureSending           SrvError = "Unable to send %s audit information for record %d. Error: %v\n"
+	audFailureSending           SrvError = "Unable to send %s audit information for record %s. Error: %v\n"
 )
 
 /*
@@ -127,6 +128,10 @@ func (ge *SrvError) BrkBadUnMarshall(topic string, message []byte, err error) st
 	return fmt.Sprintf(string(brkBadUnMarshall), topic, message, err)
 }
 
-func (ge *SrvError) AudFailureSending(operation string, id int64, err error) string {
+func (ge *SrvError) AudFailureSending(operation string, id string, err error) string {
 	return fmt.Sprintf(string(audFailureSending), operation, id, err)
+}
+
+func (ge *SrvError) AuthNoUserInToken(err error) string {
+	return fmt.Sprintf(string(authNoUserInToken), err)
 }
