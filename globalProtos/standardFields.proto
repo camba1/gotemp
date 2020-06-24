@@ -1,0 +1,15 @@
+syntax = "proto3";
+option go_package = "goTemp/globalProtos";
+
+import  "google/protobuf/timestamp.proto";
+
+message GlModification {
+    google.protobuf.Timestamp createDate = 1;
+    google.protobuf.Timestamp updateDate = 2;
+    string modifiedBy = 3;
+}
+
+message GlValidityDate {
+    google.protobuf.Timestamp validFrom = 1;
+    google.protobuf.Timestamp validThru = 2;
+}

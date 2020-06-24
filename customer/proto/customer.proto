@@ -1,0 +1,65 @@
+syntax = "proto3";
+option go_package = "goTemp/customer/proto";
+
+package customer;
+
+import  "google/protobuf/timestamp.proto";
+import "globalProtos/standardFields.proto";
+import "google/protobuf/struct.proto";
+
+
+service customerSrv {
+    rpc GetCustomerById(SearchId) returns (customer) {}
+    rpc GetCustomers(SearchParams) returns (customers) {}
+    rpc CreateCustomer(customer) returns (response) {}
+    rpc UpdateCustomer(customer) returns (response) {}
+    rpc DeleteCustomer(SearchId) returns (response) {}
+    rpc BeforeCreateCustomer(customer) returns (validationErr) {}
+    rpc BeforeUpdateCustomer(customer) returns (validationErr) {}
+    rpc BeforeDeleteCustomer(customer) returns (validationErr) {}
+    rpc AfterCreateCustomer(customer) returns (AfterFuncErr) {}
+    rpc AfterUpdateCustomer(customer) returns (AfterFuncErr) {}
+    rpc AfterDeleteCustomer(customer) returns (AfterFuncErr) {}
+}
+
+message response {
+    customer customer = 1;
+    int64 affectedCount = 2;
+    validationErr validationErr = 3;
+}
+
+message customer {
+    string _key =1;
+    string _id =2;
+    string _rev = 3;
+    string name = 4 ;
+    GlValidityDate validityDates = 5;
+    GlModification modifications = 6;
+    google.protobuf.Struct extraFields = 7;
+}
+
+message customers {
+    repeated customer customer =1;
+}
+
+message SearchParams {
+    string _key = 1;
+    string name = 2;
+    google.protobuf.Timestamp validDate = 3;
+}
+
+message SearchString {
+    string value = 1;
+}
+
+message SearchId {
+    string _key = 1;
+}
+
+message validationErr {
+    repeated string failureDesc = 1;
+}
+
+message AfterFuncErr {
+    repeated string failureDesc = 1;
+}

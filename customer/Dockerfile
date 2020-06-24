@@ -1,0 +1,40 @@
+# Build DEv image with hot rebuild
+FROM golang AS Dev
+
+ENV SRVDIR=customer
+
+ENV SRVNAME=${SRVDIR}Server
+WORKDIR /go/src/goTemp
+RUN go get github.com/githubnemo/CompileDaemon
+ENV GO111MODULE=on
+COPY ./go.mod ./go.sum ./
+RUN go mod download
+COPY ./$SRVDIR ./$SRVDIR
+COPY ./user/proto ./user/proto
+COPY ./globalerrors ./globalerrors
+COPY ./globalUtils ./globalUtils
+COPY ./globalProtos ./globalProtos
+#COPY ./go.mod ./go.sum ./
+#RUN go get -d  -v ./...
+RUN go build -o $SRVNAME ./$SRVDIR/server/
+EXPOSE 50051
+CMD ./$SRVNAME
+
+# Compile the Alpine version of the application
+FROM Dev AS alpBuild
+
+ENV SRVDIR=customer
+
+ENV SRVNAME=${SRVDIR}ServerAlp
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o $SRVNAME ./$SRVDIR/server/
+
+# Build the Alpine image
+FROM alpine
+
+ENV SRVDIR=customer
+
+ENV SRVNAME=${SRVDIR}ServerAlp
+RUN apk --no-cache add ca-certificates
+WORKDIR /goTemp
+COPY --from=alpBuild /go/src/goTemp/$SRVNAME $SRVNAME
+CMD ./$SRVNAME
