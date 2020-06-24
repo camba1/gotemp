@@ -1,0 +1,39 @@
+# Build DEv image with hot rebuild
+FROM golang AS Dev
+
+ENV CLIDIR=product
+
+ENV CLINAME=${CLIDIR}Client
+WORKDIR /go/src/goTemp
+RUN go get github.com/githubnemo/CompileDaemon
+ENV GO111MODULE=on
+COPY ./go.mod ./go.sum ./
+RUN go mod download
+COPY ./$CLIDIR ./$CLIDIR
+COPY ./user/proto ./user/proto
+#COPY ./go.mod ./go.sum ./
+#RUN go get -d  -v ./...
+RUN go build -o $CLINAME ./$CLIDIR/client/
+EXPOSE 50051
+#CMD ["./userClient"]
+CMD ./$CLINAME
+
+# Compile the Alpine version of the application
+FROM Dev AS AlpBuild
+
+ENV CLIDIR=product
+
+ENV CLINAME=${CLIDIR}ClientAlp
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o $CLINAME ./$CLIDIR/client/
+
+# Build the Alpine image
+FROM alpine
+
+ENV CLIDIR=product
+
+ENV CLINAME=${CLIDIR}ClientAlp
+RUN apk --no-cache add ca-certificates
+WORKDIR /goTemp
+COPY --from=AlpBuild /go/src/goTemp/$CLINAME $CLINAME
+#CMD ["./userClientAlp"]
+CMD ./$CLINAME

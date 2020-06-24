@@ -1,0 +1,61 @@
+syntax = "proto3";
+option go_package = "goTemp/product/proto";
+
+package product;
+
+import  "google/protobuf/timestamp.proto";
+import "globalProtos/standardFields.proto";
+
+service productSrv {
+    rpc GetProductById(SearchId) returns (product) {}
+    rpc GetProducts(SearchParams) returns (products) {}
+    rpc CreateProduct(product) returns (response) {}
+    rpc UpdateProduct(product) returns (response) {}
+    rpc DeleteProduct(SearchId) returns (response) {}
+    rpc BeforeCreateProduct(product) returns (validationErr) {}
+    rpc BeforeUpdateProduct(product) returns (validationErr) {}
+    rpc BeforeDeleteProduct(product) returns (validationErr) {}
+    rpc AfterCreateProduct(product) returns (AfterFuncErr) {}
+    rpc AfterUpdateProduct(product) returns (AfterFuncErr) {}
+    rpc AfterDeleteProduct(product) returns (AfterFuncErr) {}
+}
+
+message response {
+    product product = 1;
+    int64 affectedCount = 2;
+    validationErr validationErr = 3;
+}
+
+message product {
+    string id =1;
+    string name =2;
+    string hierarchyLevel = 3;
+    GlValidityDate validityDates = 4;
+    GlModification modifications = 5;
+}
+
+message products {
+    repeated product product =1;
+}
+
+message SearchParams {
+    string id = 1;
+    string name = 2;
+    google.protobuf.Timestamp validDate = 3;
+}
+
+message SearchString {
+    string value = 1;
+}
+
+message SearchId {
+    string id = 1;
+}
+
+message validationErr {
+    repeated string failureDesc = 1;
+}
+
+message AfterFuncErr {
+    repeated string failureDesc = 1;
+}
