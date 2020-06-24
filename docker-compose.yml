@@ -86,6 +86,38 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50055:50055"
+  customersrv:
+    build:
+      context: .
+      dockerfile: ./customer/Dockerfile
+      target: Dev
+    depends_on:
+      - arangodb
+      - nats
+    container_name: customersrvcont
+    entrypoint: CompileDaemon --build="go build -o customerServer ./customer/server/" --command=./customerServer
+    env_file: ./customer/docker-compose.env
+    volumes:
+      - ./customer/server:/go/src/goTemp/customer/server
+      - ./globalUtils:/go/src/goTemp/globalUtils
+    ports:
+      - "50057:50057"
+  productsrv:
+    build:
+      context: .
+      dockerfile: ./product/Dockerfile
+      target: Dev
+    depends_on:
+      - arangodb
+      - nats
+    container_name: productsrvcont
+    entrypoint: CompileDaemon --build="go build -o productServer ./product/server/" --command=./productServer
+    env_file: ./product/docker-compose.env
+    volumes:
+      - ./product/server:/go/src/goTemp/product/server
+      - ./globalUtils:/go/src/goTemp/globalUtils
+    ports:
+      - "50059:50059"
   nats:
 #    image: nats
 #    command: --config nats-server.conf --user ${NATS_USER} --pass ${NATS_PWD}
