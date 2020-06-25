@@ -4,11 +4,14 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"github.com/golang/protobuf/ptypes/timestamp"
 	"github.com/micro/go-micro/v2/metadata"
 	"goTemp/customer/proto"
+	"goTemp/customer/server/statements"
 	"goTemp/globalProtos"
 	"goTemp/globalUtils"
 	"log"
+	"reflect"
 	"strconv"
 	"testing"
 	"time"
@@ -279,4 +282,90 @@ func InsertTestCustomer(ctx context.Context, customerToInsert *proto.Customer) (
 		return "", fmt.Errorf("UpdateCustomer() unable to create customer before update error = %v", err)
 	}
 	return insertedResponse.Customer.XKey, nil
+}
+
+func Test_customer_getSQLForSearch(t *testing.T) {
+	type args struct {
+		searchParms *proto.SearchParams
+	}
+
+	sql := statements.SqlSelectAll.String()
+
+	dtTmForSearch, _ := time.Parse(globalUtils.DateLayoutISO, "2021-06-26")
+	protoDate, _ := globalUtils.TimeToTimeStampPPB(dtTmForSearch)
+	dtForSearch := protoDate[0]
+
+	sqlEmptyWhereClause := " FILTER 1==1 "
+	sqlFullSearch := sqlEmptyWhereClause + " AND c._key ==  @xkey AND c.name == @name AND c.validityDates.validFrom.seconds <= @validDateSecs AND c.validityDates.validThru.seconds >= @validDateSecs"
+	sqlOnlyDateSearch := sqlEmptyWhereClause + " AND c.validityDates.validFrom.seconds <= @validDateSecs AND c.validityDates.validThru.seconds >= @validDateSecs"
+	sqlOnlyObjectIdSearch := sqlEmptyWhereClause + " AND c._key ==  @xkey"
+
+	sqlEmptyWhereClauseFinal := fmt.Sprintf(sql, sqlEmptyWhereClause, statements.MaxRowsToFetch)
+	sqlFullSearchFinal := fmt.Sprintf(sql, sqlFullSearch, statements.MaxRowsToFetch)
+	sqlOnlyDateSearchFinal := fmt.Sprintf(sql, sqlOnlyDateSearch, statements.MaxRowsToFetch)
+	sqlOnlyObjectIdSearchFinal := fmt.Sprintf(sql, sqlOnlyObjectIdSearch, statements.MaxRowsToFetch)
+
+	intEmptySearch := make(map[string]interface{})
+	intFullSearch := map[string]interface{}{"xkey": "ducksrus", "name": "Ducks R Us", "validDateSecs": dtForSearch.GetSeconds()}
+	intOnlyDateSearch := map[string]interface{}{"validDateSecs": dtForSearch.GetSeconds()}
+	intOnlyObjectIdSearch := map[string]interface{}{"xkey": "patoloco"}
+
+	data, err := getSearchParmsData(dtForSearch)
+	if err != nil {
+
+		return
+	}
+
+	emptySearch := data["emptySearch"]
+	fullSearch := data["fullSearch"]
+	onlyDateSearch := data["onlyDateSearch"]
+	onlyObjectIdSearch := data["onlyObjectIdSearch"]
+
+	tests := []struct {
+		name       string
+		args       args
+		want       string
+		wantValues map[string]interface{}
+		wantErr    bool
+	}{
+		{name: "Empty search", args: args{emptySearch}, want: sqlEmptyWhereClauseFinal, wantValues: intEmptySearch, wantErr: false},
+		{name: "Full search", args: args{fullSearch}, want: sqlFullSearchFinal, wantValues: intFullSearch, wantErr: false},
+		{name: "Only date search", args: args{onlyDateSearch}, want: sqlOnlyDateSearchFinal, wantValues: intOnlyDateSearch, wantErr: false},
+		{name: "Only object Id search", args: args{onlyObjectIdSearch}, want: sqlOnlyObjectIdSearchFinal, wantValues: intOnlyObjectIdSearch, wantErr: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &customer{}
+			got, got1, err := c.getSQLForSearch(tt.args.searchParms)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("getSQLForSearch() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got1 != tt.want {
+				t.Errorf("getSQLForSearch() got1 = %v, want %v", got1, tt.want)
+			}
+			if !reflect.DeepEqual(got, tt.wantValues) {
+				t.Errorf("getSQLForSearch() got = %v, want %v", got, tt.wantValues)
+			}
+		})
+	}
+}
+
+func getSearchParmsData(dtForSearch *timestamp.Timestamp) (map[string]*proto.SearchParams, error) {
+
+	data := make(map[string]*proto.SearchParams)
+	data["emptySearch"] = &proto.SearchParams{}
+	data["fullSearch"] = &proto.SearchParams{
+		XKey:      "ducksrus",
+		Name:      "Ducks R Us",
+		ValidDate: dtForSearch,
+	}
+	data["onlyDateSearch"] = &proto.SearchParams{
+		ValidDate: dtForSearch,
+	}
+	data["onlyObjectIdSearch"] = &proto.SearchParams{
+		XKey: "patoloco",
+	}
+
+	return data, nil
 }

@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"github.com/arangodb/go-driver"
 	"goTemp/customer/proto"
+	"goTemp/customer/server/statements"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/known/structpb"
 	"log"
@@ -39,10 +41,15 @@ func (c *customer) GetCustomerById(ctx context.Context, searchId *proto.SearchId
 
 func (c *customer) GetCustomers(ctx context.Context, params *proto.SearchParams, customers *proto.Customers) error {
 	//TODO: build dynamic params and pass to query
-	values := make(map[string]interface{})
-	values["name"] = params.Name
+	//values := make(map[string]interface{})
+	//values["name"] = params.Name
 
-	cur, err := conn.Query(ctx, "FOR c IN customer FILTER c.name == @name RETURN c", values)
+	values, sqlStatement, err2 := c.getSQLForSearch(params)
+	if err2 != nil {
+		return err2
+	}
+
+	cur, err := conn.Query(ctx, sqlStatement, values)
 	if err != nil {
 		log.Printf(custErr.SelectReadError(err))
 	}
@@ -265,4 +272,45 @@ func processExtraFields(customer *proto.Customer) error {
 	//TODO: Need to process extra fields instead of removing them before saving the record
 	customer.ExtraFields = nil
 	return nil
+}
+
+//getSQLForSearch: Combine the where clause built in the buildSearchWhereClause method with the rest of the sql
+//statement to return the final search for users sql statement
+func (c *customer) getSQLForSearch(searchParms *proto.SearchParams) (map[string]interface{}, string, error) {
+	sql := statements.SqlSelectAll.String()
+	sqlWhereClause, values, err := c.buildSearchWhereClause(searchParms)
+	if err != nil {
+		return nil, "", err
+	}
+
+	sqlStatement := fmt.Sprintf(sql, sqlWhereClause, statements.MaxRowsToFetch)
+	return values, sqlStatement, nil
+}
+
+//buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+//slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
+//for the date lookup which is done  as a contains clause
+func (c *customer) buildSearchWhereClause(searchParms *proto.SearchParams) (string, map[string]interface{}, error) {
+	sqlWhereClause := " FILTER 1==1 "
+	values := make(map[string]interface{})
+
+	if searchParms.GetXKey() != "" {
+		sqlWhereClause += fmt.Sprint(" AND c._key ==  @xkey")
+		values["xkey"] = searchParms.GetXKey()
+	}
+	if searchParms.GetName() != "" {
+		sqlWhereClause += fmt.Sprint(" AND c.name == @name")
+		values["name"] = searchParms.GetName()
+	}
+	if searchParms.GetValidDate() != nil {
+		//convertedDates, err := globalUtils.TimeStampPPBToTime(searchParms.GetValidDate())
+		//if err != nil {
+		//	return "", nil, err
+		//}
+		//validFrom := convertedDates[0]
+		secs := searchParms.GetValidDate().GetSeconds()
+		sqlWhereClause += fmt.Sprint(" AND c.validityDates.validFrom.seconds <= @validDateSecs AND c.validityDates.validThru.seconds >= @validDateSecs")
+		values["validDateSecs"] = secs
+	}
+	return sqlWhereClause, values, nil
 }
