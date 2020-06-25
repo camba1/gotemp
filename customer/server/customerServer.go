@@ -6,8 +6,7 @@ import (
 	adb "github.com/arangodb/go-driver"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/client"
-	//"github.com/micro/go-micro/v2/config"
-	//"github.com/micro/go-micro/v2/config/source/env"
+
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
 	"goTemp/customer/proto"
@@ -120,23 +119,26 @@ func connectToDB() adb.Database {
 }
 
 func loadConfig() {
-	//	conf, err := config.NewConfig()
-	//	if err != nil {
-	//		//log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
-	//		log.Fatal(err)
-	//	}
-	//	defer conf.Close()
+	//conf, err := config.NewConfig()
+	//if err != nil {
+	//	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
+	//	//log.Fatal(err)
+	//}
+	//defer conf.Close()
 	//
-	//	src := env.NewSource()
+	//src := env.NewSource()
 	//
-	//	err = conf.Load(src)
-	//	if err != nil {
-	//		//log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
-	//		log.Fatal(err)
-	//	}
-	//	//test := conf.Map()
-	//	log.Printf("conf %v\n", conf)
-	//	//log.Printf("conf map %v\n", test)
+	//err = conf.Load(src)
+	////ws, err := src.Read()
+	//if err != nil {
+	//	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
+	//	//log.Fatal(err)
+	//}
+	//test := conf.Map()
+	////log.Printf("conf %v\n", ws.Data)
+	//
+	//log.Printf("conf map %v\n", test)
+
 	audits := os.Getenv(DisableAuditRecordsEnvVarName)
 	if audits == "true" {
 		glDisableAuditRecords = true
