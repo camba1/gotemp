@@ -33,7 +33,7 @@ func Test_customer_GetCustomerById(t *testing.T) {
 	}
 	validIdArg2 := args{
 		ctx:         ctx,
-		searchId:    &proto.SearchId{XKey: "13741"},
+		searchId:    &proto.SearchId{XKey: "canard"},
 		outCustomer: &proto.Customer{},
 	}
 	tests := []struct {
@@ -43,7 +43,7 @@ func Test_customer_GetCustomerById(t *testing.T) {
 		wantErr bool
 	}{
 		{name: "Get a customer", args: validIdArg, want: "Ducks R Us", wantErr: false},
-		{name: "Get a second customer", args: validIdArg2, want: "goodUpdatedCustomer", wantErr: false},
+		{name: "Get a second customer", args: validIdArg2, want: "Canard Oui Oui", wantErr: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -218,14 +218,15 @@ func Test_customer_UpdateCustomer(t *testing.T) {
 	custData := getTestData(dtValidFrom, dtValidThru)
 	updateCustomer := custData["updateCustomer"]
 
-	//goodCustomer :=  custData["goodCustomer"]
-	//newCustomerId, err := InsertTestCustomer(ctx, goodCustomer)
-	//if err != nil {
-	//	t.Errorf("UpdateCustomer() Unable to create test customer. error = %v", err)
-	//}
-	//updateCustomer.Id = newCustomerId
+	//create a customer
+	goodCustomer := custData["goodCustomer"]
+	newCustomerId, err := InsertTestCustomer(ctx, goodCustomer)
+	if err != nil {
+		t.Errorf("UpdateCustomer() Unable to create test customer. error = %v", err)
+	}
 
-	updateCustomer.XKey = "13741"
+	updateCustomer.XKey = newCustomerId
+
 	tests := []struct {
 		name    string
 		args    args
@@ -240,6 +241,13 @@ func Test_customer_UpdateCustomer(t *testing.T) {
 				t.Errorf("UpdateCustomer() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
+	}
+
+	//Clean up
+	c := &customer{}
+	err = c.DeleteCustomer(ctx, &proto.SearchId{XKey: newCustomerId}, &proto.Response{})
+	if err != nil {
+		t.Errorf("UpdateCustomer() Unable to delete created customer %v. Error: %v", newCustomerId, err)
 	}
 }
 
