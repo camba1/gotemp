@@ -14,8 +14,6 @@ COPY ./user/proto ./user/proto
 COPY ./globalerrors ./globalerrors
 COPY ./globalUtils ./globalUtils
 COPY ./globalProtos ./globalProtos
-#COPY ./go.mod ./go.sum ./
-#RUN go get -d  -v ./...
 RUN go build -o $SRVNAME ./$SRVDIR/server/
 EXPOSE 50051
 CMD ./$SRVNAME
@@ -37,5 +35,4 @@ ENV SRVNAME=${SRVDIR}ServerAlp
 RUN apk --no-cache add ca-certificates
 WORKDIR /goTemp
 COPY --from=alpBuild /go/src/goTemp/$SRVNAME $SRVNAME
-#CMD ["./promotionServerAlp"]
 CMD ./$SRVNAME
