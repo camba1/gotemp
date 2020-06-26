@@ -32,8 +32,13 @@ const (
 	dbPassEnvVarName = "DB_PASS"
 )
 
+//Other constants
+const (
+	DisableAuditRecordsEnvVarName = "DISABLE_AUDIT_RECORDS"
+)
+
 // conn: Database connection
-var conn *adb.Database
+var conn adb.Database
 
 //prodErr: Holds service specific errors
 var prodErr statements.ProdErr
@@ -44,8 +49,11 @@ var glErr globalerrors.SrvError
 //mb: Broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
-//product: Main entry point for product related services
-type product struct{}
+//enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
+var glDisableAuditRecords = false
+
+//Product: Main entry point for Product related services
+type Product struct{}
 
 //AuthWrapper: Authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
@@ -99,7 +107,7 @@ func getDBConnString() *globalUtils.DbConnParams {
 
 //connectToDB: Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
 //before giving up and throwing an error
-func connectToDB() *adb.Database {
+func connectToDB() adb.Database {
 	var dbConnect globalUtils.ArangoConnect
 	db, err := dbConnect.ConnectToDBWithRetry(dbName, getDBConnString())
 	if err != nil {
@@ -108,6 +116,34 @@ func connectToDB() *adb.Database {
 	return db
 }
 
+func loadConfig() {
+	//conf, err := config.NewConfig()
+	//if err != nil {
+	//	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
+	//	//log.Fatal(err)
+	//}
+	//defer conf.Close()
+	//
+	//src := env.NewSource()
+	//
+	//err = conf.Load(src)
+	////ws, err := src.Read()
+	//if err != nil {
+	//	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
+	//	//log.Fatal(err)
+	//}
+	//test := conf.Map()
+	////log.Printf("conf %v\n", ws.Data)
+	//
+	//log.Printf("conf map %v\n", test)
+
+	audits := os.Getenv(DisableAuditRecordsEnvVarName)
+	if audits == "true" {
+		glDisableAuditRecords = true
+	} else {
+		glDisableAuditRecords = false
+	}
+}
 func main() {
 	//instantiate service
 	service := micro.NewService(
@@ -116,10 +152,13 @@ func main() {
 	)
 
 	service.Init()
-	err := proto.RegisterProductSrvHandler(service.Server(), new(product))
+	err := proto.RegisterProductSrvHandler(service.Server(), new(Product))
 	if err != nil {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
+
+	//Load configuration
+	loadConfig()
 
 	//Connect to DB
 	conn = connectToDB()
