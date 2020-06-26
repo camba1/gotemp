@@ -48,6 +48,13 @@ const (
 	audFailureSending           SrvError = "Unable to send %s audit information for record %s. Error: %v\n"
 )
 
+const (
+	marshalFullMap          SrvError = "Unable to marshal full map. Error: %v\n"
+	unMarshalByteFullMap    SrvError = "Unable to unmarshal byte full version map to struct. Error: %v\n"
+	marshalPartialMap       SrvError = "Unable to marshal partial  map. Error: %v\n"
+	unMarshalBytePartialMap SrvError = "Unable to unmarshal byte partial version of map to proto struct. Error: %v\n"
+)
+
 /*
 Functions that return the error message formatted with the information passed in as arguments to the individual functions
 */
@@ -134,4 +141,17 @@ func (ge *SrvError) AudFailureSending(operation string, id string, err error) st
 
 func (ge *SrvError) AuthNoUserInToken(err error) string {
 	return fmt.Sprintf(string(authNoUserInToken), err)
+}
+
+func (ge *SrvError) MarshalFullMap(err error) string {
+	return fmt.Sprintf(string(marshalFullMap), err)
+}
+func (ge *SrvError) UnMarshalByteFullMap(err error) string {
+	return fmt.Sprintf(string(unMarshalByteFullMap), err)
+}
+func (ge *SrvError) MarshalPartialMap(err error) string {
+	return fmt.Sprintf(string(marshalPartialMap), err)
+}
+func (ge *SrvError) UnMarshalBytePartialMap(err error) string {
+	return fmt.Sprintf(string(unMarshalBytePartialMap), err)
 }
