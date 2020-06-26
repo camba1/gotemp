@@ -40,9 +40,6 @@ func (c *customer) GetCustomerById(ctx context.Context, searchId *proto.SearchId
 }
 
 func (c *customer) GetCustomers(ctx context.Context, params *proto.SearchParams, customers *proto.Customers) error {
-	//TODO: build dynamic params and pass to query
-	//values := make(map[string]interface{})
-	//values["name"] = params.Name
 
 	values, sqlStatement, err2 := c.getSQLForSearch(params)
 	if err2 != nil {
@@ -52,6 +49,7 @@ func (c *customer) GetCustomers(ctx context.Context, params *proto.SearchParams,
 	cur, err := conn.Query(ctx, sqlStatement, values)
 	if err != nil {
 		log.Printf(custErr.SelectReadError(err))
+		return err
 	}
 	defer cur.Close()
 	for cur.HasMore() {
@@ -67,7 +65,7 @@ func (c *customer) GetCustomers(ctx context.Context, params *proto.SearchParams,
 		if err != nil {
 			return err
 		}
-		//log.Printf("Got document with meta %v\n", meta)
+
 		customers.Customer = append(customers.Customer, customer)
 	}
 	return nil
@@ -228,12 +226,12 @@ func arangoMapToStruct(inMap map[string]interface{}, customer *proto.Customer) e
 	//Get known fields into the struct
 	fullMapBytes, err := json.Marshal(inMap)
 	if err != nil {
-		log.Printf("Unable to marshal full Arango map. Error: %v\n", err)
+		log.Printf(glErr.MarshalFullMap(err))
 		return err
 	}
 
 	if err = json.Unmarshal(fullMapBytes, customer); err != nil {
-		log.Printf("Unable to unmarshal byte full version of Arango map to struct. Error: %v\n", err)
+		log.Printf(glErr.UnMarshalByteFullMap(err))
 		return err
 	}
 
@@ -253,12 +251,12 @@ func arangoMapToStruct(inMap map[string]interface{}, customer *proto.Customer) e
 	//Get additional fields into ExtraFields field of struct
 	partialMapBytes, err := json.Marshal(inMap)
 	if err != nil {
-		log.Printf("Unable to marshal partial Arango map. Error: %v\n", err)
+		log.Printf(glErr.MarshalPartialMap(err))
 		return err
 	}
 	tempStruct := &structpb.Struct{}
 	if err = protojson.Unmarshal(partialMapBytes, tempStruct); err != nil {
-		log.Printf("Unable to unmarshal byte partial version of Arango map to proto struct. Error: %v\n", err)
+		log.Printf(glErr.UnMarshalBytePartialMap(err))
 		return err
 	}
 	customer.ExtraFields = tempStruct
@@ -303,11 +301,6 @@ func (c *customer) buildSearchWhereClause(searchParms *proto.SearchParams) (stri
 		values["name"] = searchParms.GetName()
 	}
 	if searchParms.GetValidDate() != nil {
-		//convertedDates, err := globalUtils.TimeStampPPBToTime(searchParms.GetValidDate())
-		//if err != nil {
-		//	return "", nil, err
-		//}
-		//validFrom := convertedDates[0]
 		secs := searchParms.GetValidDate().GetSeconds()
 		sqlWhereClause += fmt.Sprint(" AND c.validityDates.validFrom.seconds <= @validDateSecs AND c.validityDates.validThru.seconds >= @validDateSecs")
 		values["validDateSecs"] = secs
