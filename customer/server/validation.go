@@ -14,7 +14,7 @@ import (
 func checkMandatoryFields(customer *proto.Customer) ([]string, error) {
 	var FailureDesc []string
 	if customer.GetName() == "" {
-		FailureDesc = append(FailureDesc, glErr.MissingField("first name"))
+		FailureDesc = append(FailureDesc, glErr.MissingField("name"))
 	}
 	dateValidation, err := globalUtils.CheckValidityDates(customer.GetValidityDates().GetValidFrom(), customer.GetValidityDates().GetValidThru())
 	if err != nil {
@@ -91,7 +91,7 @@ func (c *customer) BeforeUpdateCustomer(ctx context.Context, customer *proto.Cus
 	validationErr.FailureDesc = append(validationErr.FailureDesc, validation...)
 
 	if len(validationErr.FailureDesc) > 0 {
-		return &globalerrors.ValidationError{Source: "BeforeCreateUser", FailureDesc: validationErr.FailureDesc}
+		return &globalerrors.ValidationError{Source: "BeforeCreateCustomer", FailureDesc: validationErr.FailureDesc}
 	}
 	return nil
 }
