@@ -26,19 +26,21 @@ var errTxtEn = map[string]ProdErr{
 	"SelectRowReadError":     "Unable to get row from the DB. Error: %v \n",
 	"MissingField":           "%s must not be empty\n",
 	"DtInvalidValidityDates": "The valid thru date (%v) must take place after the valid from date (%v)\n",
+	"unableToOpenCollection": "Unable to open collection %s\n",
 }
 
 var errTxtES = map[string]ProdErr{
 	"internalError":          "Error interno. Error: %v\n",
-	"insertError":            "No se pudo crear la producto. Error: %v\n",
-	"UpdateError":            "No se pudo actualizar la producto. Error: %v \n",
-	"DeleteError":            "No se pudo borrar la producto %v. Error: %v\n",
+	"insertError":            "No se pudo crear el producto. Error: %v\n",
+	"UpdateError":            "No se pudo actualizar el producto. Error: %v \n",
+	"DeleteError":            "No se pudo borrar el producto %v. Error: %v\n",
 	"DeleteRowNotFoundError": "Producto %s no se pudo encontrar. No se pudo borrar la producto",
 	"SelectReadError":        "No su pudo leer datos de la base de datos. Error: %v \n",
 	"SelectScanError":        "No se pudo leer los datos recibidos de la base de datos. Error: %v\n",
-	"SelectRowReadError":     "No se pudo leer la producto de la base de datos. Error: %v \n",
+	"SelectRowReadError":     "No se pudo leer el producto de la base de datos. Error: %v \n",
 	"MissingField":           "%s no debe estar vacio\n",
 	"DtInvalidValidityDates": "La fecha final (%v) no puede ser menor a la fecha inicial (%v)\n",
+	"unableToOpenCollection": "No se pudo abrir la colleccion %s\n",
 }
 
 func (ge *ProdErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
@@ -68,7 +70,7 @@ func (ge *ProdErr) UpdateError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("UpdateError", language), err)
 }
 
-func (ge *ProdErr) DeleteError(Id int64, err error) string {
+func (ge *ProdErr) DeleteError(Id string, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("DeleteError", language), Id, err)
 }
 
@@ -99,4 +101,7 @@ func (ge *ProdErr) DtInvalidValidityDates(validFrom, validThru time.Time) string
 
 func (ge *ProdErr) DelPromoNotInitialState() string {
 	return fmt.Sprintf(ge.getSqlTxt("DelPromoNotInitialState", language))
+}
+func (ge *ProdErr) UnableToOpenCollection(collectionName string) string {
+	return fmt.Sprintf(ge.getSqlTxt("unableToOpenCollection", language), collectionName)
 }
