@@ -130,6 +130,18 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50059:50059"
+  productcli:
+    build:
+      context: .
+      dockerfile: ./product/DockerfileCli
+      target: Dev
+    container_name: productclicont
+    env_file: ./product/docker-compose-cli.env
+    entrypoint: CompileDaemon --build="go build -o productClient ./product/client/" --command=./productClient
+    volumes:
+      - ./product/client:/go/src/goTemp/product/client
+    ports:
+      - "50060:50051"
   nats:
     build:
       context: ./nats

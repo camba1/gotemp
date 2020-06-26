@@ -33,5 +33,4 @@ ENV CLINAME=${CLIDIR}ClientAlp
 RUN apk --no-cache add ca-certificates
 WORKDIR /goTemp
 COPY --from=AlpBuild /go/src/goTemp/$CLINAME $CLINAME
-#CMD ["./userClientAlp"]
 CMD ./$CLINAME
