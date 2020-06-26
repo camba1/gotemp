@@ -128,7 +128,7 @@ func Test_customer_DeleteCustomer(t *testing.T) {
 	goodCustomer := custData["goodCustomer"]
 	newCustomerId, err := InsertTestCustomer(ctx, goodCustomer)
 	if err != nil {
-		t.Errorf("UpdateCustomer() Unable to create test customer. error = %v", err)
+		t.Errorf("DeleteCustomer() Unable to create test customer. error = %v", err)
 	}
 	custToDeleteId := newCustomerId
 
