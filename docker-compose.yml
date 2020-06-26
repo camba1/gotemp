@@ -102,6 +102,18 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50057:50057"
+  customercli:
+    build:
+      context: .
+      dockerfile: ./customer/DockerfileCli
+      target: Dev
+    container_name: customerclicont
+    env_file: ./customer/docker-compose-cli.env
+    entrypoint: CompileDaemon --build="go build -o customerClient ./customer/client/" --command=./customerClient
+    volumes:
+      - ./customer/client:/go/src/goTemp/customer/client
+    ports:
+      - "50058:50051"
   productsrv:
     build:
       context: .
@@ -119,8 +131,6 @@ services:
     ports:
       - "50059:50059"
   nats:
-#    image: nats
-#    command: --config nats-server.conf --user ${NATS_USER} --pass ${NATS_PWD}
     build:
       context: ./nats
       dockerfile: Dockerfile
