@@ -5,6 +5,8 @@ package product;
 
 import  "google/protobuf/timestamp.proto";
 import "globalProtos/standardFields.proto";
+import "google/protobuf/struct.proto";
+
 
 service productSrv {
     rpc GetProductById(SearchId) returns (product) {}
@@ -27,11 +29,14 @@ message response {
 }
 
 message product {
-    string id =1;
-    string name =2;
-    string hierarchyLevel = 3;
-    GlValidityDate validityDates = 4;
-    GlModification modifications = 5;
+    string _key =1;
+    string _id =2;
+    string _rev = 3;
+    string name =4;
+    string hierarchyLevel = 5;
+    GlValidityDate validityDates = 6;
+    GlModification modifications = 7;
+    google.protobuf.Struct extraFields = 8;
 }
 
 message products {
@@ -39,7 +44,7 @@ message products {
 }
 
 message SearchParams {
-    string id = 1;
+    string _key = 1;
     string name = 2;
     google.protobuf.Timestamp validDate = 3;
 }
@@ -49,7 +54,7 @@ message SearchString {
 }
 
 message SearchId {
-    string id = 1;
+    string _key = 1;
 }
 
 message validationErr {
