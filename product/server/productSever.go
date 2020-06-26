@@ -116,6 +116,7 @@ func connectToDB() adb.Database {
 	return db
 }
 
+//loadConfig: Load configuration from environment variables
 func loadConfig() {
 	//conf, err := config.NewConfig()
 	//if err != nil {

@@ -1,7 +1,9 @@
 package statements
 
+//custSql: Custom string that hold the statements run against the DB
 type custSql string
 
+//MaxRowsToFetch: Maximumn number of rows to pull from theDB in one call
 var MaxRowsToFetch = 200
 
 // Create update delete statements
@@ -44,6 +46,7 @@ const (
 								RETURN p`
 )
 
+//String: Returns the DB statement
 func (p custSql) String() string {
 	return string(p)
 }

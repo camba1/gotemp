@@ -59,6 +59,7 @@ func getCurrentUser(ctx context.Context) (string, error) {
 	return strconv.FormatInt(currentUser, 10), nil
 }
 
+//BeforeCreateProduct: Call data validations before creating a product
 func (p *Product) BeforeCreateProduct(ctx context.Context, product *proto.Product, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -79,6 +80,7 @@ func (p *Product) BeforeCreateProduct(ctx context.Context, product *proto.Produc
 	return nil
 }
 
+//BeforeUpdateProduct: Call data validations before updating a product
 func (p *Product) BeforeUpdateProduct(ctx context.Context, product *proto.Product, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -99,6 +101,7 @@ func (p *Product) BeforeUpdateProduct(ctx context.Context, product *proto.Produc
 	return nil
 }
 
+//BeforeDeleteProduct: Call data validations before deleting a product
 func (p *Product) BeforeDeleteProduct(ctx context.Context, product *proto.Product, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -113,6 +116,7 @@ func (p *Product) BeforeDeleteProduct(ctx context.Context, product *proto.Produc
 	return nil
 }
 
+//AfterCreateProduct: Call processes to be run after product create
 func (p *Product) AfterCreateProduct(ctx context.Context, product *proto.Product, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -127,6 +131,7 @@ func (p *Product) AfterCreateProduct(ctx context.Context, product *proto.Product
 	return nil
 }
 
+//AfterUpdateProduct: Call processes to be run after product update
 func (p *Product) AfterUpdateProduct(ctx context.Context, product *proto.Product, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -141,6 +146,7 @@ func (p *Product) AfterUpdateProduct(ctx context.Context, product *proto.Product
 	return nil
 }
 
+//AfterDeleteProduct: Call processes to be run after product delete
 func (p *Product) AfterDeleteProduct(ctx context.Context, product *proto.Product, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 

@@ -15,9 +15,11 @@ import (
 )
 
 const (
+	// productCollectionName: Name of the product collection (table)
 	productCollectionName = "product"
 )
 
+//GetProductById: Get product from DB based on a given ID
 func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, outProduct *proto.Product) error {
 	col, err := conn.Collection(ctx, productCollectionName)
 	if err != nil {
@@ -39,6 +41,7 @@ func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, 
 	return nil
 }
 
+//GetProducts: Search the products table in the DB based in a set of search parameters
 func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, products *proto.Products) error {
 	values, sqlStatement, err2 := p.getSQLForSearch(params)
 	if err2 != nil {
@@ -70,6 +73,8 @@ func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, p
 	return nil
 }
 
+//CreateProduct: Creates a product in the Database. Calls before and after create functions
+//for validations and sending record to the audit service via the broker
 func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, response *proto.Response) error {
 	outCustomer := &proto.Product{}
 	customerMap := make(map[string]interface{})
@@ -117,6 +122,8 @@ func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, r
 	return nil
 }
 
+//UpdateProduct: Update a product in the Database. Calls before and after create functions
+//for validations and sending record to the audit service via the broker
 func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, response *proto.Response) error {
 
 	outProduct := &proto.Product{}
@@ -155,6 +162,8 @@ func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, r
 	return nil
 }
 
+//DeleteProduct: Delete a product in the Database based on the product ID (Xkey). Calls before and after create functions
+//for validations and sending record to the audit service via the broker
 func (p *Product) DeleteProduct(ctx context.Context, searchId *proto.SearchId, response *proto.Response) error {
 	outCustomer := &proto.Product{}
 	if err := p.GetProductById(ctx, searchId, outCustomer); err != nil {

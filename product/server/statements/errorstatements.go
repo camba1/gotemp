@@ -7,14 +7,18 @@ import (
 	"time"
 )
 
+//language: Controls the language message will be displayed in the app. Defaults to English
 var language globalUtils.Languages = globalUtils.LangEN
 
+//SetLanguage: Change the language used in application
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
+//ProdErr: Custom errors related to this service
 type ProdErr string
 
+//errTxtEn: Error messages in English
 var errTxtEn = map[string]ProdErr{
 	"internalError":          "Internal error. Error: %v\n",
 	"insertError":            "Unable to create product. Error: %v\n",
@@ -29,6 +33,7 @@ var errTxtEn = map[string]ProdErr{
 	"unableToOpenCollection": "Unable to open collection %s\n",
 }
 
+//errTxtES: Error messages in Spanish
 var errTxtES = map[string]ProdErr{
 	"internalError":          "Error interno. Error: %v\n",
 	"insertError":            "No se pudo crear el producto. Error: %v\n",
@@ -43,6 +48,7 @@ var errTxtES = map[string]ProdErr{
 	"unableToOpenCollection": "No se pudo abrir la colleccion %s\n",
 }
 
+//getSqlTxt: Returns an error message text in a given language
 func (ge *ProdErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
 	var returnstr string
 	switch myLanguage {
