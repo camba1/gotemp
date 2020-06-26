@@ -11,11 +11,9 @@ COPY ./go.mod ./go.sum ./
 RUN go mod download
 COPY ./$CLIDIR ./$CLIDIR
 COPY ./user/proto ./user/proto
-#COPY ./go.mod ./go.sum ./
-#RUN go get -d  -v ./...
+COPY ./globalProtos ./globalProtos
 RUN go build -o $CLINAME ./$CLIDIR/client/
 EXPOSE 50051
-#CMD ["./userClient"]
 CMD ./$CLINAME
 
 # Compile the Alpine version of the application
