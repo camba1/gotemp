@@ -11,24 +11,29 @@ In it current incarnation (this is wip), this mono-repo uses the following stack
 - `multicast DNS`: for service registration and discovery 
 - `PostgreSql` for transactional data storage
 - `TimescaleDB` time series DB for historical audit data storage
-- `Docker` for creating images
+- `ArangoDB` Multi-model database for master data storage
+- `Docker` for creating application images
 - `Docker-compose` to run the services
 
-Below is a diagram that dsiplays the overall setup of the application:
+Below is a diagram that displays the overall setup of the application:
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V2.png)
 
 #### Repo organization
 
 The project is organized in a way that each folder represents either a service, a database or a shared library package.
 Currently, we have the following:
 
+- `arangodb`: Volumes mounted to the ArangoDB container as well as data initialization scripts
 - `audit`: Audit service to collect and store historical audit information
+- `customer`: Customer master data service
 - `globalErrors`: Generic errors shared package
+- `globalProtos`: Generic protobuf message definitions shared across packages
 - `globalUtils`: Generic utilities shared package
-- `postgres`: volumes mounted to the PostgreSQL DB container
+- `nats`: NATS dockerfile and configuration
+- `postgres`: Volumes mounted to the PostgreSQL DB container as well as data initialization scripts
 - `promotion`: Promotion service to track product discounts (this is the first service that was built)
-- `timescaleDB`: volumes mounted to the Timescale DB container
+- `timescaleDB`: Volumes mounted to the Timescale DB container as well as data initialization scripts
 - `user`: User and authentication service
 
 Additionally, we have the following files in the root directory as well:
@@ -53,6 +58,7 @@ Each one of the services has a similar structure:
 - `Dockerfile`: Build the image for the server service
 - `DockerfileCLI`: Build the image of the client service
 - `docker-compose.env`: Environment variable required to run the service when running the service with docker-compose
+- `docker-compose-cli.env`: Environment variable required to run the client when running the client with docker-compose
 
 ##### Building
 
@@ -81,16 +87,13 @@ the audit service may eventually store it in the time series DB. The audit servi
 
 `docker-compose up auditsrv`
 
-***Note*** The current implementation of the service does not yet necessarily wait for the DB to be ready to go. If
-a connection refused error is display when bringing up the service, bring the service back down (`docker-compose down`) and back up.
-
 #### Databases Initialization
 
-THe proejct initializes each of the DBs and seeds them with tables and data. THe data persists over time so that  the  containers
+The project initializes each of the DBs and seeds them with tables and data. THe data persists over time so that the containers
 can be brought up and down as needed when running docker-compose as long as the associated volume mounts are not deleted. 
 See the folders for each DB for details as well as the dockre-compose file.
 
 
 #### Additional information:
 
-Additional infomation can be found in the individual folders either in a readme.md or a doc.go file.
+Additional information can be found in the individual folders either in a `readme.md` or a `doc.go` file.
