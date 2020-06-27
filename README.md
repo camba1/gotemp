@@ -19,6 +19,12 @@ Below is a diagram that displays the overall setup of the application:
 
 ![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V2.png)
 
+In a nutshell. the application functionality is as follows:
+
+- Each service perform the basic CRUD operations to their underlying databases
+- All services authenticate via the user service
+- All CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB
+
 #### Repo organization
 
 The project is organized in a way that each folder represents either a service, a database or a shared library package.
