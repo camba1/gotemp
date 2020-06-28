@@ -15,8 +15,10 @@ import (
 	"time"
 )
 
+//dateLayoutISO: Default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
+// GetCustomerById: Call the customer service and retrieve the customer identified by a particular id
 func GetCustomerById(ctx context.Context, customerClient proto.CustomerSrvService, custId *proto.SearchId) (*proto.Customer, error) {
 
 	customer, err := customerClient.GetCustomerById(ctx, custId)
@@ -35,6 +37,7 @@ func GetCustomerById(ctx context.Context, customerClient proto.CustomerSrvServic
 
 }
 
+//GetCustomers: Contact the customer service and retrieve customer based on a search criteria
 func GetCustomers(ctx context.Context, customerClient proto.CustomerSrvService) (*proto.Customers, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -60,6 +63,7 @@ func GetCustomers(ctx context.Context, customerClient proto.CustomerSrvService) 
 
 }
 
+//CreateCustomer:Call the customer service and create a new customer
 func CreateCustomer(ctx context.Context, customerClient proto.CustomerSrvService) (*proto.Customer, error) {
 
 	//var cust *proto.Customer
@@ -95,6 +99,7 @@ func CreateCustomer(ctx context.Context, customerClient proto.CustomerSrvService
 	return resp.GetCustomer(), nil
 }
 
+//UpdateCustomer: Call the customer service and update a customer
 func UpdateCustomer(ctx context.Context, customerClient proto.CustomerSrvService, cust *proto.Customer) (*proto.Customer, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
@@ -119,6 +124,7 @@ func UpdateCustomer(ctx context.Context, customerClient proto.CustomerSrvService
 	return resp.GetCustomer(), nil
 }
 
+//DeleteCustomer: all the customer service and delete the customer identified by a given id
 func DeleteCustomer(ctx context.Context, customerClient proto.CustomerSrvService, custId *proto.SearchId) (int64, error) {
 
 	resp, err := customerClient.DeleteCustomer(ctx, custId)
@@ -135,6 +141,7 @@ func DeleteCustomer(ctx context.Context, customerClient proto.CustomerSrvService
 	return resp.GetAffectedCount(), nil
 }
 
+//timeStringToTimestamp: Convert time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
