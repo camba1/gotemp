@@ -1,6 +1,7 @@
 package globalUtils
 
 import (
+	"errors"
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"github.com/micro/go-micro/v2/broker"
@@ -29,6 +30,12 @@ func (mb *MyBroker) SendMsg(objectToSend []byte, header map[string]string, topic
 	message.Header = header
 	message.Body = objectToSend
 
+	if mb.Br == nil {
+		err1 := errors.New("broker is not defined or connected")
+		log.Printf(glErr.BrkNoMessageSent(topic, err1))
+		return err1
+
+	}
 	err := mb.Br.Connect()
 	if err != nil {
 		//log.Printf("unable to connect to broker: Error: %v" , err)
