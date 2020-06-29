@@ -172,7 +172,7 @@ services:
       - ./arangodb/apps_db_system:/var/lib/arangodb3-apps/_db/
       - ./arangodb/arangodbinit:/docker-entrypoint-initdb.d
   redis:
-    image: library/redis:6
+    image: redis
     container_name: rediscont
     volumes:
     - ./redis/data:/data
