@@ -26,8 +26,16 @@ const (
 	dbConStrEnvVarName = "POSTGRES_CONNECT"
 )
 
+//Other constants
+const (
+	DisableAuditRecordsEnvVarName = "DISABLE_AUDIT_RECORDS"
+)
+
 // conn: Database connection
 var conn *pgx.Conn
+
+//enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
+var glDisableAuditRecords = false
 
 //AuthWrapper: Authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
@@ -78,6 +86,35 @@ func connectToDB() *pgx.Conn {
 	return dbConn
 }
 
+func loadConfig() {
+	//conf, err := config.NewConfig()
+	//if err != nil {
+	//	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
+	//	//log.Fatal(err)
+	//}
+	//defer conf.Close()
+	//
+	//src := env.NewSource()
+	//
+	//err = conf.Load(src)
+	////ws, err := src.Read()
+	//if err != nil {
+	//	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
+	//	//log.Fatal(err)
+	//}
+	//test := conf.Map()
+	////log.Printf("conf %v\n", ws.Data)
+	//
+	//log.Printf("conf map %v\n", test)
+
+	audits := os.Getenv(DisableAuditRecordsEnvVarName)
+	if audits == "true" {
+		glDisableAuditRecords = true
+	} else {
+		glDisableAuditRecords = false
+	}
+}
+
 func main() {
 
 	//instantiate service
@@ -91,6 +128,9 @@ func main() {
 	if err != nil {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
+
+	//Load configuration
+	loadConfig()
 
 	//Connect to DB
 	conn = connectToDB()

@@ -153,13 +153,18 @@ func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.P
 
 //sendAudit: Convert a promotion to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (p *Promotion) sendAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, iObjectId int64, promotion *proto.Promotion) string {
-	objectId := strconv.FormatInt(iObjectId, 10)
-	byteUser, err := mb.ProtoToByte(promotion)
-	if err != nil {
-		return glErr.AudFailureSending(actionType, objectId, err)
+
+	if !glDisableAuditRecords {
+
+		objectId := strconv.FormatInt(iObjectId, 10)
+		byteUser, err := mb.ProtoToByte(promotion)
+		if err != nil {
+			return glErr.AudFailureSending(actionType, objectId, err)
+		}
+
+		log.Printf("sending audit record for %s:", actionFunc)
+		return globalUtils.AuditSend(ctx, mb, serviceName, actionFunc, actionType, objectName, objectId, byteUser)
+
 	}
-
-	log.Printf("sending audit record for %s:", actionFunc)
-	return globalUtils.AuditSend(ctx, mb, serviceName, actionFunc, actionType, objectName, objectId, byteUser)
-
+	return ""
 }
