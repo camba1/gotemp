@@ -176,6 +176,9 @@ services:
     container_name: rediscont
     volumes:
     - ./redis/data:/data
+    - ./redis/config:/usr/local/etc/redis/
+#    command: ["redis-server","/usr/local/etc/redis/redis.conf", "--appendonly", "yes"]
     command: ["redis-server", "--appendonly", "yes"]
+#    command: ["redis-server", "--appendonly", "yes", "--requirepass", "TestDB@home2"]
     ports:
       - "6379:6379"

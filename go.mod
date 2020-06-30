@@ -11,6 +11,7 @@ require (
 	github.com/jackc/pgx/v4 v4.6.0
 	github.com/micro/go-micro/v2 v2.8.0
 	github.com/micro/go-plugins/broker/nats/v2 v2.8.0
+	github.com/micro/go-plugins/store/redis/v2 v2.8.0
 	golang.org/x/crypto v0.0.0-20200510223506-06a226fb4e37
 	google.golang.org/protobuf v1.22.0
 
