@@ -8,12 +8,14 @@ import (
 	"github.com/micro/go-micro/v2/client"
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
+	store2 "github.com/micro/go-micro/v2/store"
 	"goTemp/globalUtils"
 	"goTemp/promotion/proto"
 	pb "goTemp/user/proto"
 	userSrv "goTemp/user/proto"
 	"log"
 	"os"
+	"time"
 )
 
 //serviceName: service identifier
@@ -132,6 +134,9 @@ func main() {
 	//Load configuration
 	loadConfig()
 
+	myStore := service.Options().Store
+	testStore(myStore)
+
 	//Connect to DB
 	conn = connectToDB()
 	defer conn.Close(context.Background())
@@ -144,4 +149,42 @@ func main() {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))
 	}
 
+}
+
+func testStore(myStore store2.Store) {
+	bal := myStore.Options()
+	log.Printf("myStore settings %v\n", bal)
+	key := "mytest"
+	rec := store2.Record{
+		Key:    key,
+		Value:  []byte("mytest2"),
+		Expiry: 2 * time.Hour,
+	}
+
+	err := myStore.Write(&rec)
+	if err != nil {
+		log.Printf("error writting. Error: %v", err)
+	}
+	rec1, err := myStore.Read(key)
+	if err != nil {
+		log.Printf("Uanble to read. Error: %v\n", err)
+	}
+	log.Printf("Read 1: %v\n", rec1)
+
+	listLimit := store2.ListLimit(5)
+	myList, err := myStore.List(listLimit)
+	if err != nil {
+		log.Printf("listing error %v\n", err)
+	}
+	log.Printf("list: %v", myList)
+
+	err = myStore.Delete(key)
+	if err != nil {
+		log.Printf("delete error %v\n", err)
+	}
+	myList, err = myStore.List(listLimit)
+	if err != nil {
+		log.Printf("listing error %v\n", err)
+	}
+	log.Printf("list: %v", myList)
 }
