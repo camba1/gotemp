@@ -9,6 +9,7 @@ import (
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
 	store2 "github.com/micro/go-micro/v2/store"
+	"github.com/micro/go-plugins/store/redis/v2"
 	"goTemp/globalUtils"
 	"goTemp/promotion/proto"
 	pb "goTemp/user/proto"
@@ -123,6 +124,7 @@ func main() {
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
+		micro.Store(redis.NewStore()),
 	)
 
 	service.Init()
