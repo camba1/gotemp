@@ -194,7 +194,7 @@ func (p *Promotion) buildSearchWhereClause(searchParms *proto.SearchParams) (str
 		values = append(values, searchParms.Name)
 		i++
 	}
-	if searchParms.GetCustomerId() != 0 {
+	if searchParms.GetCustomerId() != "" {
 		sqlWhereClause += fmt.Sprintf(" AND promotion.customerid = $%d", i)
 		values = append(values, searchParms.CustomerId)
 		i++
@@ -253,6 +253,10 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *proto.Search
 	if err != nil {
 		return err
 	}
+
+	//Get the customer name
+	getLookups(ctx, outPromotion)
+
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
 
 	return nil
@@ -345,4 +349,18 @@ func (p *Promotion) getAfterAlerts(ctx context.Context, promotion *proto.Promoti
 		return afterFuncErr.GetFailureDesc(), nil
 	}
 	return []string{}, nil
+}
+
+//getLookups: Function gets any read only lookups from other services (or cache) and add them to the ReadOnlyLookup field.
+//In this case, it is pulling the customer name from the customer service based on the customerid
+func getLookups(ctx context.Context, promotion *proto.Promotion) {
+	lookup := idLookup{}
+	custName, err := lookup.getCustomerName(ctx, promotion.CustomerId)
+	if err != nil {
+		log.Printf(glErr.MissingField("Customer Name"))
+	} else {
+		lookup := proto.ReadOnlyLookups{CustomerName: custName}
+		promotion.ReadOnlyLookup = &lookup
+	}
+
 }
