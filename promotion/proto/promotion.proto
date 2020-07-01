@@ -46,10 +46,15 @@ message Promotion {
     google.protobuf.Timestamp validFrom = 4;
     google.protobuf.Timestamp validThru = 5;
     bool active = 6;
-    int64 customerId = 7;
+    string customerId = 7;
     repeated Product product =8;
     int32 approvalStatus = 9;
     int32 prevApprovalStatus = 10;
+    readOnlyLookups readOnlyLookup = 11;
+}
+
+message readOnlyLookups {
+    string customerName = 1;
 }
 
 message Promotions {
@@ -60,7 +65,7 @@ message SearchParams {
     int64 id = 1;
     string name = 2;
     int64 productId = 3;
-    int64 customerId = 4;
+    string customerId = 4;
     google.protobuf.Timestamp validDate = 5;
 }
 

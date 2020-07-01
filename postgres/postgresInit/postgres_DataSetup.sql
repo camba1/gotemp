@@ -27,7 +27,7 @@ CREATE TABLE "public"."promotion" (
     validfrom timestamp ,
     validthru timestamp ,
     active boolean DEFAULT false,
-    customerid bigint  NOT NULL,
+    customerid varchar(50)  NOT NULL,
     approvalstatus integer  DEFAULT 0,
     prevapprovalstatus integer DEFAULT 0,
     PRIMARY KEY (id)
@@ -36,6 +36,6 @@ CREATE TABLE "public"."promotion" (
 
 -- Insert sample promotion data
 insert into promotion (name, description, validfrom, validthru, customerid)
-VALUES ('Promo1', 'Promo1 Desc', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','3308341401806443521'),
-       ('Promo2', 'Promo2 Desc', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','3308341401806443521'),
-       ('Promo3', 'Promo3 Desc', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','4308341401806443521')
+VALUES ('Promo1', 'Promo1 Desc', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','ducksrus'),
+       ('Promo2', 'Promo2 Desc', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','patoloco'),
+       ('Promo3', 'Promo3 Desc', TIMESTAMP '2000-01-01 00:00:00', TIMESTAMP '2200-01-01 00:00:00','ducksrus')
