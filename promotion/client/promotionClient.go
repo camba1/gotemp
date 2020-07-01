@@ -14,19 +14,13 @@ import (
 	"time"
 )
 
-const serverAddressEnvVar = "SERVERADDRESS"
-
+//dateLayoutISO: Default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
+//GetPromotionById: Call the promotion service and retrieve the promotion identified by a particular id
 func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (*proto.Promotion, error) {
 
-	//var promotion *proto.Promotion
-	//var err error
-	//if serverAddress != "" {
-	//	promotion, err = promotionClient.GetPromotionById(context.Background(), promoId, client.WithAddress(serverAddress))
-	//} else {
 	promotion, err := promotionClient.GetPromotionById(ctx, promoId)
-	//}
 
 	if err != nil {
 		log.Printf("Unable to find promotion by Id. Error: %v", err)
@@ -42,25 +36,15 @@ func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvSer
 
 }
 
+//GetPromotions: Contact the promotion service and retrieve promotions based on a search criteria
 func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotions, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
 	searchParms := proto.SearchParams{
-		//Id:         2308345766332077057,
-		Name: "Promo1",
-		//Name: 		"Super Promo",
-		//ProductId:  7308345766332077057,
-		CustomerId: 3308341401806443521,
+		Name:       "Promo1",
+		CustomerId: "ducksrus",
 		ValidDate:  searchDate,
 	}
-
-	//var promotion *proto.Promotions
-	//var err error
-	//if serverAddress != "" {
-	//	promotion, err = promotionClient.GetPromotions(context.Background(), &searchParms, client.WithAddress(serverAddress))
-	//} else {
-	//	promotion, err = promotionClient.GetPromotions(context.Background(), &searchParms)
-	//}
 
 	promotions, err := promotionClient.GetPromotions(ctx, &searchParms)
 
@@ -78,29 +62,27 @@ func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvServic
 
 }
 
+//CreatePromotion: Call the promotion service and create a new promotion
 func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotion, error) {
-
-	//var promo *proto.Promotion
-	//var err error
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
 
-	disc := &proto.Discount{
-		Id:          123456789,
-		Value:       0.59,
-		Type:        0,
-		Description: "Good customer",
-	}
-	prod1 := &proto.Product{
-		Id:      7308345766332077057,
-		UpcCode: "prod1a",
-	}
-	prod1.Discount = append(prod1.Discount, disc)
-	prod2 := &proto.Product{
-		Id:      8308345766441128962,
-		UpcCode: "prod1",
-	}
-	prod2.Discount = append(prod1.Discount, disc)
+	//disc := &proto.Discount{
+	//	Id:          123456789,
+	//	Value:       0.59,
+	//	Type:        0,
+	//	Description: "Good customer",
+	//}
+	//prod1 := &proto.Product{
+	//	Id:      7308345766332077057,
+	//	UpcCode: "prod1a",
+	//}
+	//prod1.Discount = append(prod1.Discount, disc)
+	//prod2 := &proto.Product{
+	//	Id:      8308345766441128962,
+	//	UpcCode: "prod1",
+	//}
+	//prod2.Discount = append(prod1.Discount, disc)
 
 	newPromo := proto.Promotion{
 		Id:                 6308345766332077057,
@@ -109,18 +91,12 @@ func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 		ValidFrom:          ptypes.TimestampNow(),
 		ValidThru:          validThru,
 		Active:             false,
-		CustomerId:         3308341401806443521,
+		CustomerId:         "ducksrus",
 		Product:            nil,
 		ApprovalStatus:     0,
 		PrevApprovalStatus: 0,
 	}
-	newPromo.Product = append(newPromo.Product, prod1, prod2)
-
-	//if serverAddress != "" {
-	//	promo, err = promotionClient.CreatePromotion(context.Background(), &newPromo, client.WithAddress(serverAddress))
-	//} else {
-	//	promo, err = promotionClient.CreatePromotion(context.Background(), &newPromo)
-	//}
+	//newPromo.Product = append(newPromo.Product, prod1, prod2)
 
 	resp, err := promotionClient.CreatePromotion(ctx, &newPromo)
 
@@ -136,6 +112,7 @@ func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetPromotion(), nil
 }
 
+//UpdatePromotion: Call the promotion service and update a promotion
 func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promo *proto.Promotion) (*proto.Promotion, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
@@ -161,7 +138,7 @@ func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	promo.ValidFrom = ptypes.TimestampNow()
 	promo.ValidThru = validThru
 	promo.Active = true
-	promo.CustomerId = 3308341401806443521
+	promo.CustomerId = "patoloco"
 	promo.Product = nil
 	promo.ApprovalStatus = 0
 	promo.PrevApprovalStatus = 0
@@ -181,19 +158,8 @@ func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetPromotion(), nil
 }
 
+//DeletePromotion: Call the promotion service and delete the promotion identified by a given id
 func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (int64, error) {
-
-	//searchId := pb.SearchId{
-	//	Id: 2312030045339653121,
-	//}
-	//
-	//var affectedCount *proto.AffectedCount
-	//var err error
-	//if serverAddress != "" {
-	//	affectedCount, err = promotionClient.DeletePromotion(context.Background(), promoId, client.WithAddress(serverAddress))
-	//} else {
-	//	affectedCount, err = promotionClient.DeletePromotion(context.Background(), promoId)
-	//}
 
 	resp, err := promotionClient.DeletePromotion(ctx, promoId)
 
@@ -209,6 +175,7 @@ func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetAffectedCount(), nil
 }
 
+//timeStringToTimestamp: Convert time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
