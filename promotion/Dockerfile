@@ -11,6 +11,8 @@ COPY ./go.mod ./go.sum ./
 RUN go mod download
 COPY ./$SRVDIR ./$SRVDIR
 COPY ./user/proto ./user/proto
+COPY ./customer/proto ./customer/proto
+COPY ./globalProtos ./globalProtos
 COPY ./globalerrors ./globalerrors
 COPY ./globalUtils ./globalUtils
 #COPY ./go.mod ./go.sum ./
