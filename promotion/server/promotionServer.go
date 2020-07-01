@@ -8,15 +8,12 @@ import (
 	"github.com/micro/go-micro/v2/client"
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
-	store2 "github.com/micro/go-micro/v2/store"
-	"github.com/micro/go-plugins/store/redis/v2"
 	"goTemp/globalUtils"
 	"goTemp/promotion/proto"
 	pb "goTemp/user/proto"
 	userSrv "goTemp/user/proto"
 	"log"
 	"os"
-	"time"
 )
 
 //serviceName: service identifier
@@ -39,6 +36,9 @@ var conn *pgx.Conn
 
 //enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
+
+//myStore: Store to hold cached values
+var glCache globalUtils.Cache
 
 //AuthWrapper: Authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
@@ -124,8 +124,11 @@ func main() {
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
-		micro.Store(redis.NewStore()),
+		//micro.Store(redis.NewStore()),
 	)
+
+	//initialize plugins (this is just needed for stores)
+	initPlugins()
 
 	service.Init()
 	err := proto.RegisterPromotionSrvHandler(service.Server(), new(Promotion))
@@ -136,9 +139,6 @@ func main() {
 	//Load configuration
 	loadConfig()
 
-	myStore := service.Options().Store
-	testStore(myStore)
-
 	//Connect to DB
 	conn = connectToDB()
 	defer conn.Close(context.Background())
@@ -146,47 +146,15 @@ func main() {
 	//setup the nats broker
 	mb.Br = service.Options().Broker
 
+	//init the cache store
+	glCache.Store = service.Options().Store
+	glCache.SetDatabaseName(serviceName)
+	defer glCache.Store.Close()
+	//testStore2()
+
 	// Run Service
 	if err := service.Run(); err != nil {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))
 	}
 
-}
-
-func testStore(myStore store2.Store) {
-	bal := myStore.Options()
-	log.Printf("myStore settings %v\n", bal)
-	key := "mytest"
-	rec := store2.Record{
-		Key:    key,
-		Value:  []byte("mytest2"),
-		Expiry: 2 * time.Hour,
-	}
-
-	err := myStore.Write(&rec)
-	if err != nil {
-		log.Printf("error writting. Error: %v", err)
-	}
-	rec1, err := myStore.Read(key)
-	if err != nil {
-		log.Printf("Uanble to read. Error: %v\n", err)
-	}
-	log.Printf("Read 1: %v\n", rec1)
-
-	listLimit := store2.ListLimit(5)
-	myList, err := myStore.List(listLimit)
-	if err != nil {
-		log.Printf("listing error %v\n", err)
-	}
-	log.Printf("list: %v", myList)
-
-	err = myStore.Delete(key)
-	if err != nil {
-		log.Printf("delete error %v\n", err)
-	}
-	myList, err = myStore.List(listLimit)
-	if err != nil {
-		log.Printf("listing error %v\n", err)
-	}
-	log.Printf("list: %v", myList)
 }
