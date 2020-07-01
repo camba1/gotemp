@@ -55,6 +55,15 @@ const (
 	unMarshalBytePartialMap SrvError = "Unable to unmarshal byte partial version of map to proto struct. Error: %v\n"
 )
 
+const (
+	cacheUnableToWrite       SrvError = "Unable to write to cache with key %s. Error: %v\n"
+	cacheDBNameNotSet        SrvError = "Cache Database Name is not set. Please provide a value\n"
+	cacheUnableToReadVal     SrvError = "Unable to read key %v. Error: %v\n"
+	cacheUnableToDeleteVal   SrvError = "Unable to delete key %v from cache. Error %v\n"
+	cacheTooManyValuesToList SrvError = "Requested too many keys to list from cache. Max number is %d\n"
+	cacheListError           SrvError = "Unable to list cache Keys .Error %v\n"
+)
+
 /*
 Functions that return the error message formatted with the information passed in as arguments to the individual functions
 */
@@ -154,4 +163,30 @@ func (ge *SrvError) MarshalPartialMap(err error) string {
 }
 func (ge *SrvError) UnMarshalBytePartialMap(err error) string {
 	return fmt.Sprintf(string(unMarshalBytePartialMap), err)
+}
+
+func (ge *SrvError) CacheUnableToWrite(key string, err error) string {
+	return fmt.Sprintf(string(cacheUnableToWrite), key, err)
+}
+
+func (ge *SrvError) CacheDBNameNotSet() string {
+	return fmt.Sprintf(string(cacheDBNameNotSet))
+}
+
+func (ge *SrvError) CacheUnableToReadVal(key string, err error) string {
+	return fmt.Sprintf(string(cacheUnableToReadVal), key, err)
+}
+
+func (ge *SrvError) CacheUnableToDeleteVal(key string, err error) string {
+	return fmt.Sprintf(string(cacheUnableToDeleteVal), key, err)
+}
+
+//
+func (ge *SrvError) CacheTooManyValuesToList(maxValues int) string {
+	return fmt.Sprintf(string(cacheTooManyValuesToList), maxValues)
+}
+
+//cacheListError
+func (ge *SrvError) CacheListError(err error) string {
+	return fmt.Sprintf(string(cacheListError), err)
 }
