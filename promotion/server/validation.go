@@ -43,7 +43,7 @@ func checkMandatoryFields(promo *proto.Promotion) ([]string, error) {
 	if promo.GetName() == "" {
 		FailureDesc = append(FailureDesc, promoErr.MissingField("name"))
 	}
-	if promo.GetCustomerId() == 0 {
+	if promo.GetCustomerId() == "" {
 		FailureDesc = append(FailureDesc, promoErr.MissingField("customer"))
 	}
 	dateValidation, err := checkValidityDates(promo.ValidFrom, promo.ValidThru)
