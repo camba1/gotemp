@@ -139,18 +139,17 @@ func main() {
 	//Load configuration
 	loadConfig()
 
+	//init the cache store
+	glCache.Store = service.Options().Store
+	glCache.SetDatabaseName(serviceName)
+	defer glCache.Store.Close()
+
 	//Connect to DB
 	conn = connectToDB()
 	defer conn.Close(context.Background())
 
 	//setup the nats broker
 	mb.Br = service.Options().Broker
-
-	//init the cache store
-	glCache.Store = service.Options().Store
-	glCache.SetDatabaseName(serviceName)
-	defer glCache.Store.Close()
-	//testStore2()
 
 	// Run Service
 	if err := service.Run(); err != nil {
