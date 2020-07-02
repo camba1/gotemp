@@ -10,14 +10,15 @@ In it current incarnation (this is wip), this mono-repo uses the following stack
 - `NATS` for Pub/Sub event driven communication
 - `multicast DNS`: for service registration and discovery 
 - `PostgreSql` for transactional data storage
-- `TimescaleDB` time series DB for historical audit data storage
-- `ArangoDB` Multi-model database for master data storage
+- `TimescaleDB` time series DB used for historical audit data storage
+- `ArangoDB`is a multi-model database used for master data storage
+- `Redis` is used to cache data and reduce number of data requests to other services
 - `Docker` for creating application images
 - `Docker-compose` to run the services
 
 Below is a diagram that displays the overall setup of the application:
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V2.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V3.png)
 
 In a nutshell. the application functionality is as follows:
 
@@ -38,7 +39,9 @@ Currently, we have the following:
 - `globalUtils`: Generic utilities shared package
 - `nats`: NATS dockerfile and configuration
 - `postgres`: Volumes mounted to the PostgreSQL DB container as well as data initialization scripts
+- `product`: Product master data service
 - `promotion`: Promotion service to track product discounts (this is the first service that was built)
+- `redis`: Volumes mounted on the redis container as well as config files (if any)
 - `timescaleDB`: Volumes mounted to the Timescale DB container as well as data initialization scripts
 - `user`: User and authentication service
 
@@ -48,7 +51,7 @@ Additionally, we have the following files in the root directory as well:
 - `.gitignore`: Files to be ignored by git
 - `docker-compose`: Compose file that controls the building of the different services and their dependencies
 - `go.mod and go.sum`: Go modules control
-- `main.go`: Not used for service yet
+- `main.go`: Not used for services yet
 - `Makefile`: shortcuts to common actions
 - `Readme.md`: Well... this file...
 
