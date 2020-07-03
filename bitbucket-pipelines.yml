@@ -1,0 +1,22 @@
+image: docker:stable
+
+options:
+  docker: true
+
+pipelines:
+  custom:
+    default:
+      - step:
+          script:
+            - docker-compose up productsrv
+            - docker-compose up productcli
+            - docker-compose down
+
+  #pushImage:
+   # - step:
+    #    script: 
+          # Set $DOCKER_HUB_USERNAME and $DOCKER_HUB_PASSWORD as environment variables in repository settings
+         # - export IMAGE_NAME=your-Dockerhub-account/your-docker-image-name:$BITBUCKET_COMMIT
+         # - docker build -t $IMAGE_NAME .
+          #- docker login --username $DOCKER_HUB_USERNAME --password $DOCKER_HUB_PASSWORD
+        #  - docker push $IMAGE_NAME
