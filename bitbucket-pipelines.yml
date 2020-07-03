@@ -1,4 +1,4 @@
-image: docker:stable
+image: docker/compose #docker:stable
 
 options:
   docker: true
@@ -8,7 +8,7 @@ pipelines:
     default:
       - step:
           script:
-            - chmod 777 cicd/pipelines/dependencies.sh
+#            - chmod 777 cicd/pipelines/dependencies.sh
             - cicd/pipelines/dependencies.sh
             - docker-compose up productsrv
             - docker-compose up productcli
