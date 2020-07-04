@@ -8,8 +8,6 @@ pipelines:
     default:
       - step:
           script:
-#            - chmod 777 cicd/pipelines/dependencies.sh
-#            - cicd/pipelines/dependencies.sh
             - docker-compose up productsrv
             - docker-compose up productcli
             - docker-compose down
