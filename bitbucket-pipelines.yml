@@ -1,15 +1,15 @@
-image: docker/compose #docker:stable
+image: docker/compose
 
 options:
   docker: true
+  max-time: 10
 
 pipelines:
   custom:
     default:
       - step:
           script:
-            - docker-compose up productsrv
-            - docker-compose up productcli
+            - docker-compose -f docker-compose.yml -f docker-compose-test.yml up productsrv
             - docker-compose down
 
   #pushImage:
