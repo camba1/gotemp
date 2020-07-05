@@ -124,6 +124,7 @@ services:
     depends_on:
       - arangodb
       - nats
+      - usersrv
     container_name: productsrvcont
     entrypoint: CompileDaemon --build="go build -o productServer ./product/server/" --command=./productServer
     env_file: ./product/docker-compose.env
