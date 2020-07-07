@@ -101,3 +101,5 @@ Temporary Items
 /timescaledb/timescaleDB/
 /arangodb/db/
 /redis/data/
+/web/svelte/node_modules/
+/web/svelte/public/build/
