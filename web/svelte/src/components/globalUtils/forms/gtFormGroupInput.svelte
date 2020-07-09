@@ -1,15 +1,15 @@
 <script>
     import { FormGroup, Input, Label  } from "sveltestrap"
-    export let config
+    export let searchParams
 </script>
 
-{#each config as configItem}
+{#each searchParams as searchParamsItem}
     <FormGroup>
-        <Label for={configItem.name}>{configItem.text}</Label>
+        <Label for={searchParamsItem.name}>{searchParamsItem.text}</Label>
         <Input
-                type={configItem.type}
-                name={configItem.name}
-                id={configItem.id}
-                placeholder={configItem.placeholder} />
+                type={searchParamsItem.type}
+                name={searchParamsItem.name}
+                id={searchParamsItem.id}
+                placeholder={searchParamsItem.placeholder} />
     </FormGroup>
 {/each}
