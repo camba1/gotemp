@@ -2,7 +2,7 @@
 	import Navbar from "./Components/Navbar.svelte";
 	import Footer from "./Components/footer.svelte";
 	import Login from "./Components/login.svelte";
-	import Product from "./Components/product/product.svelte";
+	import Products from "./Components/product/products.svelte";
 	export let name;
 
 	function handleMessage(event) {
@@ -42,6 +42,7 @@
 
 <Login on:message={handleMessage}/>
 
-<Product/>
+<Products/>
 
-<Footer/>
+
+<!--<Footer/>-->
