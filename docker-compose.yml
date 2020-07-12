@@ -187,10 +187,6 @@ services:
   microapi:
     image: micro/micro
     container_name: microcont
-#    environment:
-#      - MICRO_REGISTRY=mdns
-#    command: api --handler=rpc --address=:8080 --namespace=goTemp
-#    command: api --handler=rpc --address=:8080
-    command: api --handler=rpc
+    command: api --handler=rpc --namespace=goTemp.api
     ports:
     - "8080:8080"

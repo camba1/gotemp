@@ -14,7 +14,9 @@ import (
 )
 
 //serviceName: service identifier
-const serviceName = "user"
+const serviceName = "goTemp.api.user"
+
+//const serviceName = "user"
 
 const (
 	//dbName: Name of the DB hosting the data
@@ -151,12 +153,6 @@ func main() {
 	//setup the nats broker
 
 	mb.Br = service.Options().Broker
-	//topic := "test"
-	//queueName := "test"
-	//_ = mb.subToMsg( getMsg, topic,queueName)
-	//userToSend := &pb.User{Id: 1234, Email: "werewq", ValidFrom: ptypes.TimestampNow()}
-	//header := map[string]string{"test": "Test"}
-	//_ = mb.sendMsg( userToSend,header, topic)
 
 	// Run Service
 	err = service.Run()
