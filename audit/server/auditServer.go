@@ -95,6 +95,7 @@ func main() {
 
 	//setup the nats broker
 	mb.Br = service.Options().Broker
+	defer mb.Br.Disconnect()
 
 	//topic := "test"
 	//queueName := "test"
