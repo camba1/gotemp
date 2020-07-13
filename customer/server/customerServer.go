@@ -6,6 +6,7 @@ import (
 	adb "github.com/arangodb/go-driver"
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/client"
+	"strings"
 
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
@@ -19,8 +20,12 @@ import (
 	"os"
 )
 
-//serviceName: service identifier
-const serviceName = "customer"
+const (
+	//serviceName: service identifier
+	serviceName = "goTemp.api.customer"
+	//serviceNameUser: service identifier for user service
+	serviceNameUser = "goTemp.api.user"
+)
 
 //DB related constants
 const (
@@ -65,10 +70,20 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 			return fmt.Errorf(glErr.AuthNoMetaData(req.Endpoint()))
 		}
 
-		token := meta["Token"]
+		auth, ok := meta["Authorization"]
+		if !ok {
+			return fmt.Errorf(glErr.AuthNilToken())
+		}
+		authSplit := strings.SplitAfter(auth, " ")
+		if len(authSplit) != 2 {
+			return fmt.Errorf(glErr.AuthNilToken())
+		}
+		token := authSplit[1]
+		//token := meta["Token"]
+
 		log.Printf("endpoint: %v", req.Endpoint())
 
-		userClient := userSrv.NewUserSrvService("user", client.DefaultClient)
+		userClient := userSrv.NewUserSrvService(serviceNameUser, client.DefaultClient)
 		outToken, err := userClient.ValidateToken(ctx, &pb.Token{Token: token})
 		if err != nil {
 			return err
@@ -171,6 +186,7 @@ func main() {
 
 	//setup the nats broker
 	mb.Br = service.Options().Broker
+	defer mb.Br.Disconnect()
 
 	// Run Service
 	err = service.Run()

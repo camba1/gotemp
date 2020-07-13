@@ -14,10 +14,17 @@ import (
 	userSrv "goTemp/user/proto"
 	"log"
 	"os"
+	"strings"
 )
 
-//serviceName: service identifier
-const serviceName = "promotion"
+const (
+	//serviceName: service identifier
+	serviceName = "goTemp.api.promotion"
+	//serviceNameUser: service identifier for user service
+	serviceNameUser = "goTemp.api.user"
+	//serviceNameCustomer: service identifier for customer service
+	serviceNameCustomer = "goTemp.api.customer"
+)
 
 const (
 	//dbName: Name of the DB hosting the data
@@ -48,10 +55,20 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 			return fmt.Errorf(glErr.AuthNoMetaData(req.Endpoint()))
 		}
 
-		token := meta["Token"]
+		auth, ok := meta["Authorization"]
+		if !ok {
+			return fmt.Errorf(glErr.AuthNilToken())
+		}
+		authSplit := strings.SplitAfter(auth, " ")
+		if len(authSplit) != 2 {
+			return fmt.Errorf(glErr.AuthNilToken())
+		}
+		token := authSplit[1]
+		//token := meta["Token"]
+
 		log.Printf("endpoint: %v", req.Endpoint())
 
-		userClient := userSrv.NewUserSrvService("user", client.DefaultClient)
+		userClient := userSrv.NewUserSrvService(serviceNameUser, client.DefaultClient)
 		outToken, err := userClient.ValidateToken(ctx, &pb.Token{Token: token})
 		if err != nil {
 			return err
@@ -150,6 +167,7 @@ func main() {
 
 	//setup the nats broker
 	mb.Br = service.Options().Broker
+	defer mb.Br.Disconnect()
 
 	// Run Service
 	if err := service.Run(); err != nil {

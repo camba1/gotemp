@@ -11,6 +11,7 @@ import (
 	pb "goTemp/user/proto"
 	"log"
 	"os"
+	"strings"
 )
 
 //serviceName: service identifier
@@ -49,7 +50,18 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 			return fmt.Errorf(glErr.AuthNoMetaData(req.Endpoint()))
 		}
 
-		token := meta["Token"]
+		auth, ok := meta["Authorization"]
+		if !ok {
+			return fmt.Errorf(glErr.AuthNilToken())
+		}
+		authSplit := strings.SplitAfter(auth, " ")
+		if len(authSplit) != 2 {
+			return fmt.Errorf(glErr.AuthNilToken())
+		}
+		token := authSplit[1]
+
+		//token := meta["Token"]
+
 		log.Printf("endpoint: %v", req.Endpoint())
 
 		//Validate token
@@ -153,6 +165,7 @@ func main() {
 	//setup the nats broker
 
 	mb.Br = service.Options().Broker
+	defer mb.Br.Disconnect()
 
 	// Run Service
 	err = service.Run()
