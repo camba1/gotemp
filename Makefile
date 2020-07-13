@@ -32,3 +32,9 @@ genproductproto:
 	protoc --proto_path=$$GOPATH/src:. --micro_out=source_relative:.. --go_out=. --go_opt=paths=source_relative product/proto/product.proto
 genstandardFieldsproto:
 	protoc --proto_path=$$GOPATH/src:. --micro_out=source_relative:.. --go_out=. --go_opt=paths=source_relative globalProtos/standardFields.proto
+
+promoviaapigateway:
+	curl --location --request POST 'http://localhost:8080/promotion/promotionSrv/getPromotions' \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5NDY3Mzc2OSwiaWF0IjoxNTk0NTg3MzY5LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.LDTwQLtydDzLmL4RIyNu6YobHFFJSA_aPPCuSSkjFco' \
+    --data-raw '{"name":"Promo1", "customerId": "ducksrus"}'
