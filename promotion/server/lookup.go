@@ -10,12 +10,11 @@ import (
 type idLookup struct{}
 
 const (
-	customerServiceName   = "customer"
 	cacheCustomerIdPrefix = "customerId"
 )
 
 func (i *idLookup) getCustomerNameFromService(ctx context.Context, customerId string) (string, error) {
-	customerClient := custServ.NewCustomerSrvService(customerServiceName, client.DefaultClient)
+	customerClient := custServ.NewCustomerSrvService(serviceNameCustomer, client.DefaultClient)
 	customer, err := customerClient.GetCustomerById(ctx, &custServ.SearchId{XKey: customerId})
 	if err != nil {
 		return "", err
