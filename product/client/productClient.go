@@ -15,6 +15,13 @@ import (
 	"time"
 )
 
+const (
+	//serviceName: service identifier
+	serviceName = "goTemp.api.product"
+	//serviceNameUser: service identifier for user service
+	serviceNameUser = "goTemp.api.user"
+)
+
 //dateLayoutISO: Default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
@@ -182,7 +189,8 @@ func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	}
 
 	ctx := metadata.NewContext(context.Background(), map[string]string{
-		"token": authToken.Token,
+		//"token": authToken.Token,
+		"Authorization": "Bearer " + authToken.Token,
 	})
 	return ctx, nil
 }
@@ -195,12 +203,12 @@ func main() {
 	fmt.Println("Client Running")
 
 	// send requests
-	ctx, err := loginUser(userSrv.NewUserSrvService("user", client.DefaultClient))
+	ctx, err := loginUser(userSrv.NewUserSrvService(serviceNameUser, client.DefaultClient))
 	if err != nil {
 		return
 	}
 
-	productClient := proto.NewProductSrvService("product", service.Client())
+	productClient := proto.NewProductSrvService(serviceName, service.Client())
 
 	createdPromo, err := CreateProduct(ctx, productClient)
 	if err != nil {
