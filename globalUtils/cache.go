@@ -7,15 +7,21 @@ import (
 	"time"
 )
 
+//cacheDefaultExpiration: Default time for a value in the cache to expire
 const cacheDefaultExpiration = 2 * time.Hour
+
+//cacheMaxListLimit: Maximum number of items to pull from the cache when doing a list of keys
 const cacheMaxListLimit = 200
 
+//Cache: struct in charge of handling the caching. it uses the default micro store
+//functionality backed with a redis instance
 type Cache struct {
 	Store          store2.Store
 	expiryDuration time.Duration
 	databaseName   string
 }
 
+//DatabaseName: used to determine the Db where to store the data. Not used with redis.
 func (c *Cache) DatabaseName() string {
 	if c.databaseName == "" {
 		log.Printf(glErr.CacheDBNameNotSet())
@@ -23,10 +29,12 @@ func (c *Cache) DatabaseName() string {
 	return c.databaseName
 }
 
+//SetDatabaseName: used to determine the Db where to store the data. Not used with redis.
 func (c *Cache) SetDatabaseName(databaseName string) {
 	c.databaseName = databaseName
 }
 
+//ExpiryDuration: Gets the time that values in the cache are set to expire
 func (c *Cache) ExpiryDuration() time.Duration {
 	if c.expiryDuration == 0 {
 		c.expiryDuration = cacheDefaultExpiration
@@ -34,10 +42,12 @@ func (c *Cache) ExpiryDuration() time.Duration {
 	return c.expiryDuration
 }
 
+//SetExpiryDuration: Overrides the time before values in the cache expire
 func (c *Cache) SetExpiryDuration(expiryDuration time.Duration) {
 	c.expiryDuration = expiryDuration
 }
 
+//checkDBandPrefix; Ensure that DB name and prefix are set
 func (c *Cache) checkDBandPrefix(prefix string) error {
 	if c.databaseName == "" {
 		return errors.New(glErr.CacheDBNameNotSet())
@@ -48,6 +58,8 @@ func (c *Cache) checkDBandPrefix(prefix string) error {
 	return nil
 }
 
+//GetCacheValue: Get a value from the cache. The key of the value to be read is a
+//combination of the provided prefix and  key
 func (c *Cache) GetCacheValue(prefix string, key string) (string, error) {
 
 	err := c.checkDBandPrefix(prefix)
@@ -69,6 +81,8 @@ func (c *Cache) GetCacheValue(prefix string, key string) (string, error) {
 	return value, nil
 }
 
+//SetCacheValue: Sets a value in the cache. The key of the value to be read is a
+////combination of the provided prefix and  key
 func (c *Cache) SetCacheValue(prefix string, key string, value string) error {
 	err := c.checkDBandPrefix(prefix)
 	if err != nil {
@@ -88,6 +102,8 @@ func (c *Cache) SetCacheValue(prefix string, key string, value string) error {
 	return nil
 }
 
+//DeleteCacheValue: Delete a value from the cache. The key of the value to be read is a
+//////combination of the provided prefix and  key
 func (c *Cache) DeleteCacheValue(prefix string, key string) error {
 	err := c.checkDBandPrefix(prefix)
 	if err != nil {
@@ -102,6 +118,7 @@ func (c *Cache) DeleteCacheValue(prefix string, key string) error {
 	return nil
 }
 
+//ListCacheValues: List all keys present in the cache up to a max of 'cacheMaxListLimit' values
 func (c *Cache) ListCacheValues(prefix string, numberOfValues uint, offsetValue uint) ([]string, error) {
 	err := c.checkDBandPrefix(prefix)
 	if err != nil {
