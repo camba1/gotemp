@@ -13,8 +13,10 @@ import (
 //glErr: Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//serviceName: Name of this service and which will be used for service discovery and registration
-const serviceName = "audit"
+const (
+	//serviceName: Name of this service and which will be used for service discovery and registration
+	serviceName = "goTemp.api.audit"
+)
 
 const (
 	//dbName: Name of the DB hosting the data
@@ -47,7 +49,17 @@ func getDBConnString() string {
 //			return fmt.Errorf(glErr.AuthNoMetaData(req.Endpoint()))
 //		}
 //
-//		token := meta["Token"]
+//		auth,ok := meta["Authorization"]
+//		if !ok {
+//			return fmt.Errorf(glErr.AuthNilToken())
+//		}
+//		authSplit := strings.SplitAfter(auth, " ")
+//			if len(authSplit) != 2 {
+//		return fmt.Errorf(glErr.AuthNilToken())
+//}
+//		token := authSplit[1]
+
+//		//token := meta["Token"]
 //		log.Printf("endpoint: %v", req.Endpoint())
 //
 //		var u User
