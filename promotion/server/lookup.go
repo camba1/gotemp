@@ -7,12 +7,15 @@ import (
 	"log"
 )
 
+//idLookup: Struct in charge of looking up names based on ids
 type idLookup struct{}
 
 const (
+	//cacheCustomerIdPrefix: Prefix to be used when storing a new customer id value in the cache
 	cacheCustomerIdPrefix = "customerId"
 )
 
+//getCustomerNameFromService: Get a customer id directly from the customer service
 func (i *idLookup) getCustomerNameFromService(ctx context.Context, customerId string) (string, error) {
 	customerClient := custServ.NewCustomerSrvService(serviceNameCustomer, client.DefaultClient)
 	customer, err := customerClient.GetCustomerById(ctx, &custServ.SearchId{XKey: customerId})
@@ -22,6 +25,8 @@ func (i *idLookup) getCustomerNameFromService(ctx context.Context, customerId st
 	return customer.Name, nil
 }
 
+//getCustomerName: Lookup the customer id. first search the cache If customer if not found in cache
+//call function to get it from the customer service and store it in the cache.
 func (i *idLookup) getCustomerName(ctx context.Context, customerId string) (string, error) {
 	customerName := ""
 	customerName, err := glCache.GetCacheValue(cacheCustomerIdPrefix, customerId)
