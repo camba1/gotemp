@@ -2,7 +2,7 @@
 
 goTemp is an introduction to Golang microservices using go-micro.
 
-In it current incarnation (this is wip), this mono-repo uses the following stack:
+In it current incarnation (this is wip), this mono-repo uses the following stack as backend:
 
 - `Golang` as its main implementation technology
 - `go-Micro` as the micro service framework
@@ -16,15 +16,25 @@ In it current incarnation (this is wip), this mono-repo uses the following stack
 - `Docker` for creating application images
 - `Docker-compose` to run the services
 
+In terms of the web front end, the stack is as follows:
+
+- `Javascript` as its main implementation technology
+- `Svelte` is used as  the compilation engine (via rollup)
+- `Sapper` is the javascript framework
+- `Sveltestrap` provides the css framework and is based on bootstrap
+
 Below is a diagram that displays the overall setup of the application:
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V3.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V4.png)
 
-In a nutshell. the application functionality is as follows:
+In a nutshell. the application functionality is as follows in the backend:
 
 - Each service perform the basic CRUD operations to their underlying databases
 - All services authenticate via the user service
-- All CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB
+- All completed CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB
+- Each service has a client which can be used to test all basic CRUD functionality
+
+The frontend is still under construction at this time.
 
 #### Repo organization
 
@@ -34,6 +44,7 @@ Currently, we have the following:
 - `arangodb`: Volumes mounted to the ArangoDB container as well as data initialization scripts
 - `audit`: Audit service to collect and store historical audit information
 - `customer`: Customer master data service
+- `diagramforDocs`: Diagrams used in the readme documents
 - `globalErrors`: Generic errors shared package
 - `globalProtos`: Generic protobuf message definitions shared across packages
 - `globalUtils`: Generic utilities shared package
@@ -44,12 +55,14 @@ Currently, we have the following:
 - `redis`: Volumes mounted on the redis container as well as config files (if any)
 - `timescaleDB`: Volumes mounted to the Timescale DB container as well as data initialization scripts
 - `user`: User and authentication service
+- `web`: application web frontend
 
 Additionally, we have the following files in the root directory as well:
 
 - `.dockerignore`: Files to be ignored when building service images
 - `.gitignore`: Files to be ignored by git
 - `docker-compose`: Compose file that controls the building of the different services and their dependencies
+- `docker-compose-test`: Override compose file that can be used to test different services with their dependencies
 - `go.mod and go.sum`: Go modules control
 - `main.go`: Not used for services yet
 - `Makefile`: shortcuts to common actions
