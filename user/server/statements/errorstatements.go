@@ -26,6 +26,7 @@ var errTxtEn = map[string]UserErr{
 	"selectScanError":        "Unable to read the user rows returned from the Db. Error: %v\n",
 	"selectRowReadError":     "Unable to get row from the DB. Error: %v \n",
 	"delUserActive":          "User cannot be deleted because it is active \n",
+	"userNotFound":           "User not found\n",
 }
 
 var errTxtES = map[string]UserErr{
@@ -40,6 +41,7 @@ var errTxtES = map[string]UserErr{
 	"selectScanError":        "No se pudo leer los datos recibidos de la base de datos. Error: %v\n",
 	"selectRowReadError":     "No se pudo leer el usuario de la base de datos. Error: %v \n",
 	"delUserActive":          "Usario no puede ser borrado porque esta activo \n",
+	"userNotFound":           "Usuario no se puedo encontrar\n",
 }
 
 func (ge *UserErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
@@ -99,4 +101,8 @@ func (ge *UserErr) UpdateDupEmail() string {
 
 func (ge *UserErr) InsertDupEmail() string {
 	return fmt.Sprintf(ge.getSqlTxt("insertDupEmail", language))
+}
+
+func (ge *UserErr) UserNotFound() string {
+	return fmt.Sprintf(ge.getSqlTxt("userNotFound", language))
 }

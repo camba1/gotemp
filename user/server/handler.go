@@ -400,6 +400,11 @@ func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 		return err
 	}
 
+	if outUsers.GetUser() == nil {
+		log.Printf(userErr.UserNotFound())
+		return errors.New(userErr.UserNotFound())
+	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(outUsers.User[0].GetPwd()), []byte(user.GetPwd())); err != nil {
 		return err
 	}
