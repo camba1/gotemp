@@ -119,3 +119,44 @@ func TestUser_ValidateToken(t *testing.T) {
 		})
 	}
 }
+
+func TestUser_Auth(t *testing.T) {
+	type args struct {
+		ctx   context.Context
+		user  *pb.User
+		token *pb.Token
+	}
+
+	loadConfig()
+	conn = connectToDB()
+	ctx := context.Background()
+	goodUser := &pb.User{
+		Pwd:   "1234",
+		Email: "duck@mymail.com"}
+	badUser := &pb.User{
+		Pwd:   "0000",
+		Email: "XYZ@mybadmail.com"}
+
+	tests := []struct {
+		name      string
+		args      args
+		wantErr   bool
+		wantToken bool
+	}{
+		{name: "Find customer", args: args{ctx: ctx, user: goodUser, token: &pb.Token{}}, wantErr: false, wantToken: true},
+		{name: "Do not find customer", args: args{ctx: ctx, user: badUser, token: &pb.Token{}}, wantErr: true, wantToken: false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			u := &User{}
+			err := u.Auth(tt.args.ctx, tt.args.user, tt.args.token)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Auth() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if len(tt.args.token.GetToken()) != 0 && !tt.wantToken {
+				t.Errorf("Auth() Unexpected user token length. Wanted = 0, got %v", len(tt.args.token.GetToken()))
+			}
+		})
+	}
+}
