@@ -1,9 +1,19 @@
 <script>
     import { Col, Container, Row, Form, Button, Table  } from "sveltestrap"
+    import { createEventDispatcher } from 'svelte';
     import GtFormGroupInput from "./../forms/gtFormGroupInput.svelte"
+
     export let tblHeaders;
     export let searchParams;
     export let pageTitle;
+
+    const dispatch = createEventDispatcher();
+
+    function search() {
+        dispatch('message', {
+            text: 'Hello!'
+        });
+    }
 
 </script>
 
@@ -17,11 +27,11 @@
     <h5>{pageTitle}</h5>
     <Row>
         <Col class="col-3">
-            <Form>
+            <form on:submit|preventDefault={search}>
                 <GtFormGroupInput {searchParams}/>
                 <Button type="submit">Search</Button>
                 <Button type="reset">Clear</Button>
-            </Form>
+            </form>
         </Col>
         <Col>
             <Table hover bordered size="sm">
