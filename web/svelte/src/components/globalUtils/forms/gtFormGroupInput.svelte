@@ -10,6 +10,7 @@
                 type={searchParamsItem.type}
                 name={searchParamsItem.name}
                 id={searchParamsItem.id}
-                placeholder={searchParamsItem.placeholder} />
+                placeholder={searchParamsItem.placeholder}
+                bind:value={searchParamsItem.value} />
     </FormGroup>
 {/each}
