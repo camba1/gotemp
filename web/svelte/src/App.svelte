@@ -1,7 +1,7 @@
 <script>
 	import Navbar from "./Components/Navbar.svelte";
 	import Footer from "./Components/footer.svelte";
-	import Login from "./Components/login.svelte";
+	import Login from "./components/user/login.svelte";
 	import Products from "./Components/product/products.svelte";
 	export let name;
 
@@ -43,6 +43,5 @@
 <Login on:message={handleMessage}/>
 
 <Products/>
-
 
 <!--<Footer/>-->
