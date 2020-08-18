@@ -132,6 +132,11 @@ func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, r
 		return errVal
 	}
 
+	err := processExtraFields(inProduct)
+	if err != nil {
+		return err
+	}
+
 	col, err := conn.Collection(ctx, productCollectionName)
 	if err != nil {
 		log.Printf(prodErr.UnableToOpenCollection(productCollectionName))
