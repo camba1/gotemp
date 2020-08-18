@@ -13,3 +13,7 @@ diagramsforDocs/*
 postgres/postgresDB/*
 timescaledb/timescaleDB/*
 shellen.txt
+sapper/.sessions
+sapper/__sapper__
+sapper/node_modules
+sapper/src/node_modules
