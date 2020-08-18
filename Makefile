@@ -36,5 +36,5 @@ genstandardFieldsproto:
 promoviaapigateway:
 	curl --location --request POST 'http://localhost:8080/promotion/promotionSrv/getPromotions' \
     --header 'Content-Type: application/json' \
-    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5NDY3Mzc2OSwiaWF0IjoxNTk0NTg3MzY5LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.LDTwQLtydDzLmL4RIyNu6YobHFFJSA_aPPCuSSkjFco' \
+    --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5NzMzNTMzNywiaWF0IjoxNTk3MjQ4OTM3LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.QWAvvoXQHv_Cf48PTrjK9uRvrdEblNvFOxQWjNcX79U' \
     --data-raw '{"name":"Promo1", "customerId": "ducksrus"}'
