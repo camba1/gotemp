@@ -1,22 +1,24 @@
 <script context="module">
-    import { httpPost } from '../../globalUtils/api'
+    // import { httpPost } from '../../globalUtils/api'
+    import { httpGet } from '../../globalUtils/api'
 
     export async function preload(page, session) {
         const { slug } = page.params;
 
-
-        let params = {_key: slug}
         let extraFields = []
-        const {ok, data} = await httpPost("product/productSrv/GetProductById", params);
+        // let params = {_key: slug}
+        // const {ok, data} = await httpPost("product/productSrv/GetProductById", params);
+        const paramString = new URLSearchParams({ _key: `"${slug}"` })
+        const {ok, data} = await httpGet(`product/productSrv/GetProductById?${paramString.toString()}`);
         if (ok) {
             console.log(data)
             if (isObjectEmpty(data)) {
-                alert('Products not found')
+                alert('Product not found')
             } else {
                 extraFields = convertExtraFields(data.extraFields)
             }
         } else {
-            alert('Products not found')
+            alert('Product not found')
         }
         let product = data
 
@@ -43,6 +45,7 @@
 
 <script>
     import { httpPut } from '../../globalUtils/api'
+    import { httpDelete } from '../../globalUtils/api'
     import GtDetailCard from './../../components/detailScreen/gtDetailCard.svelte'
     import GtDetailCardFormGrp from './../../components/detailScreen/gtDetailCardFormGrp.svelte'
     import Row from 'sveltestrap/src/Row.svelte'
@@ -64,18 +67,27 @@
          console.log(ok)
         if (ok) {
             if (isObjectEmpty(data)) {
-                alert('Products not saved')
+                alert('Product not saved')
             }
         } else {
-            alert('Products not saved')
+            alert('Product not saved')
         }
 
     }
 
-    function handleDelete() {
+    async function handleDelete() {
         alert('Deleting...')
         console.log(slug)
         console.log(product)
+        const paramString = new URLSearchParams({ _key: `"${slug}"` })
+        const {ok, data} = await httpDelete(`product/productSrv/DeleteProduct?${paramString.toString()}`);
+        console.log(data)
+        if (ok) {
+            alert('Product deleted')
+        } else {
+            alert('Product not deleted')
+        }
+
     }
 
 </script>

@@ -1,7 +1,7 @@
 export const apiUrl = "http://localhost:8080/"
 
 //TODO: Fetch token from session
-let Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5Nzg2OTMzNSwiaWF0IjoxNTk3NzgyOTM1LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.-n8W9LTCseSqdxNBYzicbWS__etYObKzLDt66_hvHZk"
+let Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5Nzk0MzUxNCwiaWF0IjoxNTk3ODU3MTE0LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.P1PpVGYKiW009r_RBgJXnHqtmHHekH87uZrr8zyKpLs"
 export function httpGet(path) {
     return req(path, 'GET')
 }
@@ -12,6 +12,10 @@ export function httpPost(path, data) {
 
 export function httpPut(path,data) {
     return req(path, 'PUT', data)
+}
+
+export function httpDelete(path,data) {
+    return req(path, 'DELETE', data)
 }
 
 async function req(path, method, data) {
