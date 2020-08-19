@@ -34,13 +34,20 @@
 </style>
 
 <Container>
-    <h5>{pageTitle}</h5>
+    <Row>
+        <Col class="col-10">
+            <h5>{pageTitle}</h5>
+        </Col>
+        <Col class="col-2 text-right">
+            <Button size="sm"><span><i class="fas fa-plus"></i> Add</span></Button>
+        </Col>
+    </Row>
     <Row>
         <Col class="col-3">
             <form on:submit|preventDefault={search}>
                 <GtFormGroupInput {searchParams}/>
-                <Button type="submit"><i class="fas fa-search"></i> Search</Button>
-                <Button type="reset"><i class="fas fa-eraser"></i> Clear</Button>
+                <Button size="sm" type="submit"><i class="fas fa-search"></i> Search</Button>
+                <Button size="sm" type="reset"><i class="fas fa-eraser"></i> Clear</Button>
             </form>
         </Col>
         <Col>
