@@ -14,11 +14,13 @@
             console.log(data)
             if (isObjectEmpty(data)) {
                 alert('Product not found')
+                this.redirect(302, `/product/new`);
             } else {
                 extraFields = convertExtraFields(data.extraFields)
             }
         } else {
-            alert('Product not found')
+            // alert('Product not found')
+            this.redirect(302, `/product/new`);
         }
         let product = data
 
