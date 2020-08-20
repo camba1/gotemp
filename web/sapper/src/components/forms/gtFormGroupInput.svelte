@@ -13,6 +13,7 @@
                 name={searchParamsItem.name}
                 id={searchParamsItem.id}
                 placeholder={searchParamsItem.placeholder}
+                readonly={false}
                 bind:value={searchParamsItem.value} />
     </FormGroup>
 {/each}
