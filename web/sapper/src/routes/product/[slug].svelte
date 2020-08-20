@@ -9,7 +9,7 @@
         // let params = {_key: slug}
         // const {ok, data} = await httpPost("product/productSrv/GetProductById", params);
         const paramString = new URLSearchParams({ _key: `"${slug}"` })
-        const {ok, data} = await httpGet(`product/productSrv/GetProductById?${paramString.toString()}`);
+        const {ok, data} = await httpGet(`product/productSrv/GetProductById?${paramString.toString()}`, this.fetch);
         if (ok) {
             console.log(data)
             if (isObjectEmpty(data)) {
@@ -112,19 +112,19 @@
                 <Input id="id" class="form-control form-control-sm" name="id" type="text" readonly bind:value={product._key}/>
             </GtDetailCardFormGrp>
             <GtDetailCardFormGrp lblFor="name" lblText="Name:">
-                <Input id="name"class="form-control form-control-sm"  name="name" type="text" bind:value={product.name}/>
+                <Input id="name"class="form-control form-control-sm"  name="name" type="text" readonly={false} bind:value={product.name}/>
             </GtDetailCardFormGrp>
             <GtDetailCardFormGrp lblFor="hierLevel" lblText="Level:">
-                <Input id="hierLevel"class="form-control form-control-sm"  name="hierLevel" type="text" bind:value={product.hierarchyLevel}/>
+                <Input id="hierLevel"class="form-control form-control-sm"  name="hierLevel" type="text" readonly={false} bind:value={product.hierarchyLevel}/>
             </GtDetailCardFormGrp>
         </GtDetailCard>
 
         <GtDetailCard cardHeader="Validity">
             <GtDetailCardFormGrp lblFor="validFrom" lblText="Valid From:">
-                <Input id="validFrom" class="form-control form-control-sm" name="validFrom" type="date"  bind:value={tmpDateFrom}/>
+                <Input id="validFrom" class="form-control form-control-sm" name="validFrom" type="date" readonly={false}  bind:value={tmpDateFrom}/>
             </GtDetailCardFormGrp>
             <GtDetailCardFormGrp lblFor="validThru" lblText="Valid Thru:">
-                <Input id="validThru"class="form-control form-control-sm"  name="validThru" type="date" bind:value={tmpDateThru}/>
+                <Input id="validThru"class="form-control form-control-sm"  name="validThru" type="date" readonly={false}  bind:value={tmpDateThru}/>
             </GtDetailCardFormGrp>
         </GtDetailCard>
     </Row>
@@ -133,7 +133,7 @@
             <GtDetailCard cardHeader="Other Fields">
                 {#each extraFields as field }
                     <GtDetailCardFormGrp lblFor="test2" lblText="{field.name}:">
-                        <Input id="test2" class="form-control form-control-sm" name="test2" plaintext  bind:value={field.value}/>
+                        <Input id="test2" class="form-control form-control-sm" name="test2" plaintext readonly={false}  bind:value={field.value}/>
                     </GtDetailCardFormGrp>
                 {/each}
             </GtDetailCard>
