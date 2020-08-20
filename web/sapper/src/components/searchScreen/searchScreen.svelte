@@ -39,7 +39,7 @@
             <h5>{pageTitle}</h5>
         </Col>
         <Col class="col-2 text-right">
-            <Button size="sm"><span><i class="fas fa-plus"></i> Add</span></Button>
+            <Button size="sm"><span><i class="fas fa-plus"></i> New</span></Button>
         </Col>
     </Row>
     <Row>
