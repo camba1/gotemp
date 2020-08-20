@@ -33,12 +33,9 @@
         isOpen = event.detail.isOpen;
     }
 
-    //TODO: Figure out why setting token to null crashes page. It seems to have problems reloading the nav items
     async function logout(){
-        alert('here')
         $session.user = undefined
         $session.token = undefined
-        // await goto("/")
     }
 
 </script>
@@ -67,7 +64,7 @@
                     </DropdownMenu>
                 </UncontrolledDropdown>
                 <NavItem>
-                    <NavLink on:click={logout}><i class="fas fa-sign-out-alt"></i></NavLink>
+                    <NavLink on:click={logout}><span><i class="fas fa-sign-out-alt"></i></span></NavLink>
                 </NavItem>
             {:else}
                 <NavItem>
