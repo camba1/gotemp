@@ -35,6 +35,14 @@ func SetMandatoryFields(ctx context.Context, product *proto.Product, isInsert bo
 	log.Println("Start Set Mandatory Fields")
 
 	tempDates, _ := globalUtils.TimeToTimeStampPPB(time.Now(), time.Now().AddDate(1, 0, 0))
+	if product.GetValidityDates() == nil {
+		product.ValidityDates = &globalProtos.GlValidityDate{}
+	}
+
+	if product.GetModifications() == nil {
+		product.Modifications = &globalProtos.GlModification{}
+	}
+
 	if isInsert {
 		if product.GetValidityDates().GetValidFrom() == nil {
 			product.GetValidityDates().ValidFrom = tempDates[0]
@@ -45,9 +53,6 @@ func SetMandatoryFields(ctx context.Context, product *proto.Product, isInsert bo
 
 	log.Println("Set Mandatory Fields - Set Mod Date")
 
-	if product.GetModifications() == nil {
-		product.Modifications = &globalProtos.GlModification{}
-	}
 	product.GetModifications().UpdateDate = tempDates[0]
 
 	log.Println("Set Mandatory Fields - Set user")
