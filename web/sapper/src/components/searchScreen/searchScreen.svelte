@@ -8,15 +8,34 @@
     import { createEventDispatcher } from 'svelte';
     import GtFormGroupInput from "./../forms/gtFormGroupInput.svelte"
 
+    // import { goto } from '@sapper/app'
+
     export let tblHeaders;
     export let searchParams;
     export let pageTitle;
 
+    let inProgress = false;
+
     const dispatch = createEventDispatcher();
 
     function search() {
+        inProgress = true;
         dispatch('message', {
             text: 'Hello!'
+        });
+        inProgress = false;
+    }
+
+    async function openNew() {
+        //await goto('/product/new')
+        dispatch('navigate', {
+            newPage: 'new'
+        });
+    }
+    async function backToPrevious() {
+       // await goto('/')
+        dispatch('navigate', {
+            newPage: 'previous'
         });
     }
 
@@ -35,19 +54,20 @@
 
 <Container>
     <Row>
-        <Col class="col-10">
+        <Col class="col-9">
             <h5>{pageTitle}</h5>
         </Col>
-        <Col class="col-2 text-right">
-            <Button size="sm"><span><i class="fas fa-plus"></i> New</span></Button>
+        <Col class="col-3 text-right">
+            <Button size="sm" on:click="{openNew}"><span><i class="fas fa-plus"></i> New</span></Button>
+            <Button size="sm" on:click="{backToPrevious}"><span><i class="fas fa-arrow-alt-circle-left"></i> Back</span></Button>
         </Col>
     </Row>
     <Row>
         <Col class="col-3">
             <form on:submit|preventDefault={search}>
                 <GtFormGroupInput {searchParams}/>
-                <Button size="sm" type="submit"><i class="fas fa-search"></i> Search</Button>
-                <Button size="sm" type="reset"><i class="fas fa-eraser"></i> Clear</Button>
+                    <Button size="sm" type="submit" disabled={inProgress} ><i class="fas fa-search"></i> Search</Button>
+                    <Button size="sm" type="reset"><i class="fas fa-eraser"></i> Clear</Button>
             </form>
         </Col>
         <Col>
