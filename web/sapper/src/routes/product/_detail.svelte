@@ -1,4 +1,5 @@
 <script>
+    import { goto } from '@sapper/app'
     import { httpPut } from '../../globalUtils/api'
     import { httpPost } from '../../globalUtils/api'
     import { httpDelete } from '../../globalUtils/api'
@@ -16,12 +17,18 @@
     let tmpDateFrom = new Date(product.validityDates.validFrom).toLocaleDateString();
     let tmpDateThru = new Date(product.validityDates.validThru).toLocaleDateString();
 
+    let addresses = {update: "product/productSrv/UpdateProduct",
+        create: "product/productSrv/CreateProduct",
+        delete: "product/productSrv/DeleteProduct",
+        previousPage: "/product"}
+
+
     async function  handleSave() {
         alert('Saving...');
         console.log(product)
         const {ok, data} = await (slug
-                                    ? httpPut("product/productSrv/UpdateProduct", product)
-                                    : httpPost("product/productSrv/CreateProduct", product))
+                                    ? httpPut(addresses.update, product)
+                                    : httpPost(addresses.create, product))
         console.log(ok)
         if (ok) {
             if (isObjectEmpty(data)) {
@@ -34,18 +41,22 @@
     }
 
     async function handleDelete() {
-        alert('Deleting...')
         console.log(slug)
         console.log(product)
         const paramString = new URLSearchParams({ _key: `"${slug}"` })
-        const {ok, data} = await httpDelete(`product/productSrv/DeleteProduct?${paramString.toString()}`);
+        const {ok, data} = await httpDelete(`${addresses.delete}?${paramString.toString()}`);
         console.log(data)
         if (ok) {
-            alert('Product deleted')
+            await backToSearch()
         } else {
             alert('Product not deleted')
         }
 
+    }
+
+    async function backToSearch() {
+        // alert('back to base')
+        await goto(addresses.previousPage)
     }
 
     function isObjectEmpty(obj) {
@@ -61,12 +72,12 @@
         <Col class="col-8">
             <h4>Product: {product.name}</h4>
         </Col>
-        <Col class="text-right">
+        <Col class="text-right" >
             <Button size="sm" on:click={handleSave}><span><i class="fas fa-save"></i> Save</span></Button>
             {#if slug}
                 <Button size="sm" on:click={handleDelete}><span><i class="fas fa-trash-alt"></i> Delete</span></Button>
             {/if}
-            <Button size="sm" onclick="history.back()"><span><i class="fas fa-arrow-alt-circle-left"></i> Back</span></Button>
+            <Button size="sm" on:click="{backToSearch}"><span><i class="fas fa-arrow-alt-circle-left"></i> Back</span></Button>
 
         </Col>
     </Row>
@@ -106,5 +117,5 @@
     {/if}
 {:else}
     <h3>No data found for product</h3>
-    <Button size="sm" onclick="history.back()"><span><i class="fas fa-arrow-alt-circle-left"></i> Back</span></Button>
+    <Button size="sm" on:click="{backToSearch}"><span><i class="fas fa-arrow-alt-circle-left"></i> Back</span></Button>
 {/if}
