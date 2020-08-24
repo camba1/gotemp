@@ -2,13 +2,12 @@
     import  Col from 'sveltestrap/src/Col.svelte'
     import Container from 'sveltestrap/src/Container.svelte'
     import Row from 'sveltestrap/src/Row.svelte'
-    // import Form from 'sveltestrap/src/Form.svelte'
     import Button from 'sveltestrap/src/Button.svelte'
     import Table  from "sveltestrap/src/Table.svelte"
-    import { createEventDispatcher } from 'svelte';
     import GtFormGroupInput from "./../forms/gtFormGroupInput.svelte"
 
-    // import { goto } from '@sapper/app'
+    import { createEventDispatcher } from 'svelte';
+
 
     export let tblHeaders;
     export let searchParams;
@@ -27,7 +26,6 @@
     }
 
     async function openNew() {
-        //await goto('/product/new')
         dispatch('navigate', {
             newPage: 'new'
         });
@@ -46,7 +44,7 @@
         background-color: rgba(0, 0, 0, .03);
     }
     div.detailgrid {
-        overflow-y: scroll;
+        overflow: scroll;
         max-height: 600px;
     }
 
@@ -55,7 +53,7 @@
 <Container>
     <Row>
         <Col class="col-9">
-            <h5>{pageTitle}</h5>
+            <h4>{pageTitle}</h4>
         </Col>
         <Col class="col-3 text-right">
             <Button size="sm" on:click="{openNew}"><span><i class="fas fa-plus"></i> New</span></Button>
