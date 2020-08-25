@@ -19,7 +19,7 @@
 {#if errorList}
     <Row>
         <Col class="text-center" >
-            <pre>{errorList.detail}</pre>
+            <span style="color: #8B0000"><i class="fas fa-times-circle"></i><pre>{errorList.detail}</pre></span>
         </Col>
     </Row>
 {/if}
