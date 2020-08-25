@@ -7,19 +7,17 @@
     export let updateDateTime
     export let modifiedBy
 
-    let tmpCreateDateTime = new Date(createDateTime).toLocaleString();
-    let tmpUpdateDateTime = new Date(updateDateTime).toLocaleString();
 
 </script>
 
 <GtDetailCard cardHeader="Modifications">
     <GtDetailCardFormGrp lblFor="createDate" lblText="Creation Date:">
-        <Input id="createDate" class="form-control form-control-sm" name="createDate" plaintext readonly={false}  bind:value={tmpCreateDateTime}/>
+        <Input id="createDate" class="form-control-sm" name="createDate" plaintext readonly  bind:value={createDateTime}/>
     </GtDetailCardFormGrp>
     <GtDetailCardFormGrp lblFor="updateDate" lblText="Update Date:">
-        <Input id="updateDate" class="form-control form-control-sm" name="updateDate" plaintext readonly={false}  bind:value={tmpUpdateDateTime}/>
+        <Input id="updateDate" class="form-control-sm" name="updateDate" plaintext readonly  bind:value={updateDateTime}/>
     </GtDetailCardFormGrp>
     <GtDetailCardFormGrp lblFor="modifiedBy" lblText="Modified By:">
-        <Input id="modifiedBy" class="form-control form-control-sm" name="modifiedBy" plaintext readonly={false}  bind:value={modifiedBy}/>
+        <Input id="modifiedBy" class="form-control-sm" name="modifiedBy" plaintext readonly  bind:value={modifiedBy}/>
     </GtDetailCardFormGrp>
 </GtDetailCard>
