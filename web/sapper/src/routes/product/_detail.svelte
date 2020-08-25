@@ -10,6 +10,7 @@
     import GTExtraFieldsCard from './../../components/detailScreen/gtExtraFieldsCard.svelte'
     import GTDetailHeader from './../../components/detailScreen/gtDetailHeader.svelte'
     import GTErrorList from './../../components/gtErrorList.svelte'
+    import GTSaveWarningModal from './../../components/detailScreen/gtSaveWarningModal.svelte'
 
     import Row from 'sveltestrap/src/Row.svelte'
     import Container from 'sveltestrap/src/Container.svelte'
@@ -34,10 +35,13 @@
     let inProgress = false
 
     let errorList = null
+    let warningMessage = null
+    let openModal = false
 
     async function  handleSave() {
 
         inProgress = true
+        openModal = false
 
         const {ok, data} = await (slug
                                     ? httpPut(addresses.update, product)
@@ -52,6 +56,10 @@
                 product = data.product
                 tmpCreateDateTime = new Date(product.modifications.createDate).toLocaleString();
                 tmpUpdateDateTime = new Date(product.modifications.updateDate).toLocaleString();
+                if (!isObjectEmpty(data.validationErr)) {
+                    warningMessage = data.validationErr.failureDesc
+                    openModal = true
+                }
             }
         } else {
             errorList = data
@@ -70,13 +78,13 @@
             await backToSearch()
         } else {
             alert('Product not deleted')
+            errorList = data
         }
 
         inProgress = false
     }
 
     async function backToSearch() {
-
         await goto(addresses.previousPage)
     }
 
@@ -128,8 +136,8 @@
                             on:backToSearch={backToSearch} />
         </Row>
 
-
         <GTErrorList errorList={errorList} />
+        <GTSaveWarningModal open={openModal} warningText={warningMessage} />
 
         <Row>
             <GtDetailCard cardHeader="Information">
