@@ -9,8 +9,8 @@
 
 <GtDetailCard cardHeader="Other Fields">
     {#each extraFields as field }
-        <GtDetailCardFormGrp lblFor="test2" lblText="{field.name}:">
-            <Input id="test2" class="form-control form-control-sm" name="test2" plaintext readonly={false}  bind:value={field.value}/>
+        <GtDetailCardFormGrp lblFor="{field.name}" lblText="{field.name}:">
+            <Input id="{field.name}" class="form-control-sm" name="{field.name}" plaintext readonly  bind:value={field.value}/>
         </GtDetailCardFormGrp>
     {/each}
 </GtDetailCard>
