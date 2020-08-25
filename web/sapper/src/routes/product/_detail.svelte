@@ -9,6 +9,7 @@
     import GTModificationsCard from './../../components/detailScreen/gtModificationsCard.svelte'
     import GTExtraFieldsCard from './../../components/detailScreen/gtExtraFieldsCard.svelte'
     import GTDetailHeader from './../../components/detailScreen/gtDetailHeader.svelte'
+    import GTErrorList from './../../components/gtErrorList.svelte'
 
     import Row from 'sveltestrap/src/Row.svelte'
     import Container from 'sveltestrap/src/Container.svelte'
@@ -21,6 +22,8 @@
 
     let tmpDateFrom = new Date(product.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
     let tmpDateThru = new Date(product.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
+    let tmpCreateDateTime = new Date(product.modifications.createDate).toLocaleString("en-CA");
+    let tmpUpdateDateTime = new Date(product.modifications.updateDate).toLocaleString("en-CA");
 
     let addresses = {update: "product/productSrv/UpdateProduct",
         create: "product/productSrv/CreateProduct",
@@ -30,22 +33,28 @@
 
     let inProgress = false
 
+    let errorList = null
 
     async function  handleSave() {
 
         inProgress = true
-console.log(product.validityDates.validFrom)
+
         const {ok, data} = await (slug
                                     ? httpPut(addresses.update, product)
                                     : httpPost(addresses.create, product))
         if (ok) {
             if (isObjectEmpty(data)) {
-                alert('Product not saved')
+                alert('No data found for product')
             } else if (!slug) {
                 goto(addresses.reload + data.product._key)
+            } else {
+                errorList = null
+                product = data.product
+                tmpCreateDateTime = new Date(product.modifications.createDate).toLocaleString();
+                tmpUpdateDateTime = new Date(product.modifications.updateDate).toLocaleString();
             }
         } else {
-            alert('Product not saved')
+            errorList = data
         }
 
         inProgress = false
@@ -119,6 +128,9 @@ console.log(product.validityDates.validFrom)
                             on:backToSearch={backToSearch} />
         </Row>
 
+
+        <GTErrorList errorList={errorList} />
+
         <Row>
             <GtDetailCard cardHeader="Information">
                 <GtDetailCardFormGrp lblFor="id" lblText="Id:">
@@ -144,7 +156,7 @@ console.log(product.validityDates.validFrom)
 
         <Row>
             {#if product.modifications}
-                <GTModificationsCard createDateTime={product.modifications.createDate} updateDateTime={product.modifications.updateDate} modifiedBy={product.modifications.modifiedBy} />
+                <GTModificationsCard createDateTime={tmpCreateDateTime} updateDateTime={tmpUpdateDateTime} modifiedBy={product.modifications.modifiedBy} />
             {/if}
             {#if extraFields}
                 <GTExtraFieldsCard extraFields={extraFields} />
