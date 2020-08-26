@@ -17,14 +17,17 @@
     import Button from 'sveltestrap/src/Button.svelte'
     import Input from 'sveltestrap/src/Input.svelte'
 
+    import { stores } from '@sapper/app'
+    const { session } = stores()
+
     export let product;
     export let slug;
     export let extraFields;
 
-    let tmpDateFrom = new Date(product.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
-    let tmpDateThru = new Date(product.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
-    let tmpCreateDateTime = new Date(product.modifications.createDate).toLocaleString("en-CA");
-    let tmpUpdateDateTime = new Date(product.modifications.updateDate).toLocaleString("en-CA");
+    let tmpDateFrom = product.validityDates && new Date(product.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
+    let tmpDateThru = product.validityDates && new Date(product.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
+    let tmpCreateDateTime = product.modifications && new Date(product.modifications.createDate).toLocaleString("en-CA");
+    let tmpUpdateDateTime = product.modifications && new Date(product.modifications.updateDate).toLocaleString("en-CA");
 
     let addresses = {update: "product/productSrv/UpdateProduct",
         create: "product/productSrv/CreateProduct",
@@ -44,8 +47,8 @@
         openModal = false
 
         const {ok, data} = await (slug
-                                    ? httpPut(addresses.update, product)
-                                    : httpPost(addresses.create, product))
+                                    ? httpPut(addresses.update, product, $session.token)
+                                    : httpPost(addresses.create, product, $session.token))
         if (ok) {
             if (isObjectEmpty(data)) {
                 alert('No data found for product')
@@ -72,7 +75,7 @@
         inProgress = true
 
         const paramString = new URLSearchParams({ _key: `"${slug}"` })
-        const {ok, data} = await httpDelete(`${addresses.delete}?${paramString.toString()}`);
+        const {ok, data} = await httpDelete(`${addresses.delete}?${paramString.toString()}`,null ,$session.token);
         console.log(data)
         if (ok) {
             await backToSearch()
