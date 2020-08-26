@@ -19,11 +19,11 @@
     let pwd = "1234";
     let token = '';
 
-    function sayHello() {
-        dispatch('message', {
-            text: 'Hello!'
-        });
-    }
+    // function sayHello() {
+    //     dispatch('message', {
+    //         text: 'Hello!'
+    //     });
+    // }
 
     async function login(){
         let user = {email: email, pwd: pwd};
@@ -57,6 +57,7 @@
                         name="userEmail"
                         id="userEmail"
                         placeholder="Type your email"
+                        readonly={false}
                         bind:value={email}/>
             </FormGroup>
             <FormGroup>
@@ -66,6 +67,7 @@
                         name="userPassword"
                         id="userPassword"
                         placeholder="Type your password"
+                        readonly={false}
                         bind:value={pwd}/>
             </FormGroup>
             <Button type="submit" >Submit</Button>
