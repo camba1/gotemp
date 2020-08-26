@@ -1,9 +1,21 @@
+
+<script context="module">
+    export function preload(page, session) {
+        // console.log(session)
+        // console.log(page)
+        if (!session.user) {
+            this.redirect(302, `/login`);
+        }
+    }
+</script>
+
 <script>
     import { httpPost } from '../../globalUtils/api'
     import SearchScreen from './../../components/searchScreen/searchScreen.svelte'
     import ProductGridSlot from "./_productGridSlot.svelte"
 
-    import { goto } from '@sapper/app'
+    import { goto, stores } from '@sapper/app'
+    const { session } = stores()
 
     // let tblData=[{"_key": "switch", "name": "Play Switch Console","validityDates":{ "validFrom": "2020-02-02", "validThru": "2021-02-02"}, "hierarchyLevel": "sku", "extraFields": {"externalId": "12345"}},
     //     {"_key": "tele", "name": "Watch me TV", "validityDates":{ "validFrom": "2020-02-02", "validThru": "2021-02-02"}, "hierarchyLevel": "sku", "extraFields": {"externalId": "12345"}},
@@ -26,9 +38,9 @@
         if (isValidStringDate(searchParams[2].value)) {
             params.validDate = new Date(searchParams[2].value).toISOString()
         }
-        const {ok, data} = await httpPost(getDataAddress, params);
+        const {ok, data} = await httpPost(getDataAddress, params, $session.token);
         if (ok) {
-            console.log(data)
+            // console.log(data)
             if (isObjectEmpty(data)) {
                 alert(`${pageTitle} not found`)
             } else {
