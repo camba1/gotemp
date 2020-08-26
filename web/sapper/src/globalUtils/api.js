@@ -1,20 +1,24 @@
 export const apiUrl = "http://localhost:8080/"
 
 //TODO: Fetch token from session
-let Token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5ODAzMTEyMywiaWF0IjoxNTk3OTQ0NzIzLCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.krz6ME_pHkcBIiaB_oFSla8ypnr-LsnmV-WeDmUlyyk"
-export function httpGet(path, myFetch) {
+let Token = "" // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5ODU1MzMzMSwiaWF0IjoxNTk4NDY2OTMxLCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.7V66xm-TF1Sy13UMZUtxcnxy8MuO9by7LPbeS_C_xc8"
+export function httpGet(path, myFetch, myToken) {
+    Token = myToken
     return req(path, 'GET', null, myFetch)
 }
 
-export function httpPost(path, data) {
+export function httpPost(path, data, myToken) {
+    Token = myToken
     return req(path, 'POST', data)
 }
 
-export function httpPut(path,data) {
+export function httpPut(path,data, myToken) {
+    Token = myToken
     return req(path, 'PUT', data)
 }
 
-export function httpDelete(path,data) {
+export function httpDelete(path,data, myToken) {
+    Token = myToken
     return req(path, 'DELETE', data)
 }
 
@@ -32,8 +36,8 @@ async function req(path, method, data, myFetch) {
         body: data && JSON.stringify(data)
     })
     let json = await res.json()
-    console.log(res.status)
-    console.log(json)
+    // console.log(res.status)
+    // console.log(json)
     return {ok: res.ok, data: json}
 }
 
