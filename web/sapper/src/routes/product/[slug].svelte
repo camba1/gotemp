@@ -3,28 +3,36 @@
     import { httpGet } from '../../globalUtils/api'
 
     export async function preload(page, session) {
+        // console.log(session)
         const { slug } = page.params;
 
-        let extraFields = []
-        // let params = {_key: slug}
-        // const {ok, data} = await httpPost("product/productSrv/GetProductById", params);
-        const paramString = new URLSearchParams({ _key: `"${slug}"` })
-        const {ok, data} = await httpGet(`product/productSrv/GetProductById?${paramString.toString()}`, this.fetch);
-        if (ok) {
-            console.log(data)
-            if (isObjectEmpty(data)) {
-                alert('Product not found')
-                this.redirect(302, `/product/new`);
-            } else {
-                extraFields = convertExtraFields(data.extraFields)
-            }
+        if (!session.user) {
+            this.redirect(302, `/login`);
         } else {
-            // alert('Product not found')
-            this.redirect(302, `/product/new`);
-        }
-        let product = data
 
-        return  {product, slug, extraFields} ;
+            let extraFields = []
+            // let params = {_key: slug}
+            // const {ok, data} = await httpPost("product/productSrv/GetProductById", params);
+            const paramString = new URLSearchParams({ _key: `"${slug}"` })
+            const {ok, data} = await httpGet(`product/productSrv/GetProductById?${paramString.toString()}`, this.fetch, session.token);
+            if (ok) {
+                // console.log(data)
+                if (isObjectEmpty(data)) {
+                    alert('Product not found')
+                    this.redirect(302, `/product/new`);
+                } else {
+                    extraFields = convertExtraFields(data.extraFields)
+                }
+            } else {
+                alert('Error getting Product')
+                this.redirect(302, `/product`);
+            }
+            let product = data
+
+            return  {product, slug, extraFields} ;
+
+        }
+
     }
 
     function convertExtraFields(obj) {
