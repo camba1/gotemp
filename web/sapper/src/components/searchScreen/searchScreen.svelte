@@ -1,4 +1,10 @@
 <script>
+    /**
+     * Component shows the search screen with search parameters in one side
+     * and a results grid on the other
+     */
+
+    // GUI components imports
     import  Col from 'sveltestrap/src/Col.svelte'
     import Container from 'sveltestrap/src/Container.svelte'
     import Row from 'sveltestrap/src/Row.svelte'
@@ -6,17 +12,43 @@
     import Table  from "sveltestrap/src/Table.svelte"
     import GtFormGroupInput from "./../forms/gtFormGroupInput.svelte"
 
+    // Dispatcher to send events to the parent control
     import { createEventDispatcher } from 'svelte';
-
-
-    export let tblHeaders;
-    export let searchParams;
-    export let pageTitle;
-
-    let inProgress = false;
-
     const dispatch = createEventDispatcher();
 
+    /**
+     * String array of results grid headers
+     * @type {array}
+     */
+    export let tblHeaders;
+    /**
+     * The items to be used as search parameters
+     * @type {object}
+     * @property {string} name
+     * @property {string} text
+     * @property {string} type
+     * @property {string} id
+     * @property {string} placeholder
+     * @property {string} value
+     */
+    export let searchParams;
+
+    /**
+     * Search screen title
+     * @type {string}
+     */
+    export let pageTitle;
+
+    /**
+     * Controls editability of buttons on the screen
+     * @type {boolean}
+     */
+    let inProgress = false;
+
+
+    /**
+     * Captures the search button click and forwards to parent component
+     */
     function search() {
         inProgress = true;
         dispatch('message', {
@@ -25,13 +57,21 @@
         inProgress = false;
     }
 
+    /**
+     * Captures the new button click and forwards to parent component
+     * @returns {Promise<void>}
+     */
     async function openNew() {
         dispatch('navigate', {
             newPage: 'new'
         });
     }
+
+    /**
+     * Captures the back button click and forwards to parent component
+     * @returns {Promise<void>}
+     */
     async function backToPrevious() {
-       // await goto('/')
         dispatch('navigate', {
             newPage: 'previous'
         });
@@ -64,8 +104,8 @@
         <Col class="col-3">
             <form on:submit|preventDefault={search}>
                 <GtFormGroupInput {searchParams}/>
-                    <Button size="sm" type="submit" disabled={inProgress} ><i class="fas fa-search"></i> Search</Button>
-                    <Button size="sm" type="reset"><i class="fas fa-eraser"></i> Clear</Button>
+                <Button size="sm" type="submit" disabled={inProgress} ><i class="fas fa-search"></i> Search</Button>
+                <Button size="sm" type="reset"><i class="fas fa-eraser"></i> Clear</Button>
             </form>
         </Col>
         <Col>

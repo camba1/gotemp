@@ -1,5 +1,9 @@
 <script>
-    // import Form from 'sveltestrap/src/Form.svelte'
+    /**
+     * Login page component
+     */
+
+    // GUI components imports
     import Card from 'sveltestrap/src/Card.svelte'
     import CardBody from 'sveltestrap/src/CardBody.svelte'
     import CardHeader from 'sveltestrap/src/CardHeader.svelte'
@@ -8,28 +12,37 @@
     import FormGroup from 'sveltestrap/src/FormGroup.svelte'
     import Input from 'sveltestrap/src/Input.svelte'
     import Label from "sveltestrap/src/Label.svelte";
-    import { httpPost } from '../../globalUtils/api'
-    import { createEventDispatcher } from 'svelte';
-    import { goto, stores } from '@sapper/app';
 
+    // Post
+    import { httpPost } from '../../globalUtils/api'
+
+    // Dispatcher to send events to the parent control
+    import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
+
+    // Linking to pages and sessions
+    import { goto, stores } from '@sapper/app';
     const { session } = stores();
 
+    /**
+     * Email used to login to the app
+     * @type {string}
+     */
     let email = "duck@mymail.com";
+    /**
+     * Password used to login to the app
+     * @type {string}
+     */
     let pwd = "1234";
-    let token = '';
 
-    // function sayHello() {
-    //     dispatch('message', {
-    //         text: 'Hello!'
-    //     });
-    // }
-
+    /**
+     * Request a token from the authentication service and stores it in the session store
+     * @returns {Promise<void>}
+     */
     async function login(){
         let user = {email: email, pwd: pwd};
         const {ok, data} = await httpPost("user/userSrv/auth", user);
         if (ok) {
-            token = data.token
             $session.user = data.token
             $session.token = data.token
             goto('/');
@@ -74,4 +87,3 @@
         </form>
     </CardBody>
 </Card>
-<!--{email}, {pwd} <br> {token}-->

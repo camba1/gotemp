@@ -1,23 +1,58 @@
 <script>
+
+    /**
+     * The header for a detail page. Includes a title and the save, delete and back buttons
+     */
+
+    // GUI components imports
     import Col from 'sveltestrap/src/Col.svelte'
     import Button from 'sveltestrap/src/Button.svelte'
 
+    // Dispatcher to send events to the parent control
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
 
+    /**
+     * Label for the type of the objects we are displaying (e.g.Product, customer, etc)
+     * @type {string}
+     */
     export let label
+    /**
+     * Name of the object we are displaying
+     * @type {string}
+     */
     export let name
+    /**
+     * Controls editability of the buttons in the form
+     * @type {boolean}
+     */
     export let inProgress
+    /**
+     * Identifyer for the object we are displaying
+     * @type {string}
+     */
     export let slug
 
+    /**
+     * Captures the save button press event and forwards to parent component
+     * @returns {Promise<void>}
+     */
     async function handleSave() {
         dispatch('handleSave');
     }
 
+    /**
+     * Captures the delete button press event and forwards to parent component
+     * @returns {Promise<void>}
+     */
     async function handleDelete() {
         dispatch('handleDelete');
     }
 
+    /**
+     * Captures the back to search button press event and forwards to parent component
+     * @returns {Promise<void>}
+     */
     async function backToSearch() {
         dispatch('backToSearch');
     }

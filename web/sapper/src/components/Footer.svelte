@@ -1,8 +1,14 @@
 <script>
+    /**
+     * Footer component for main page
+     */
+
+    // GUI components imports
     import Col from 'sveltestrap/src/Col.svelte'
     import Container from 'sveltestrap/src/Container.svelte'
     import Row  from "sveltestrap/src/Row.svelte"
 
+    // Data for footer
     let header = "goTemp";
     let osTechList = ["GO", "go-Micro", "Svelte", "NATS"];
     let dbTechList = ["ArangoDB", "PostgreSQL", "Redis", "TimescaleDB"];

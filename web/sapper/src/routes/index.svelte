@@ -42,13 +42,14 @@
 	<title>goTemp</title>
 </svelte:head>
 
-<h1>Great success!</h1>
+<h1>Welcome to goTemp</h1>
 
 <figure>
 	<img alt='Success Kid' src='successkid.jpg'>
-	<figcaption>Have fun with Sapper, yeah!</figcaption>
+	<figcaption>Now, let's have fun with some micro-services!</figcaption>
 </figure>
 
-<p><strong>Try editing this file (src/routes/index.svelte) to test live reloading.</strong></p>
+<p><strong>Try exploring some of the menu items and review the bitbucket docs for more info. <br/>
+			If you have any issues please create an issue or a pull request.</strong></p>
 
 <Footer />

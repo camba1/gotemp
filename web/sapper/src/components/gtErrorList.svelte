@@ -1,7 +1,16 @@
 <script>
+    /**
+     * Component to display errors in the application
+     */
+
+    // GUI components imports
     import Row from 'sveltestrap/src/Row.svelte'
     import Col from 'sveltestrap/src/Col.svelte'
 
+    /**
+     * list of errors. Can contain line feeds for multiple errors
+     * @type {string}
+     */
     export let errorList;
 
 </script>

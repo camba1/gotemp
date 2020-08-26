@@ -1,10 +1,28 @@
 <script>
+
+    /**
+     * Component displays audit fields of an object (creation date, update date , etc)
+     */
+
+    // GUI components imports
     import GtDetailCard from './../../components/detailScreen/gtDetailCard.svelte'
     import GtDetailCardFormGrp from './../../components/detailScreen/gtDetailCardFormGrp.svelte'
     import Input from 'sveltestrap/src/Input.svelte'
 
+    /**
+     * Creation date and time in the correct locale to be displayed
+     * @type {string}
+     */
     export let createDateTime
+    /**
+     * Last update date and time in the correct locale to be displayed
+     * @type {string}
+     */
     export let updateDateTime
+    /**
+     * Last user to modify the document/record
+     * @type {string}
+     */
     export let modifiedBy
 
 

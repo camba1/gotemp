@@ -1,13 +1,30 @@
 <script>
 
+    /**
+     * Component modal that shows warnings that do not stop obejct from being saved
+     */
+
+    // GUI components imports
     import Button from 'sveltestrap/src/Button.svelte'
     import Modal from 'sveltestrap/src/Modal.svelte'
     import ModalBody from 'sveltestrap/src/ModalBody.svelte'
     import ModalFooter from 'sveltestrap/src/ModalFooter.svelte'
     import ModalHeader from 'sveltestrap/src/ModalHeader.svelte'
 
+    /**
+     * Indicates whether the modal is open and displayed to the user
+     * @type {boolean}
+     */
     export let open = false
+    /**
+     * Text to display in the modal
+     * @type {string}
+     */
     export let warningText
+    /**
+     * Controls the visibility of the modal
+     * @returns {boolean}
+     */
     const toggle = () => (open = !open)
 
 </script>
