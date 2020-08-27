@@ -21,25 +21,88 @@
     // Interacting with server
     import { httpPut, httpPost, httpDelete  } from '../../globalUtils/api'
 
-    //Validation utils
-    import { isObjectEmpty, isValidDate } from '../../globalUtils/helperUtils'
+    //helper utils
+    import { isObjectEmpty, updateValidDate } from '../../globalUtils/helperUtils'
 
+    /**
+     * Main object to be displayed in the page
+     * @type {object}
+     */
     export let product;
+
+    /**
+     * Slug indicating which item we are displaying (the id)
+     * @type {string}
+     */
     export let slug;
+
+    /**
+     * Field holding any additional values that we know nothing about in the application
+     * This is specially valid for NoSQL backends
+     * @type ({name: string, value: string}[])
+     */
     export let extraFields;
+
+    /**
+     *  Uris for interacting with the server and navigating
+     *  @type {object}
+     */
     export let addresses;
 
+    /**
+     * String representing the object displayed in the page
+     */
+    let pageObjectLbl = 'Product'
+
+    /**
+     * String formatted valid from
+     * @type {string}
+     */
     let tmpDateFrom = product.validityDates && new Date(product.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
+
+    /**
+     * String formatted valid thru
+     * @type {string}
+     */
     let tmpDateThru = product.validityDates && new Date(product.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
+
+    /**
+     * String formatted create date
+     * @type {string}
+     */
     let tmpCreateDateTime = product.modifications && new Date(product.modifications.createDate).toLocaleString("en-CA");
+
+    /**
+     * String formatted update date
+     * @type {string}
+     */
     let tmpUpdateDateTime = product.modifications && new Date(product.modifications.updateDate).toLocaleString("en-CA");
 
+    /**
+     * Indicates if an action is in progress and disables the buttons
+     * @type {boolean}
+     */
     let inProgress = false
 
+    /**
+     * list of errors to be displayed to the user. Can include line feeds for multiple lines
+     */
     let errorList = null
+
+    /**
+     * List of warning messages to display to the user. Can include line feeds formultiple items
+     */
     let warningMessage = null
+
+    /**
+     * Controls opening and closing of the modal that shouw warnings
+     */
     let openModal = false
 
+    /**
+     * Handles creation and updates based on wether the slug is present
+     * @returns {Promise<void>}
+     */
     async function  handleSave() {
 
         inProgress = true
@@ -50,7 +113,7 @@
                                     : httpPost(addresses.create, product, $session.token))
         if (ok) {
             if (isObjectEmpty(data)) {
-                alert('No data found for product')
+                alert(`No data found for ${pageObjectLbl}`)
             } else if (!slug) {
                 goto(addresses.reload + data.product._key)
             } else {
@@ -70,6 +133,10 @@
         inProgress = false
     }
 
+    /**
+     * Handles object deletion
+     * @returns {Promise<void>}
+     */
     async function handleDelete() {
         inProgress = true
 
@@ -79,43 +146,36 @@
         if (ok) {
             await backToSearch()
         } else {
-            alert('Product not deleted')
+            alert(`${pageObjectLbl} not deleted`)
             errorList = data
         }
 
         inProgress = false
     }
 
+    /**
+     * Navigates back to search screen
+     * @returns {Promise<void>}
+     */
     async function backToSearch() {
         await goto(addresses.previousPage)
     }
 
-
+    /**
+     * Update the valid from data in the page object
+     * @param event - item that called the event
+     */
     function updateVF(event) {
-        updateVD("validFrom", event.target.value)
+        updateValidDate("validFrom", event.target.value, product)
     }
 
+    /**
+     * Update the valid thru data in the page object
+     * @param event - item that called the event
+     */
     function updateVT(event) {
-        updateVD("validThru", event.target.value)
+        updateValidDate("validThru", event.target.value, product)
     }
-
-    function updateVD(dateToUpdate, newDateString){
-        let foundVD = false
-        if (product) {
-            if (product.validityDates) {
-                let parts = newDateString.split('-');
-                let VD = new Date(parts[0], parts[1] - 1, parts[2]);
-                if (isValidDate(VD)){
-                    product.validityDates[dateToUpdate] = VD
-                }
-                foundVD = true
-            }
-        }
-        if (!foundVD) {
-            alert('Unable to populate validity date')
-        }
-    }
-
 
 </script>
 
@@ -124,7 +184,7 @@
     {#if product}
 
         <Row>
-            <GTDetailHeader label="Product" inProgress={inProgress} name={product.name} slug={slug}
+            <GTDetailHeader label="{pageObjectLbl}" inProgress={inProgress} name={product.name} slug={slug}
                             on:handleSave={handleSave}
                             on:handleDelete={handleDelete}
                             on:backToSearch={backToSearch} />
@@ -139,10 +199,10 @@
                     <Input id="id" class="form-control form-control-sm" name="id" type="text" readonly bind:value={product._key}/>
                 </GtDetailCardFormGrp>
                 <GtDetailCardFormGrp lblFor="name" lblText="Name:">
-                    <Input id="name"class="form-control form-control-sm"  name="name" type="text" readonly={false} bind:value={product.name}/>
+                    <Input id="name" class="form-control form-control-sm"  name="name" type="text" readonly={false} bind:value={product.name}/>
                 </GtDetailCardFormGrp>
                 <GtDetailCardFormGrp lblFor="hierLevel" lblText="Level:">
-                    <Input id="hierLevel"class="form-control form-control-sm"  name="hierLevel" type="text" readonly={false} bind:value={product.hierarchyLevel}/>
+                    <Input id="hierLevel" class="form-control form-control-sm"  name="hierLevel" type="text" readonly={false} bind:value={product.hierarchyLevel}/>
                 </GtDetailCardFormGrp>
             </GtDetailCard>
 
@@ -151,7 +211,7 @@
                     <Input id="validFrom" class="form-control form-control-sm" name="validFrom" type="date" placeholder="yyyy-mm-dd" readonly={false} on:input={updateVF} bind:value={tmpDateFrom}/>
                 </GtDetailCardFormGrp>
                 <GtDetailCardFormGrp lblFor="validThru" lblText="Valid Thru:">
-                    <Input id="validThru"class="form-control form-control-sm"  name="validThru" type="date" placeholder="yyyy-mm-dd" readonly={false} on:input={updateVT} bind:value={tmpDateThru}/>
+                    <Input id="validThru" class="form-control form-control-sm"  name="validThru" type="date" placeholder="yyyy-mm-dd" readonly={false} on:input={updateVT} bind:value={tmpDateThru}/>
                 </GtDetailCardFormGrp>
             </GtDetailCard>
         </Row>
@@ -166,7 +226,7 @@
         </Row>
 
     {:else}
-        <h3>No data found for product</h3>
+        <h3>No data found for {pageObjectLbl}</h3>
         <Button size="sm" on:click="{backToSearch}"><span><i class="fas fa-arrow-alt-circle-left"></i> Back</span></Button>
     {/if}
 
