@@ -1,5 +1,5 @@
 <script context="module">
-    // import { httpPost } from '../../globalUtils/api'
+
     import { httpGet } from '../../globalUtils/api'
 
     //Helper utils
