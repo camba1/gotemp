@@ -16,7 +16,5 @@
         <td>{dataRow.name}</td>
         <td>{new Date(dataRow.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"})}</td>
         <td>{new Date(dataRow.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"})}</td>
-        <td>{dataRow.hierarchyLevel}</td>
-<!--        <td>{dataRow.extraFields}</td>-->
     </tr>
 {/each}
