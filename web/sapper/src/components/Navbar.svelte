@@ -17,10 +17,10 @@
     import DropdownToggle from 'sveltestrap/src/DropdownToggle.svelte'
     import DropdownMenu  from 'sveltestrap/src/DropdownMenu.svelte'
     import DropdownItem from 'sveltestrap/src/DropdownItem.svelte'
-    import Button from 'sveltestrap/src/Button.svelte'
+    // import Button from 'sveltestrap/src/Button.svelte'
 
     // Import session to determine if user is logged in
-    import { goto, stores } from '@sapper/app'
+    import { stores } from '@sapper/app'
     const { session } = stores()
 
     /**
@@ -37,8 +37,7 @@
     export let servicesDropDown = [{label:"Customers", href:"customer"},
                                     {label:"Products", href:"product"},
                                     {label:"divider", href:""},
-                                    {label:"Users", href:"user"},
-                                    {label:"blog", href:"blog"},]
+                                    {label:"Users", href:"user"}]
     /**
      * Items to be displayed at the top level of the navigation bar (not in the drop dpwn)
      * @type {{label: string, href: string}[]}
