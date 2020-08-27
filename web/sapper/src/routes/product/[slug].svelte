@@ -54,12 +54,32 @@
 </script>
 
 <script>
-
+    // GUI components imports
     import Detail from './_detail.svelte';
 
+    /**
+     * Main object to be displayed in the page
+     * @type {object}
+     */
     export let product;
+
+    /**
+     * Slug indicating which item we are displaying (the id)
+     * @type {string}
+     */
     export let slug;
+
+    /**
+     * Field holding any additional values that we know nothing about in the application
+     * This is specially valid for NoSQL backends
+     * @type ({name: string, value: string}[])
+     */
     export let extraFields;
+
+    /**
+     *  Uris for interacting with the server and navigating
+     *  @type {object}
+     */
     export let addresses;
 
 </script>

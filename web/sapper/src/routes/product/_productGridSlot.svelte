@@ -1,4 +1,12 @@
 <script>
+    /**
+     * Component to be displayed within the search grid
+     */
+
+    /**
+     * Data to be displayed
+     * @type {object}
+     */
     export let tblData;
 </script>
 
