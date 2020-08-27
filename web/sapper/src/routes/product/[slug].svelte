@@ -7,7 +7,7 @@
     import { productAddresses } from '../../globalUtils/addresses'
 
     /**
-     * Uris for interacting with the server and navicating
+     * Uris for interacting with the server and navigating
      */
     let addresses = productAddresses
 
