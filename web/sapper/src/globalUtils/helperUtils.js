@@ -47,3 +47,27 @@ export function convertExtraFields(obj) {
         return vals
     }
 }
+
+/**
+ * Since some fields come as date time and we need to display them as dates,
+ * we need to update them manually
+ * @param dateToUpdate - String, name of the date field to update
+ * @param newDateString - String that contains the date to be used for update
+ * @param objectToUpdate - Object to be updated
+ */
+export function updateValidDate(dateToUpdate, newDateString, objectToUpdate){
+    let foundVD = false
+    if (objectToUpdate) {
+        if (objectToUpdate.validityDates) {
+            let parts = newDateString.split('-');
+            let VD = new Date(parts[0], parts[1] - 1, parts[2]);
+            if (isValidDate(VD)){
+                objectToUpdate.validityDates[dateToUpdate] = VD
+            }
+            foundVD = true
+        }
+    }
+    if (!foundVD) {
+        alert('Unable to populate validity date')
+    }
+}
