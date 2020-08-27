@@ -86,7 +86,7 @@
                 tblData = data.customer
             }
         } else {
-            alert(`${pageTitle} not found`)
+            alert(` Error getting ${pageTitle}`)
         }
     }
 
