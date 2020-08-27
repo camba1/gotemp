@@ -4,12 +4,13 @@
 
     //Helper utils
     import { isObjectEmpty, convertExtraFields } from '../../globalUtils/helperUtils'
+    import { productAddresses } from '../../globalUtils/addresses'
 
     /**
-     * Uri for the micro-service that will return data for the screen
-     * @type {string}
+     * Uris for interacting with the server and navicating
      */
-    let getDataAddress = "product/productSrv/GetProductById"
+    let addresses = productAddresses
+
 
     /**
      * Redirect to login page if user is not logged in. Load and return page data.
@@ -29,22 +30,22 @@
 
             let extraFields = []
             const paramString = new URLSearchParams({ _key: `"${slug}"` })
-            const {ok, data} = await httpGet(`${getDataAddress}?${paramString.toString()}`, this.fetch, session.token);
+            const {ok, data} = await httpGet(`${addresses.get}?${paramString.toString()}`, this.fetch, session.token);
             if (ok) {
                 // console.log(data)
                 if (isObjectEmpty(data)) {
                     alert('Product not found')
-                    this.redirect(302, `/product/new`);
+                    this.redirect(302, addresses.new);
                 } else {
                     extraFields = convertExtraFields(data.extraFields)
                 }
             } else {
                 alert('Error getting Product')
-                this.redirect(302, `/product`);
+                this.redirect(302, addresses.previousPage);
             }
             let product = data
 
-            return  {product, slug, extraFields} ;
+            return  {product, slug, extraFields, addresses} ;
 
         }
 
@@ -59,10 +60,8 @@
     export let product;
     export let slug;
     export let extraFields;
-
+    export let addresses;
 
 </script>
 
-<!--<h5>New Product</h5>-->
-
-<Detail {product} {slug} {extraFields} />
+<Detail {product} {slug} {extraFields} {addresses}/>

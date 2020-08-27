@@ -23,17 +23,12 @@
     export let product;
     export let slug;
     export let extraFields;
+    export let addresses;
 
     let tmpDateFrom = product.validityDates && new Date(product.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
     let tmpDateThru = product.validityDates && new Date(product.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"});
     let tmpCreateDateTime = product.modifications && new Date(product.modifications.createDate).toLocaleString("en-CA");
     let tmpUpdateDateTime = product.modifications && new Date(product.modifications.updateDate).toLocaleString("en-CA");
-
-    let addresses = {update: "product/productSrv/UpdateProduct",
-        create: "product/productSrv/CreateProduct",
-        delete: "product/productSrv/DeleteProduct",
-        reload: "product/",
-        previousPage: "/product"}
 
     let inProgress = false
 

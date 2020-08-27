@@ -8,6 +8,8 @@
 <script>
 
     import Detail from './_detail.svelte';
+    import { productAddresses } from '../../globalUtils/addresses'
+    let addresses = productAddresses
 
     const curDate = new Date()
     let nextYearDate = new Date()
@@ -20,6 +22,4 @@
 
 </script>
 
-<!--<h5>New Product</h5>-->
-
-<Detail {product} {slug} {extraFields} />
+<Detail {product} {slug} {extraFields} {addresses} />
