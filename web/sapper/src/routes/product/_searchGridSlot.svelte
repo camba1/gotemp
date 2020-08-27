@@ -12,7 +12,7 @@
 
 {#each tblData as dataRow}
     <tr>
-        <th scope="row"><a href="customer/{dataRow._key}"> {dataRow._key} </a></th>
+        <th scope="row"><a href="product/{dataRow._key}"> {dataRow._key} </a></th>
         <td>{dataRow.name}</td>
         <td>{new Date(dataRow.validityDates.validFrom).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"})}</td>
         <td>{new Date(dataRow.validityDates.validThru).toLocaleDateString("en-CA",{year:"numeric",month:"2-digit", day:"2-digit"})}</td>
