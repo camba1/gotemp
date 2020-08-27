@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"goTemp/customer/proto"
+	"goTemp/globalProtos"
 	"goTemp/globalUtils"
 	"goTemp/globalerrors"
 	"log"
@@ -27,7 +28,17 @@ func checkMandatoryFields(customer *proto.Customer) ([]string, error) {
 
 //SetMandatoryFields: Preset the mandatory fields that need to be populated before insert,delete or update
 func SetMandatoryFields(ctx context.Context, customer *proto.Customer, isInsert bool) error {
+
+	log.Println("Start Set Mandatory Fields")
+
 	tempDates, _ := globalUtils.TimeToTimeStampPPB(time.Now(), time.Now().AddDate(1, 0, 0))
+	if customer.GetValidityDates() == nil {
+		customer.ValidityDates = &globalProtos.GlValidityDate{}
+	}
+
+	if customer.GetModifications() == nil {
+		customer.Modifications = &globalProtos.GlModification{}
+	}
 	if isInsert {
 		if customer.GetValidityDates().GetValidFrom() == nil {
 			customer.GetValidityDates().ValidFrom = tempDates[0]
@@ -35,13 +46,21 @@ func SetMandatoryFields(ctx context.Context, customer *proto.Customer, isInsert 
 		}
 		customer.Modifications.CreateDate = tempDates[0]
 	}
-	customer.Modifications.UpdateDate = tempDates[0]
+
+	log.Println("Set Mandatory Fields - Set Mod Date")
+
+	customer.GetModifications().UpdateDate = tempDates[0]
+
+	log.Println("Set Mandatory Fields - Set user")
 
 	currentUser, err := getCurrentUser(ctx)
 	if err != nil {
 		return err
 	}
 	customer.Modifications.ModifiedBy = currentUser
+
+	log.Println("End Set Mandatory Fields")
+
 	return nil
 }
 
