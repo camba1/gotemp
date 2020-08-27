@@ -1,5 +1,15 @@
 
 <script context="module">
+    /**
+     * Generic section that handles loading of data
+     * and/or redirect needed prior to rendering the page
+     */
+
+    /**
+     * Redirect to login page if user is not logged in
+     * @param page - is a { host, path, params, query } object
+     * @param session - contains user information if logged in
+     */
     export function preload(page, session) {
         // console.log(session)
         // console.log(page)
@@ -10,10 +20,18 @@
 </script>
 
 <script>
-    import { httpPost } from '../../globalUtils/api'
+    /**
+     * Search page
+     */
+
+    // GUI components imports
     import SearchScreen from './../../components/searchScreen/searchScreen.svelte'
     import ProductGridSlot from "./_productGridSlot.svelte"
 
+    // http Post
+    import { httpPost } from '../../globalUtils/api'
+
+    // Allow navigation and Import session to determine if user is logged in
     import { goto, stores } from '@sapper/app'
     const { session } = stores()
 
@@ -21,18 +39,47 @@
     //     {"_key": "tele", "name": "Watch me TV", "validityDates":{ "validFrom": "2020-02-02", "validThru": "2021-02-02"}, "hierarchyLevel": "sku", "extraFields": {"externalId": "12345"}},
     //     {"_key": "fridge", "name": "Cool Stuff Fridge", "validityDates":{ "validFrom": "2020-02-02", "validThru": "2021-02-02"}, "hierarchyLevel": "sku", "extraFields": {"externalId": "12345"}}
     // ]
+
+    /**
+     * Array of objects to be displayed on the search grid
+     * @type {*[]}
+     */
     let tblData=[]
-    let tblHeaders=["ID","name","Valid From","Valid Thru","Hierarchy Level"] //,"Other Fields"]
+    /**
+     * Test for search grid column headers
+     * @type {string[]}
+     */
+    let tblHeaders=["ID","name","Valid From","Valid Thru","Hierarchy Level"]
+    /**
+     * Parameters to be used as search parameters for searching
+     * @type {({name: string, text: string, id: string, placeholder: string, type: string, value: string})[]}
+     */
     let searchParams = [{text: "Id:",name: "key", type:"text", id:"key", placeholder:"key", value: ""},
         {text: "Name:",name: "name", type:"text", id:"name", placeholder:"name", value:""},
         {text: "Valid Date:", name: "validDate", type:"date", id:"validDate", placeholder:"Valid Date", value:""}
     ]
 
+    /**
+     * Title to be displayed on the top of the page.
+     * @type {string}
+     */
     let pageTitle = "Products"
+    /**
+     * Uri for the micro-service that will return data for the search grid
+     * @type {string}
+     */
     let getDataAddress = "product/productSrv/GetProducts"
+    /**
+     * Uri to naviaate to when the new and previous buttons are clicked
+     * @type {{new: string, previous: string}}
+     */
     let otherPagesAddress = {new: '/product/new', previous: '/' }
 
-    async function handleMessage(event) {
+    /**
+     * Request search results from the server. Data is loaded into the tblData variable.
+     * The actual call comes from a child component
+     */
+    async function handleSearch(event) {
 
         let params = {_key: searchParams[0].value, name: searchParams[1].value}
         if (isValidStringDate(searchParams[2].value)) {
@@ -51,14 +98,17 @@
         }
     }
 
+    /**
+     * Handle page navigation using sapper's goto method
+     * @param newPage - Uri of page we want to visit
+     * @returns {Promise<void>}
+     */
     async function navigateTo(newPage) {
         switch (newPage.detail.newPage) {
             case "new":
-              //  await goto('/product/new');
                 await goto(otherPagesAddress.new)
                 break;
             case "previous":
-                // await goto('/');
                 await goto(otherPagesAddress.previous);
                 break;
             default:
@@ -67,14 +117,30 @@
         }
     }
 
+    /**
+     * Checks if an object is empty
+     * @param obj - Object ot check
+     * @returns {boolean} - True if object is empty
+     */
     function isObjectEmpty(obj) {
         for(var i in obj) return false;
         return true;
     }
 
+    /**
+     * Checks if object is a valid date
+     * @param d - object to check
+     * @returns {boolean} - True if object is a valid date
+     */
     function isValidDate(d) {
         return d instanceof Date && !isNaN(d);
     }
+
+    /**
+     * Check if a string canbe coverted to a valid date
+     * @param stringDate - String possibly containing a date
+     * @returns {boolean} - True if string contains a valid date
+     */
     function isValidStringDate(stringDate) {
         if (stringDate === "") {
             return false
@@ -85,6 +151,6 @@
 
 </script>
 
-<SearchScreen {tblHeaders} {searchParams} {pageTitle} on:message={handleMessage} on:navigate={navigateTo}>
+<SearchScreen {tblHeaders} {searchParams} {pageTitle} on:search={handleSearch} on:navigate={navigateTo}>
     <ProductGridSlot {tblData}/>
 </SearchScreen>

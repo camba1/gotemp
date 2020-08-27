@@ -51,9 +51,7 @@
      */
     function search() {
         inProgress = true;
-        dispatch('message', {
-            text: 'Hello!'
-        });
+        dispatch('search');
         inProgress = false;
     }
 
@@ -75,6 +73,14 @@
         dispatch('navigate', {
             newPage: 'previous'
         });
+    }
+
+    /**
+     * Reset the values of the search parameters as the standard reset button only clears
+     * the control but not the bound value
+     */
+    function resetSearchParams() {
+        searchParams.forEach((param) => {param.value = ""})
     }
 
 </script>
@@ -105,7 +111,7 @@
             <form on:submit|preventDefault={search}>
                 <GtFormGroupInput {searchParams}/>
                 <Button size="sm" type="submit" disabled={inProgress} ><i class="fas fa-search"></i> Search</Button>
-                <Button size="sm" type="reset"><i class="fas fa-eraser"></i> Clear</Button>
+                <Button size="sm" type="reset" on:click={resetSearchParams} ><i class="fas fa-eraser"></i> Clear</Button>
             </form>
         </Col>
         <Col>
