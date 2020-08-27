@@ -127,6 +127,11 @@ func (c *customer) UpdateCustomer(ctx context.Context, inCustomer *proto.Custome
 		return errVal
 	}
 
+	err := processExtraFields(inCustomer)
+	if err != nil {
+		return err
+	}
+
 	col, err := conn.Collection(ctx, customerCollectionName)
 	if err != nil {
 		log.Printf(custErr.UnableToOpenCollection(customerCollectionName))
