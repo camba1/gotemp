@@ -31,6 +31,9 @@
     // http Post
     import { httpPost } from '../../globalUtils/api'
 
+    //Validation utils
+    import { isObjectEmpty, isValidStringDate } from '../../globalUtils/helperUtils'
+
     // Allow navigation and Import session to determine if user is logged in
     import { goto, stores } from '@sapper/app'
     const { session } = stores()
@@ -45,11 +48,13 @@
      * @type {*[]}
      */
     let tblData=[]
+
     /**
      * Test for search grid column headers
      * @type {string[]}
      */
     let tblHeaders=["ID","name","Valid From","Valid Thru","Hierarchy Level"]
+
     /**
      * Parameters to be used as search parameters for searching
      * @type {({name: string, text: string, id: string, placeholder: string, type: string, value: string})[]}
@@ -64,11 +69,13 @@
      * @type {string}
      */
     let pageTitle = "Products"
+
     /**
      * Uri for the micro-service that will return data for the search grid
      * @type {string}
      */
     let getDataAddress = "product/productSrv/GetProducts"
+
     /**
      * Uri to naviaate to when the new and previous buttons are clicked
      * @type {{new: string, previous: string}}
@@ -115,38 +122,6 @@
                 alert(`Unknown page when trying to navigate: ${newPage.detail.newPage}`);
 
         }
-    }
-
-    /**
-     * Checks if an object is empty
-     * @param obj - Object ot check
-     * @returns {boolean} - True if object is empty
-     */
-    function isObjectEmpty(obj) {
-        for(var i in obj) return false;
-        return true;
-    }
-
-    /**
-     * Checks if object is a valid date
-     * @param d - object to check
-     * @returns {boolean} - True if object is a valid date
-     */
-    function isValidDate(d) {
-        return d instanceof Date && !isNaN(d);
-    }
-
-    /**
-     * Check if a string canbe coverted to a valid date
-     * @param stringDate - String possibly containing a date
-     * @returns {boolean} - True if string contains a valid date
-     */
-    function isValidStringDate(stringDate) {
-        if (stringDate === "") {
-            return false
-        }
-        let d = new Date(stringDate)
-        return isValidDate(d)
     }
 
 </script>

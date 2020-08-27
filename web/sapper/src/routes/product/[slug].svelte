@@ -2,6 +2,23 @@
     // import { httpPost } from '../../globalUtils/api'
     import { httpGet } from '../../globalUtils/api'
 
+    //Helper utils
+    import { isObjectEmpty, convertExtraFields } from '../../globalUtils/helperUtils'
+
+    /**
+     * Uri for the micro-service that will return data for the screen
+     * @type {string}
+     */
+    let getDataAddress = "product/productSrv/GetProductById"
+
+    /**
+     * Redirect to login page if user is not logged in. Load and return page data.
+     * Extract the additional fields (that the app is not aware of) into a name, value KV
+     * as they will be displayed separately
+     * @param page - is a { host, path, params, query } object
+     * @param session - contains user information if logged in
+     * @returns {Promise<{product: json, slug: *, extraFields: []}>}
+     */
     export async function preload(page, session) {
         // console.log(session)
         const { slug } = page.params;
@@ -11,10 +28,8 @@
         } else {
 
             let extraFields = []
-            // let params = {_key: slug}
-            // const {ok, data} = await httpPost("product/productSrv/GetProductById", params);
             const paramString = new URLSearchParams({ _key: `"${slug}"` })
-            const {ok, data} = await httpGet(`product/productSrv/GetProductById?${paramString.toString()}`, this.fetch, session.token);
+            const {ok, data} = await httpGet(`${getDataAddress}?${paramString.toString()}`, this.fetch, session.token);
             if (ok) {
                 // console.log(data)
                 if (isObjectEmpty(data)) {
@@ -35,22 +50,6 @@
 
     }
 
-    function convertExtraFields(obj) {
-        let vals = []
-        let key;
-        if (!isObjectEmpty(obj)) {
-            for (let key1 in obj) {
-                key = key1
-                vals.push({'name': key, 'value': obj[key]})
-            }
-            return vals
-        }
-    }
-
-    function isObjectEmpty(obj) {
-        for(var i in obj) return false;
-        return true;
-    }
 </script>
 
 <script>
