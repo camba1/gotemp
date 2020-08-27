@@ -26,13 +26,14 @@
 
     // GUI components imports
     import SearchScreen from './../../components/searchScreen/searchScreen.svelte'
-    import ProductGridSlot from "./_productGridSlot.svelte"
+    import SearchGridSlot from "./_searchGridSlot.svelte"
 
     // http Post
     import { httpPost } from '../../globalUtils/api'
 
-    //Validation utils
+    //Helper utils
     import { isObjectEmpty, isValidStringDate } from '../../globalUtils/helperUtils'
+    import { productAddresses } from '../../globalUtils/addresses'
 
     // Allow navigation and Import session to determine if user is logged in
     import { goto, stores } from '@sapper/app'
@@ -74,13 +75,13 @@
      * Uri for the micro-service that will return data for the search grid
      * @type {string}
      */
-    let getDataAddress = "product/productSrv/GetProducts"
+    //let getDataAddress = "product/productSrv/GetProducts"
 
     /**
      * Uri to naviaate to when the new and previous buttons are clicked
      * @type {{new: string, previous: string}}
      */
-    let otherPagesAddress = {new: '/product/new', previous: '/' }
+    //let otherPagesAddress = {new: '/product/new', previous: '/' }
 
     /**
      * Request search results from the server. Data is loaded into the tblData variable.
@@ -92,7 +93,7 @@
         if (isValidStringDate(searchParams[2].value)) {
             params.validDate = new Date(searchParams[2].value).toISOString()
         }
-        const {ok, data} = await httpPost(getDataAddress, params, $session.token);
+        const {ok, data} = await httpPost(productAddresses.getAll, params, $session.token);
         if (ok) {
             // console.log(data)
             if (isObjectEmpty(data)) {
@@ -113,10 +114,10 @@
     async function navigateTo(newPage) {
         switch (newPage.detail.newPage) {
             case "new":
-                await goto(otherPagesAddress.new)
+                await goto(productAddresses.new)
                 break;
             case "previous":
-                await goto(otherPagesAddress.previous);
+                await goto(productAddresses.searchPreviousPage);
                 break;
             default:
                 alert(`Unknown page when trying to navigate: ${newPage.detail.newPage}`);
@@ -127,5 +128,5 @@
 </script>
 
 <SearchScreen {tblHeaders} {searchParams} {pageTitle} on:search={handleSearch} on:navigate={navigateTo}>
-    <ProductGridSlot {tblData}/>
+    <SearchGridSlot {tblData}/>
 </SearchScreen>
