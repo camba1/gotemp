@@ -11,6 +11,10 @@
      */
     let addresses = productAddresses
 
+    /**
+     * String representing the object displayed in the page
+     */
+    let pageObjectLbl = 'Product'
 
     /**
      * Redirect to login page if user is not logged in. Load and return page data.
@@ -34,13 +38,13 @@
             if (ok) {
                 // console.log(data)
                 if (isObjectEmpty(data)) {
-                    alert('Product not found')
+                    alert(`${pageObjectLbl} not found`)
                     this.redirect(302, addresses.new);
                 } else {
                     extraFields = convertExtraFields(data.extraFields)
                 }
             } else {
-                alert('Error getting Product')
+                alert(`Error getting ${pageObjectLbl}`)
                 this.redirect(302, addresses.previousPage);
             }
             let product = data
