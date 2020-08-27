@@ -1,9 +1,6 @@
 <script>
-    import { goto } from '@sapper/app'
-    import { httpPut } from '../../globalUtils/api'
-    import { httpPost } from '../../globalUtils/api'
-    import { httpDelete } from '../../globalUtils/api'
 
+    // GUI components imports
     import GtDetailCard from './../../components/detailScreen/gtDetailCard.svelte'
     import GtDetailCardFormGrp from './../../components/detailScreen/gtDetailCardFormGrp.svelte'
     import GTModificationsCard from './../../components/detailScreen/gtModificationsCard.svelte'
@@ -17,8 +14,15 @@
     import Button from 'sveltestrap/src/Button.svelte'
     import Input from 'sveltestrap/src/Input.svelte'
 
-    import { stores } from '@sapper/app'
+    // Allow navigation and Import session to determine if user is logged in
+    import { goto, stores } from '@sapper/app'
     const { session } = stores()
+
+    // Interacting with server
+    import { httpPut, httpPost, httpDelete  } from '../../globalUtils/api'
+
+    //Validation utils
+    import { isObjectEmpty, isValidDate } from '../../globalUtils/helperUtils'
 
     export let product;
     export let slug;
@@ -86,10 +90,6 @@
         await goto(addresses.previousPage)
     }
 
-    function isObjectEmpty(obj) {
-        for(var i in obj) return false;
-        return true;
-    }
 
     function updateVF(event) {
         updateVD("validFrom", event.target.value)
@@ -105,7 +105,6 @@
             if (product.validityDates) {
                 let parts = newDateString.split('-');
                 let VD = new Date(parts[0], parts[1] - 1, parts[2]);
-                // let VD = new Date(event.target.value)
                 if (isValidDate(VD)){
                     product.validityDates[dateToUpdate] = VD
                 }
@@ -117,9 +116,6 @@
         }
     }
 
-    function isValidDate(d) {
-        return d instanceof Date && !isNaN(d);
-    }
 
 </script>
 
