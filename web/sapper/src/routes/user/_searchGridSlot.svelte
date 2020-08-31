@@ -17,7 +17,7 @@
         <td>{dataRow.company}</td>
         <td>{dataRow.email}</td>
         {#if dataRow.active}
-            <td><i class="far fa-check-circle"></i></td>
+            <td class="text-center"><i class="far fa-check-circle"></i></td>
         {:else}
             <td></td>
         {/if}
