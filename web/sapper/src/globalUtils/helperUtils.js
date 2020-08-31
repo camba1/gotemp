@@ -83,3 +83,15 @@ export function addBoolField(objToCheck, flagName) {
         objToCheck[flagName] = false
     }
 }
+
+/**
+ * Check if an object has a property, if it does not add it with initial value = passed in value
+ * @param objToCheck - Object to which we may need to add a property
+ * @param fieldName - Name of the  field to add
+ * @param value - Initial default value for the field to add
+ */
+export function addFieldtoObj(objToCheck, fieldName, value) {
+    if (objToCheck && !objToCheck.hasOwnProperty(fieldName)) {
+        objToCheck[fieldName] = value
+    }
+}
