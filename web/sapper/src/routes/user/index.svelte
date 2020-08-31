@@ -87,7 +87,8 @@
         //Go microservice will not handle empty id field since id is expected to be int value
         // and empty for int values is 0 in Go
         if (searchParams[0].value !== "") {
-            params.id = searchParams[0].value
+            !isNaN(searchParams[0].value) ?
+                params.id = searchParams[0].value : searchParams[0].value = ""
         }
         //Validate we have a date before adding it to the request
         if (isValidStringDate(searchParams[5].value)) {
