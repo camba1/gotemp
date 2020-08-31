@@ -58,16 +58,28 @@ export function convertExtraFields(obj) {
 export function updateValidDate(dateToUpdate, newDateString, objectToUpdate){
     let foundVD = false
     if (objectToUpdate) {
-        if (objectToUpdate.validityDates) {
             let parts = newDateString.split('-');
             let VD = new Date(parts[0], parts[1] - 1, parts[2]);
             if (isValidDate(VD)){
-                objectToUpdate.validityDates[dateToUpdate] = VD
+                objectToUpdate[dateToUpdate] = VD
             }
             foundVD = true
-        }
     }
     if (!foundVD) {
         alert('Unable to populate validity date')
+    }
+}
+
+/**
+ * By default grpc will not send out empty fields, so our object may be missing some fields.
+ * Additionally, GO will not unMarshal a string value to a boolean field.
+ * So we need to initialize the boolean fields with a boolean value so that it is not
+ * automatically marshalled as a string
+ * @param objToCheck - Object to which we may need to add the boolean field
+ * @param flagName - Name of the boolean field to add
+ */
+export function addBoolField(objToCheck, flagName) {
+    if (objToCheck && !objToCheck.hasOwnProperty(flagName)) {
+        objToCheck[flagName] = false
     }
 }
