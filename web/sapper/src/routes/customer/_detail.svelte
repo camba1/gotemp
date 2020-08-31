@@ -166,7 +166,7 @@
      * @param event - item that called the event
      */
     function updateVF(event) {
-        updateValidDate("validFrom", event.target.value, detailData)
+        updateValidDate("validFrom", event.target.value, detailData.validityDates)
     }
 
     /**
@@ -174,7 +174,7 @@
      * @param event - item that called the event
      */
     function updateVT(event) {
-        updateValidDate("validThru", event.target.value, detailData)
+        updateValidDate("validThru", event.target.value, detailData.validityDates)
     }
 
 </script>
