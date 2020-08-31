@@ -17,3 +17,23 @@ export let customerAddresses = { get: "customer/customerSrv/GetCustomerById",
     reload: "customer/",
     previousPage: "/customer",
     searchPreviousPage: "/"}
+
+export let userAddresses = { get: "user/userSrv/GetUserById",
+    getAll: "user/userSrv/GetUsers",
+    update: "user/userSrv/UpdateUser",
+    create: "user/userSrv/CreateUser",
+    delete: "user/userSrv/DeleteUser",
+    new: "/user/new",
+    reload: "user/",
+    previousPage: "/user",
+    searchPreviousPage: "/"}
+
+export let promotionAddresses = { get: "promotion/promotionSrv/GetPromotionById",
+    getAll: "promotion/promotionSrv/GetPromotions",
+    update: "promotion/promotionSrv/UpdatePromotion",
+    create: "promotion/promotionSrv/CreatePromotion",
+    delete: "promotion/promotionSrv/DeletePromotion",
+    new: "/promotion/new",
+    reload: "promotion/",
+    previousPage: "/promotion",
+    searchPreviousPage: "/"}
