@@ -1,3 +1,4 @@
+# Docker-compose sample commands
 composeup:
 	docker-compose up
 composedown:
@@ -7,9 +8,10 @@ composebuildpromosrv:
 composerestartpromocli:
 	docker-compose rm -fsv promotioncli
 	docker-compose up promotioncli
+
+# Docker sample commands
 docbuildpromosrv:
 	docker build -t promosrv -f promotion/Dockerfile .
-
 docrunpromosrv:
 	docker run -p 50051:50051 --name promosrvcont promosrv
 docbuildpromocli:
@@ -17,11 +19,25 @@ docbuildpromocli:
 docrunpromocli:
 	docker run -p 50051:50051 --name promoclicont promocli
 
+# Run service directly
 runpromosrv:
 	go run promotion/server/promotionServer.go
 runpromocli:
 	go run promotion/client/promotionClient.go
 
+# Web App
+# Directly (dev)
+	npm run dev
+# Docker
+docbuildweb:
+	docker build -t gotempweb -f ./web/Dockerfile ./web
+docrunweb:
+	docker run -p 3000:3000 --name gotempwebcont gotempweb
+#Docker-compose
+composeupweb:
+	docker-compose up web
+
+# Compile proto files
 genpromotionproto:
 	protoc --proto_path=$$GOPATH/src:. --micro_out=source_relative:.. --go_out=. --go_opt=paths=source_relative promotion/proto/promotion.proto
 genuserproto:
@@ -33,6 +49,7 @@ genproductproto:
 genstandardFieldsproto:
 	protoc --proto_path=$$GOPATH/src:. --micro_out=source_relative:.. --go_out=. --go_opt=paths=source_relative globalProtos/standardFields.proto
 
+# Call service through the micro gateway
 promoviaapigateway:
 	curl --location --request POST 'http://localhost:8080/promotion/promotionSrv/getPromotions' \
     --header 'Content-Type: application/json' \
