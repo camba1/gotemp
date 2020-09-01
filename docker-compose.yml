@@ -191,3 +191,13 @@ services:
     command: api --handler=rpc --namespace=goTemp.api
     ports:
     - "8080:8080"
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    container_name: gtweb
+    volumes:
+    - ./web/sapper/src:/goTemp/web/sapper/src
+    ports:
+    - "3000:3000"
+    - "10000:10000"
