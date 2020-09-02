@@ -22,6 +22,7 @@ In terms of the web front end, the stack is as follows:
 - `Svelte` is used as  the compilation engine (via rollup)
 - `Sapper` is the javascript framework
 - `Sveltestrap` provides the css framework and is based on bootstrap
+- `Font Awesome` to display icons in the application
 
 Below is a diagram that displays the overall setup of the application:
 
@@ -100,7 +101,7 @@ Additionally, we have the following files in the root directory as well:
 
 #### Services
 
-We use go-micro as the main GO micro services framework. Using go-micro simplifies many of the tasks associated with building 
+We use `go-micro` as the main GO micro services framework. Using go-micro simplifies many of the tasks associated with building 
 micro services including (but not limited to):
 
 - Service discovery
@@ -179,7 +180,7 @@ The web application lives in the `./web` folder. Since `Sapper` and `Svelte` gen
         - `routes`: application routes to the different pages
         - `client.js`: Required file used to start `Sapper`
         - `server.js`: Used to configure app with items like middleware and compression
-        - `template.html`: Main page that contains our application. We added Bootstrap and Fontawesome CDN references in this page
+        - `template.html`: Main page that contains our application. We added Bootstrap and Font Awesome CDN references in this page
     - `static`: Holds static items
 - `Dockerfile`: Used to build the docker image for the web app
         
