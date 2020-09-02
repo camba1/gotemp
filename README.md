@@ -38,17 +38,30 @@ The frontend is still under construction at this time, but it is at a very usabl
 
 ### Starting the application
 
-- Clone the repository. Then, cd into `gotemp/web/sapper` and run `npm install` to generate the javascript dependencies.
+Before running the application the first time:
 
-- Before starting the application, ensure that Docker is installed and running. Then, run the following command from a terminal:
+- Clone the repository
+- cd into `gotemp/web/sapper`
+- Run the following command to generate the javascript dependencies.
+
+```bash
+    npm install
+```
+
+To start the application:
+
+- Ensure that Docker is installed and running. Then, run the following command from a terminal in the goTemp root folder:
 
 ```bash
    make start
 ```
 
 Depending on wether you have run the application before, docker may have to download all the dependent images (PostgerSql, TimescaleDB, Nodejs, etc).
-Once everything has been downloaded and started, you should see a message in the terminal indicating that the application is listening at localhost:3000.
-Open your browser and navigate to `http://localhost:3000`
+This may take a while depending on your internet connection speed. Once everything has been downloaded and started, you should see a message in the terminal indicating that the application is listening at localhost:3000.
+At that point, yo can open your browser and navigate to:
+```
+    http://localhost:3000
+``` 
 
 #### Repo organization
 
