@@ -34,7 +34,21 @@ In a nutshell. the application functionality is as follows in the backend:
 - All completed CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB
 - Each service has a client which can be used to test all basic CRUD functionality
 
-The frontend is still under construction at this time.
+The frontend is still under construction at this time, but it is at a very usable state.
+
+### Starting the application
+
+- Clone the repository. Then, cd into `gotemp/web/sapper` and run `npm install` to generate the javascript dependencies.
+
+- Before starting the application, ensure that Docker is installed and running. Then, run the following command from a terminal:
+
+```bash
+   make start
+```
+
+Depending on wether you have run the application before, docker may have to download all the dependent images (PostgerSql, TimescaleDB, Nodejs, etc).
+Once everything has been downloaded and started, you should see a message in the terminal indicating that the application is listening at localhost:3000.
+Open your browser and navigate to `http://localhost:3000`
 
 #### Repo organization
 
@@ -91,7 +105,7 @@ For example the user service can be built using:
 
 Note that there is no need to run this if you are using docker-compose as that will build the image automatically
 
-##### Running
+##### Running individual services
 
 The services are designed to run in containers, and the easiest way to run them is to bring them up using docker-compose:
 As an example we will run the user service with the commands below in a terminal:
@@ -111,11 +125,49 @@ the audit service may eventually store it in the time series DB. The audit servi
 
 #### Databases Initialization
 
-The project initializes each of the DBs and seeds them with tables and data. THe data persists over time so that the containers
-can be brought up and down as needed when running docker-compose as long as the associated volume mounts are not deleted. 
-See the folders for each DB for details as well as the dockre-compose file.
+The project initializes each of the DBs and seeds them with tables and data. Data changes made at run time are automatically persisted using mounted volumes when running via docker-compose. 
+See the folders for each DB for details as well as the docker-compose file.
+
+#### Web front end
+
+Our web front end is built with Svelte and Sapper which have some interesting benefits:
+
+- Server side initial rendering of our pages
+- File based routing
+- Smaller code base than other Javascript frameworks. Does more with less.
+- Svelte translates the code to vanilla javascript. Thus, smaller application footprint than most frameworks
+- Emphasis on component re-usability
+
+##### Organization
+
+The web application lives in the `./web` folder. Since `Sapper` and `Svelte` generate multiple files and folders, we will just discuss the relevant folders below:
+
+- `sapper`: The main folder containing the web app
+    - `src`: This is where the bulk of the application resides
+        - `components`: Contains re-usable `Svelte` components
+        - `globalUtils`: Shared javascript utilities
+        - `routes`: application routes to the different pages
+        - `client.js`: Required file used to start `Sapper`
+        - `server.js`: Used to configure app with items like middleware and compression
+        - `template.html`: Main page that contains our application. We added Bootstrap and Fontawesome CDN references in this page
+    - `static`: Holds static items
+- `Dockerfile`: Used to build the docker image for the web app
+        
+#### Routes
+
+All of our main routes are pretty standard in terms of organization. We will use the customer route (`./web/sapper/src/routes/customer`) as an example:
+
+- `index.svelte`: Main customers search page that serves at localhost:3000/customer
+- `_searchGridSlot`: Svelte component that holds the template for the search grid to be display in hte search page (index.svelte)
+- `new.svelte`: Page to be displayed when user want to create a new customer. Displayed at localhost:3000/customer/new
+- `[slug].svelte`: Page to view and modify existing customers. Displayed at localhost:3000/customer/[customerid]
+- `_detail.svelte`: Holds the gui and bulk of the logic for adding or editing customers. It is called by new.svelte and [slug].svelte
+
+There are three routes that do not share the structure above as they have very little functionality and thus are server by a single index.svelte component: root, register and login.
+
 
 
 #### Additional information:
 
 Additional information can be found in the individual folders either in a `readme.md` or a `doc.go` file.
+Additionally, the Makefile contains many command samples that can be used for development.  
