@@ -1,3 +1,7 @@
+# Start all services and the web UI. Does not start server clients
+start:
+	docker-compose up -d usersrv customersrv productsrv promotionsrv auditsrv
+	docker-compose up web
 # Docker-compose sample commands
 composeup:
 	docker-compose up
