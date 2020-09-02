@@ -34,7 +34,10 @@ In a nutshell. the application functionality is as follows in the backend:
 - All completed CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB
 - Each service has a client which can be used to test all basic CRUD functionality
 
-The frontend is still under construction at this time, but it is at a very usable state.
+The frontend is still under construction at this time, but it is at a very usable state. It provides:
+- An entry page
+- Login/logout
+- A search and a detail page for each service
 
 ### Starting the application
 
@@ -96,6 +99,20 @@ Additionally, we have the following files in the root directory as well:
 - `Readme.md`: Well... this file...
 
 #### Services
+
+We use go-micro as the main GO micro services framework. Using go-micro simplifies many of the tasks associated with building 
+micro services including (but not limited to):
+
+- Service discovery
+- gRPC transport for inter service communication
+- Pluggable interfaces to popular software applications like NATS and Redis
+- Built in async messaging (in our case used to setup pub/sub messages to NATS )
+- Built-in data storage interface (in our case used to interact with Redis)
+- API gateway:
+     - Request routing
+     - Load balancing
+     - Automatic conversion of frontend JSON payloads to backend gRPC messages 
+
 
 ##### Organization
 
