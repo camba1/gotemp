@@ -61,10 +61,6 @@
     let errorList = null
 
     /**
-     * Controls opening and closing of the modal that shouw warnings
-     */
-
-    /**
      * Handles creation and updates based on whether the slug is present
      * @returns {Promise<void>}
      */
@@ -72,17 +68,23 @@
 
         inProgress = true
 
-        const {ok, data} = await (httpPost(addresses.register, detailData))
-        if (ok) {
-            if (isObjectEmpty(data)) {
-                alert(`No data found for ${pageObjectLbl}`)
-            } else {
-                goto(addresses.loginPage)
-            }
+        if (detailData.name !== "") {
+            alert("invalid registration")
+            goto(addresses.previousPage)
         } else {
-            errorList = data
-        }
 
+            const {ok, data} = await (httpPost(addresses.register, detailData))
+            if (ok) {
+                if (isObjectEmpty(data)) {
+                    alert(`No data found for ${pageObjectLbl}`)
+                } else {
+                    goto(addresses.loginPage)
+                }
+            } else {
+                errorList = data
+            }
+
+        }
         inProgress = false
     }
 
@@ -94,7 +96,12 @@
         await goto(addresses.previousPage)
     }
 
+
 </script>
+
+<style>
+    .dispnon{display: none}
+</style>
 
 <Container>
 
@@ -122,5 +129,6 @@
                 </GtDetailCardFormGrp>
             </GtDetailCard>
         </Row>
+        <input id="name" class="dispnon" name="name" type="text" bind:value={detailData.name}/>
 
 </Container>
