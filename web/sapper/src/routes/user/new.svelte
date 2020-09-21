@@ -18,7 +18,7 @@
 
     // GUI components imports
     import Detail from './_detail.svelte';
-    // URLs to different pages and product services
+    // URLs to different pages and services
     import { userAddresses } from '../../globalUtils/addresses'
     let addresses = userAddresses
 
