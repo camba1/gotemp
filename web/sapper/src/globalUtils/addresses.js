@@ -37,3 +37,9 @@ export let promotionAddresses = { get: "promotion/promotionSrv/GetPromotionById"
     reload: "promotion/",
     previousPage: "/promotion",
     searchPreviousPage: "/"}
+
+export let authAddresses = { auth: "user/userSrv/auth",
+    register: "user/userSrv/CreateUser",
+    loginPage: "/login",
+    previousPage: "/"
+    }
