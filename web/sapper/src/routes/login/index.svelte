@@ -13,6 +13,9 @@
     import Input from 'sveltestrap/src/Input.svelte'
     import Label from "sveltestrap/src/Label.svelte";
 
+    // URLs to different pages and services
+    import {authAddresses} from '../../globalUtils/addresses'
+
     // Post
     import { httpPost } from '../../globalUtils/api'
 
@@ -23,6 +26,12 @@
     // Linking to pages and sessions
     import { goto, stores } from '@sapper/app';
     const { session } = stores();
+
+    /**
+     *  Uris for interacting with the server and navigating
+     *  @type {object}
+     */
+    let addresses = authAddresses
 
     /**
      * Email used to login to the app
@@ -41,16 +50,20 @@
      */
     async function login(){
         let user = {email: email, pwd: pwd};
-        const {ok, data} = await httpPost("user/userSrv/auth", user);
+        const {ok, data} = await httpPost(addresses.auth, user);
         if (ok) {
             $session.user = data.token
             $session.token = data.token
-            goto('/');
+            goto(addresses.previousPage);
         } else {
             alert('user not found')
         }
         // console.log(ok);
         // console.log(data);
+    }
+
+    async function backToRoot(){
+        await goto(addresses.previousPage)
     }
 
 </script>
@@ -84,6 +97,7 @@
                         bind:value={pwd}/>
             </FormGroup>
             <Button type="submit" >Submit</Button>
+            <Button on:click="{backToRoot}">Cancel</Button>
         </form>
     </CardBody>
 </Card>
