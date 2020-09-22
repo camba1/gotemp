@@ -41,7 +41,7 @@ var glDisableAuditRecords = false
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		//User login is excepted from authentication
-		if req.Endpoint() == "UserSrv.Auth" {
+		if req.Endpoint() == "UserSrv.Auth" || req.Endpoint() == "UserSrv.CreateUser" {
 			return fn(ctx, req, resp)
 		}
 
