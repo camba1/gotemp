@@ -1,3 +1,17 @@
+<script context="module">
+    import { authAddresses } from '../../globalUtils/addresses'
+    /**
+     * Redirect to root page if user is already logged in
+     * @param page - is a { host, path, params, query } object
+     * @param session - contains user information if logged in
+     */
+    export async function preload(page, session) {
+        if (session.user !== undefined) {
+            this.redirect(302, authAddresses.previousPage);
+        }
+    }
+</script>
+
 <script>
 
     // GUI components imports
@@ -10,7 +24,7 @@
     import Container from 'sveltestrap/src/Container.svelte'
     import Input from 'sveltestrap/src/Input.svelte'
 
-    import { authAddresses } from '../../globalUtils/addresses'
+    // import { authAddresses } from '../../globalUtils/addresses'
 
     // Allow navigation and Import session to determine if user is logged in
     import { goto, stores } from '@sapper/app'
@@ -106,7 +120,7 @@
 <Container>
 
         <Row>
-            <GTDetailHeader label="{pageObjectLbl}" inProgress={inProgress} name=""
+            <GTDetailHeader label="{pageObjectLbl}" inProgress={inProgress} name="" slug=null
                             on:handleSave={handleSave}
                             on:backToSearch={backToSearch} />
         </Row>
