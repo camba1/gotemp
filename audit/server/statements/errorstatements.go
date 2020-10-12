@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-// language: Language in which the application messages will be presented
+//language: Language in which the application messages will be presented
 var language = globalUtils.LangEN
 
 //SetLanguage: Populates the language variable to set in which language the message will be displayed
@@ -58,38 +58,46 @@ func (ge *UserErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) st
 }
 
 /*
-The following functions return the appripriate error to the client. it also interpolates the passed arguments
+The following functions return the appropriate error to the client. it also interpolates the passed arguments
 to the returned message
 */
 
+//internalError returns relevant error in the selected language
 func (ge *UserErr) internalError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("internalError", language), err)
 }
 
+//InsertError returns relevant error in the selected language
 func (ge *UserErr) InsertError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("insertError", language), err)
 }
 
+//UpdateError returns relevant error in the selected language
 func (ge *UserErr) UpdateError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("updateError", language), err)
 }
 
+//DeleteError returns relevant error in the selected language
 func (ge *UserErr) DeleteError(Id int64, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("deleteError", language), Id, err)
 }
 
+//DeleteRowNotFoundError  returns relevant error in the selected language
 func (ge *UserErr) DeleteRowNotFoundError(id int64) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectRowReadError", language), id)
 }
 
+//SelectReadError returns relevant error in the selected language
 func (ge *UserErr) SelectReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectReadError", language), err)
 }
 
+//SelectScanError  returns relevant error in the selected language
 func (ge *UserErr) SelectScanError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectScanError", language), err)
 }
 
+//SelectRowReadError returns relevant error in the selected language
 func (ge *UserErr) SelectRowReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectRowReadError", language), err)
 }

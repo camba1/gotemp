@@ -1,5 +1,5 @@
 /*
-proto package contains the definition of protobuffer messages and services related to the product service. Note that the
+Package proto contains the definition of protobuffer messages and services related to the product service. Note that the
 .pb.go and .pb.micro.go files are generated and should not be manually modified.
 Note that the product message contains a couple of atypical fields:
 - _key: Collection primary key. This is unique field required by the DB and will be auto generated if not provided

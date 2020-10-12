@@ -2,6 +2,7 @@ package statements
 
 type usrSql string
 
+//MaxRowsToFetch is the maximum number of row that a get all sql statement should return
 var MaxRowsToFetch = 200
 
 // Create update delete statements

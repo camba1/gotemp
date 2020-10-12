@@ -3,7 +3,7 @@ package statements
 //custSql: Custom string that hold the statements run against the DB
 type custSql string
 
-//MaxRowsToFetch: Maximumn number of rows to pull from theDB in one call
+//MaxRowsToFetch is the maximum number of row that a get all sql statement should return
 var MaxRowsToFetch = 200
 
 // Create update delete statements

@@ -1,5 +1,5 @@
 /*
-globalUtils package includes generic utilities that are common to all services. This package is referenced in all services
+Package globalUtils includes generic utilities that are common to all services. This package is referenced in all services
 It is compose of the following files:
 - audit: Allows the creation of audit messages to be sent out to the audit service
 - AuthUtils: Useful auth based functions

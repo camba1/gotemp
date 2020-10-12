@@ -7,10 +7,10 @@ import (
 	"time"
 )
 
-//language: Controls the language message will be displayed in the app. Defaults to English
+//language is the default language in which messages are returned
 var language globalUtils.Languages = globalUtils.LangEN
 
-//SetLanguage: Change the language used in application
+// SetLanguage Overrides the language in which the messages are returned
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
@@ -64,50 +64,63 @@ func (ge *ProdErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) st
 	return returnstr
 }
 
+//internalError returns relevant error in the selected language
 func (ge *ProdErr) internalError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("internalError", language), err)
 }
 
+//InsertError returns relevant error in the selected language
 func (ge *ProdErr) InsertError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("insertError", language), err)
 }
 
+//UpdateError returns relevant error in the selected language
 func (ge *ProdErr) UpdateError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("UpdateError", language), err)
 }
 
+//DeleteError returns relevant error in the selected language
 func (ge *ProdErr) DeleteError(Id string, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("DeleteError", language), Id, err)
 }
 
+//DeleteRowNotFoundError returns relevant error in the selected language
 func (ge *ProdErr) DeleteRowNotFoundError(id int64) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), id)
 }
 
+//SelectReadError returns relevant error in the selected language
 func (ge *ProdErr) SelectReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectReadError", language), err)
 }
 
+//SelectScanError returns relevant error in the selected language
 func (ge *ProdErr) SelectScanError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectScanError", language), err)
 }
 
+//SelectRowReadError returns relevant error in the selected language
 func (ge *ProdErr) SelectRowReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), err)
 }
 
+//MissingField returns relevant error in the selected language
 func (ge *ProdErr) MissingField(fieldName string) string {
 	return fmt.Sprintf(ge.getSqlTxt("MissingField", language), fieldName)
 }
 
+//DtInvalidValidityDates returns relevant error in the selected language
 func (ge *ProdErr) DtInvalidValidityDates(validFrom, validThru time.Time) string {
 	dateLayout := globalUtils.DateLayoutISO
 	return fmt.Sprintf(ge.getSqlTxt("DtInvalidValidityDates", language), validThru.Format(dateLayout), validFrom.Format(dateLayout))
 }
 
+// DelPromoNotInitialState returns relevant error in the selected language
 func (ge *ProdErr) DelPromoNotInitialState() string {
 	return fmt.Sprintf(ge.getSqlTxt("DelPromoNotInitialState", language))
 }
+
+//UnableToOpenCollection returns relevant error in the selected language
 func (ge *ProdErr) UnableToOpenCollection(collectionName string) string {
 	return fmt.Sprintf(ge.getSqlTxt("unableToOpenCollection", language), collectionName)
 }

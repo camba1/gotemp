@@ -1,5 +1,5 @@
 /*
-Statements package contains service specific error messages and sql statements that will be encountered while running the
+Package statements contains service specific error messages and sql statements that will be encountered while running the
 audit service. It is composed of two files:
 	- errorstatements.go contains all the error messages. The error messages support multiple languages. Language used
 	  depends on the value of the 'language' variable. If not explicitly set, using the SetLanguage function,

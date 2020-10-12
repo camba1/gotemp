@@ -12,7 +12,7 @@ import (
 // AuthUtils contains methods to simplify authentication
 type AuthUtils struct{}
 
-//getCurrentUserFromContext: User is added to the context during authentication. this function extracts it so
+// GetCurrentUserFromContext : User is added to the context during authentication. this function extracts it so
 //that it can be used sending audit records to the broker
 func (a *AuthUtils) GetCurrentUserFromContext(ctx context.Context) (int64, error) {
 	meta, ok := metadata.FromContext(ctx)

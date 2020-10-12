@@ -1,4 +1,5 @@
-/* Audit server: Main package to handle the creation of historical audit data. Anytime a service interacts with data in their
+/*
+Audit server: Main package to handle the creation of historical audit data. Anytime a service interacts with data in their
 individual services, a message is send to the pub/sub broker  with the globalUtils.AuditTopic topic. This message is
 automatically picked up by this service and stored in the time series database for safe guarding.
 Service is currently composed of two files:

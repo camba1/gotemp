@@ -18,7 +18,7 @@ const serviceNameUser = "goTemp.api.user"
 //dateLayoutISO: Default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
-//CreateUser: Call the cuser service and create a new user
+// CreateUser  calls the user service and create a new user
 func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, error) {
 	//var outUser *pb.User
 	//var err error
@@ -54,7 +54,7 @@ func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, err
 	return resp.GetUser(), nil
 }
 
-//UpdateUser: Call the user service and update a user
+//UpdateUser calls the user service and update a user
 func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
 	//var outUser *pb.User
 	//var err error
@@ -84,7 +84,7 @@ func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User)
 	return resp.GetUser(), nil
 }
 
-//GetUserById: Call the user service and retrieve the user identified by a particular id
+//GetUserById  calls the user service and retrieve the user identified by a particular id
 func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (*pb.User, error) {
 	var outUser *pb.User
 	var err error
@@ -105,7 +105,7 @@ func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.
 	return outUser, nil
 }
 
-//DeleteUser: Call the user service and DeleteUser the user identified by a given id
+//DeleteUser calls the user service and DeleteUser the user identified by a given id
 func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, error) {
 
 	resp, err := srvClient.DeleteUser(ctx, searchId)
@@ -123,7 +123,7 @@ func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.S
 	return resp.GetAffectedCount(), nil
 }
 
-//GetUsers: Contact the user service and retrieve users based on a search criteria
+//GetUsers contact the user service and retrieve users based on a search criteria
 func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -152,7 +152,7 @@ func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, erro
 
 }
 
-//authUser: Call the user service and authenticate a user. receive a jwt token if successful
+//authUser calls the user service and authenticate a user. receive a jwt token if successful
 func authUser(srvClient pb.UserSrvService, user *pb.User) (*pb.Token, error) {
 	token, err := srvClient.Auth(context.Background(), &pb.User{
 		Email: user.Email,
@@ -166,7 +166,7 @@ func authUser(srvClient pb.UserSrvService, user *pb.User) (*pb.Token, error) {
 	return token, err
 }
 
-//timeStringToTimestamp: Convert time string to gRPC timestamp
+//timeStringToTimestamp converts time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -179,7 +179,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
-//loginUser: Call authUser to get an authentication token and store it in the context for use on other tasks
+//loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
 func loginUser(srvClient pb.UserSrvService) (context.Context, error) {
 	myUser := &pb.User{
 		Pwd:   "1234",

@@ -22,14 +22,17 @@ type auditMsg struct {
 	header       AuditMsgHeader
 }
 
+// Header returns the header from the Audit Message
 func (a auditMsg) Header() AuditMsgHeader {
 	return a.header
 }
 
+//ObjectToSend returns the object that will be sent to the audit system in the Audit Message
 func (a auditMsg) ObjectToSend() []byte {
 	return a.objectToSend
 }
 
+//Topic returns the topic that will be used to store the object in the audit system
 func (a auditMsg) Topic() string {
 	return a.topic
 }
@@ -37,7 +40,7 @@ func (a auditMsg) Topic() string {
 //AuditMsgHeader: structure of the header portion of the audit message to be sent to the broker
 type AuditMsgHeader map[string]string
 
-//Struct version of the AuditMsgHeader (map) to allow for easier handling
+// AuditMsgHeaderStruct is the struct version of the AuditMsgHeader (map) to allow for easier handling
 type AuditMsgHeaderStruct struct {
 	ServiceName  string
 	ActionFunc   string
@@ -50,43 +53,52 @@ type AuditMsgHeaderStruct struct {
 	Id           int64
 }
 
+//GetId returns the id from audit header
 func (a *AuditMsgHeaderStruct) GetId() int64 {
 	return a.Id
 }
 
+//GetRecordedTime returns the recorded time from audit header
 func (a *AuditMsgHeaderStruct) GetRecordedTime() time.Time {
 	return a.RecordedTime
 }
 
+//GetObjectName returns the object name from audit header
 func (a *AuditMsgHeaderStruct) GetObjectName() string {
 	return a.ObjectName
 }
 
+//GetActionTime returns the  action time from the audit header
 func (a *AuditMsgHeaderStruct) GetActionTime() time.Time {
 	return a.ActionTime
 }
 
+//GetPerformedBy returns the  performed by  from the  audit header
 func (a *AuditMsgHeaderStruct) GetPerformedBy() int64 {
 	return a.PerformedBy
 }
 
+//GetObjectId returns the object id  from audit header
 func (a *AuditMsgHeaderStruct) GetObjectId() string {
 	return a.ObjectId
 }
 
+//GetActionType returns the action type from audit header
 func (a *AuditMsgHeaderStruct) GetActionType() string {
 	return a.ActionType
 }
 
+//GetActionFunc returns the action function name from audit header
 func (a *AuditMsgHeaderStruct) GetActionFunc() string {
 	return a.ActionFunc
 }
 
+//GetServiceName returns the service name from audit header
 func (a *AuditMsgHeaderStruct) GetServiceName() string {
 	return a.ServiceName
 }
 
-//Struct version of the AuditMsgHeader (map) to allow for easier handling
+//AuditMsgHeaderStructs is the struct version of the AuditMsgHeader (map) to allow for easier handling
 type AuditMsgHeaderStructs struct {
 	Header []AuditMsgHeaderStruct
 }
@@ -99,12 +111,12 @@ type AuditSearchParams struct {
 	ActionTimeEnd   time.Time
 }
 
-//SearchId: Parameter used to search audit records by id
+//AuditSearchId is the parameter used to search audit records by id
 type AuditSearchId struct {
 	Id int64
 }
 
-//NewAuditMsg: Validate and create a new Audit message that is ready to be sent out to the broker
+//NewAuditMsg validates and create a new Audit message that is ready to be sent out to the broker
 func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, objectName string, objectId string, objectToSend []byte) (*auditMsg, error) {
 	var missingFields string
 	if serviceName == "" {
@@ -146,7 +158,7 @@ func NewAuditMsg(serviceName, actionFunc, actionType string, performedBy int64, 
 	return &aud, nil
 }
 
-//AuditMsgHeaderToStruct: convert the AuditMsgHeader to its struct based counterpart AuditMsgHeaderStruct
+//AuditMsgHeaderToStruct converts the AuditMsgHeader to its struct based counterpart AuditMsgHeaderStruct
 func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error) {
 	if header == nil {
 		return nil, fmt.Errorf("message header cannot be nil when trying to convert to struct")
@@ -178,7 +190,7 @@ func AuditMsgHeaderToStruct(header AuditMsgHeader) (*AuditMsgHeaderStruct, error
 	return headerStruct, nil
 }
 
-//sendUserAudit: Convert a user to a byte array, compose an audit message and send that message to the broker for
+//AuditSend converts a user to a byte array, compose an audit message and send that message to the broker for
 //forwarding to the audit service
 func AuditSend(ctx context.Context, mb MyBroker, serviceName, actionFunc, actionType string, objectName string, objectId string, byteMessage []byte) string {
 

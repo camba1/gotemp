@@ -7,8 +7,10 @@ import (
 	"time"
 )
 
+//language is the default language in which messages are returned
 var language globalUtils.Languages = globalUtils.LangEN
 
+// SetLanguage Overrides the language in which the messages are returned
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
@@ -43,6 +45,7 @@ var errTxtES = map[string]CustErr{
 	"unableToOpenCollection": "No se pudo abrir la colleccion %s\n",
 }
 
+//getSqlTxt pull an error message in the correct language
 func (ge *CustErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
 	var returnstr string
 	switch myLanguage {
@@ -58,52 +61,63 @@ func (ge *CustErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) st
 	return returnstr
 }
 
+//internalError returns relevant error in the selected language
 func (ge *CustErr) internalError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("internalError", language), err)
 }
 
+//InsertError returns relevant error in the selected language
 func (ge *CustErr) InsertError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("insertError", language), err)
 }
 
+//UpdateError returns relevant error in the selected language
 func (ge *CustErr) UpdateError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("UpdateError", language), err)
 }
 
+//DeleteError returns relevant error in the selected language
 func (ge *CustErr) DeleteError(Id string, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("DeleteError", language), Id, err)
 }
 
+//DeleteRowNotFoundError returns relevant error in the selected language
 func (ge *CustErr) DeleteRowNotFoundError(id string) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), id)
 }
 
+//SelectReadError returns relevant error in the selected language
 func (ge *CustErr) SelectReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectReadError", language), err)
 }
 
+//SelectScanError returns relevant error in the selected language
 func (ge *CustErr) SelectScanError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectScanError", language), err)
 }
 
+//SelectRowReadError returns relevant error in the selected language
 func (ge *CustErr) SelectRowReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), err)
 }
 
+//MissingField returns relevant error in the selected language
 func (ge *CustErr) MissingField(fieldName string) string {
 	return fmt.Sprintf(ge.getSqlTxt("MissingField", language), fieldName)
 }
 
+//DtInvalidValidityDates returns relevant error in the selected language
 func (ge *CustErr) DtInvalidValidityDates(validFrom, validThru time.Time) string {
 	dateLayout := globalUtils.DateLayoutISO
 	return fmt.Sprintf(ge.getSqlTxt("DtInvalidValidityDates", language), validThru.Format(dateLayout), validFrom.Format(dateLayout))
 }
 
+//DelPromoNotInitialState returns relevant error in the selected language
 func (ge *CustErr) DelPromoNotInitialState() string {
 	return fmt.Sprintf(ge.getSqlTxt("DelPromoNotInitialState", language))
 }
 
-//
+//UnableToOpenCollection returns relevant error in the selected language
 func (ge *CustErr) UnableToOpenCollection(collectionName string) string {
 	return fmt.Sprintf(ge.getSqlTxt("unableToOpenCollection", language), collectionName)
 }

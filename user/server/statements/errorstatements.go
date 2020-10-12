@@ -6,8 +6,10 @@ import (
 	"log"
 )
 
+//language is the default language in which messages are returned
 var language = globalUtils.LangEN
 
+// SetLanguage Overrides the language in which the messages are returned
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
@@ -44,6 +46,7 @@ var errTxtES = map[string]UserErr{
 	"userNotFound":           "Usuario no se puedo encontrar\n",
 }
 
+//getSqlTxt pull an error message in the correct language
 func (ge *UserErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
 	var returnstr string
 	switch myLanguage {
@@ -59,50 +62,62 @@ func (ge *UserErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) st
 	return returnstr
 }
 
+//internalError returns relevant error in the selected language
 func (ge *UserErr) internalError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("internalError", language), err)
 }
 
+//InsertError returns relevant error in the selected language
 func (ge *UserErr) InsertError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("insertError", language), err)
 }
 
+//UpdateError returns relevant error in the selected language
 func (ge *UserErr) UpdateError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("updateError", language), err)
 }
 
+//DeleteError returns relevant error in the selected language
 func (ge *UserErr) DeleteError(Id int64, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("deleteError", language), Id, err)
 }
 
+//DeleteRowNotFoundError returns relevant error in the selected language
 func (ge *UserErr) DeleteRowNotFoundError(id int64) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectRowReadError", language), id)
 }
 
+//SelectReadError returns relevant error in the selected language
 func (ge *UserErr) SelectReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectReadError", language), err)
 }
 
+//SelectScanError returns relevant error in the selected language
 func (ge *UserErr) SelectScanError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectScanError", language), err)
 }
 
+//SelectRowReadError returns relevant error in the selected language
 func (ge *UserErr) SelectRowReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("selectRowReadError", language), err)
 }
 
+//DelUserActive returns relevant error in the selected language
 func (ge *UserErr) DelUserActive() string {
 	return fmt.Sprintf(ge.getSqlTxt("delUserActive", language))
 }
 
+//UpdateDupEmail returns relevant error in the selected language
 func (ge *UserErr) UpdateDupEmail() string {
 	return fmt.Sprintf(ge.getSqlTxt("updateDupEmail", language))
 }
 
+//InsertDupEmail returns relevant error in the selected language
 func (ge *UserErr) InsertDupEmail() string {
 	return fmt.Sprintf(ge.getSqlTxt("insertDupEmail", language))
 }
 
+//UserNotFound returns relevant error in the selected language
 func (ge *UserErr) UserNotFound() string {
 	return fmt.Sprintf(ge.getSqlTxt("userNotFound", language))
 }
