@@ -8,5 +8,4 @@ audit service. It is composed of two files:
 	- sqlstatements.go contains all the sql statements to be run against the DB. Currently the sql statements are coded
 	  directly into constants on the package, but they could be loaded from a file or a DB in the future
 */
-
 package statements

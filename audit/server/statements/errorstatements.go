@@ -14,7 +14,7 @@ func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
-//UserErr: String based type that relates service specific errors
+//UserErr defines User audit specific error messages
 type UserErr string
 
 //errTxtEn: Error messages in english map

@@ -73,7 +73,7 @@ func checkEmailUnique(user *pb.User, users *pb.Users, isInsert bool) string {
 //	user.ValidThru = validThru[0]
 //}
 
-// BeforeCreateUser : Call data validations before creating a user
+//BeforeCreateUser calls data validations before creating a user
 func (u *User) BeforeCreateUser(ctx context.Context, user *pb.User, validationErr *pb.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(user)
@@ -96,7 +96,7 @@ func (u *User) BeforeCreateUser(ctx context.Context, user *pb.User, validationEr
 	return nil
 }
 
-// BeforeUpdateUser : Call data validations before updating a user
+//BeforeUpdateUser calls data validations before updating a user
 func (u *User) BeforeUpdateUser(ctx context.Context, user *pb.User, validationErr *pb.ValidationErr) error {
 	_ = ctx
 
@@ -120,7 +120,7 @@ func (u *User) BeforeUpdateUser(ctx context.Context, user *pb.User, validationEr
 	return nil
 }
 
-// BeforeDeleteUser : Call data validations before deleting a user
+//BeforeDeleteUser calls data validations before deleting a user
 func (u *User) BeforeDeleteUser(ctx context.Context, user *pb.User, validationErr *pb.ValidationErr) error {
 	_ = ctx
 	if user.GetActive() {
@@ -132,7 +132,7 @@ func (u *User) BeforeDeleteUser(ctx context.Context, user *pb.User, validationEr
 	return nil
 }
 
-// AfterCreateUser : Call processes to be run after user create
+//AfterCreateUser calls processes to be run after user create
 func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
@@ -147,7 +147,7 @@ func (u *User) AfterCreateUser(ctx context.Context, user *pb.User, afterFuncErr 
 	return nil
 }
 
-// AfterUpdateUser : Call processes to be run after user update
+//AfterUpdateUser calls processes to be run after user update
 func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
@@ -162,7 +162,7 @@ func (u *User) AfterUpdateUser(ctx context.Context, user *pb.User, afterFuncErr 
 	return nil
 }
 
-// AfterDeleteUser : Call processes to be run after user delete
+//AfterDeleteUser calls processes to be run after user delete
 func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr *pb.AfterFuncErr) error {
 	_ = ctx
 
@@ -177,7 +177,7 @@ func (u *User) AfterDeleteUser(ctx context.Context, user *pb.User, afterFuncErr 
 	return nil
 }
 
-// sendUserAudit : Convert a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
+//sendUserAudit converts a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (u *User) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, iObjectId int64, user *pb.User) string {
 
 	if !glDisableAuditRecords {

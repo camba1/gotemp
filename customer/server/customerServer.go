@@ -62,7 +62,7 @@ var glDisableAuditRecords = false
 //customer: Main entry point for customer related services
 type customer struct{}
 
-//AuthWrapper: Authentication middleware
+//AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		meta, ok := metadata.FromContext(ctx)

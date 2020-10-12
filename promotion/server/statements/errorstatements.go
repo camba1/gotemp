@@ -15,6 +15,7 @@ func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
+//PromoErr defines promotion specific error messages
 type PromoErr string
 
 var errTxtEn = map[string]PromoErr{

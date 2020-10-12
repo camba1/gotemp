@@ -3,7 +3,7 @@ package statements
 //auditSql: String based type that relates service specific sql statements
 type auditSql string
 
-//MaxRowsToFetch: Maximum number of rows to return from the database in one select
+//MaxRowsToFetch defines the maximum number of rows to return from the database in one select
 var MaxRowsToFetch = 200
 
 // Create, update, delete statements

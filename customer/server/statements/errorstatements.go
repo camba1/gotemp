@@ -15,6 +15,7 @@ func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
+//CustErr defines customer specific error messages
 type CustErr string
 
 var errTxtEn = map[string]CustErr{

@@ -15,7 +15,7 @@ func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
-//ProdErr: Custom errors related to this service
+//ProdErr defines product specific error messages
 type ProdErr string
 
 //errTxtEn: Error messages in English

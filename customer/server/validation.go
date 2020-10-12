@@ -26,7 +26,7 @@ func checkMandatoryFields(customer *proto.Customer) ([]string, error) {
 	return FailureDesc, nil
 }
 
-//SetMandatoryFields: Preset the mandatory fields that need to be populated before insert,delete or update
+//SetMandatoryFields presets the mandatory fields that need to be populated before insert,delete or update
 func SetMandatoryFields(ctx context.Context, customer *proto.Customer, isInsert bool) error {
 
 	log.Println("Start Set Mandatory Fields")
@@ -75,6 +75,7 @@ func getCurrentUser(ctx context.Context) (string, error) {
 	return strconv.FormatInt(currentUser, 10), nil
 }
 
+//BeforeCreateCustomer calls data validations before creating a customer
 func (c *customer) BeforeCreateCustomer(ctx context.Context, customer *proto.Customer, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -95,6 +96,7 @@ func (c *customer) BeforeCreateCustomer(ctx context.Context, customer *proto.Cus
 	return nil
 }
 
+//BeforeUpdateCustomer calls data validations before updating a customer
 func (c *customer) BeforeUpdateCustomer(ctx context.Context, customer *proto.Customer, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -115,6 +117,7 @@ func (c *customer) BeforeUpdateCustomer(ctx context.Context, customer *proto.Cus
 	return nil
 }
 
+//BeforeDeleteUser calls data validations before deleting a customer
 func (c *customer) BeforeDeleteCustomer(ctx context.Context, customer *proto.Customer, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -129,6 +132,7 @@ func (c *customer) BeforeDeleteCustomer(ctx context.Context, customer *proto.Cus
 	return nil
 }
 
+//AfterCreateCustomer calls processes to be run after customer creation
 func (c *customer) AfterCreateCustomer(ctx context.Context, customer *proto.Customer, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -143,6 +147,7 @@ func (c *customer) AfterCreateCustomer(ctx context.Context, customer *proto.Cust
 	return nil
 }
 
+//AfterUpdateCustomer calls processes to be run after customer update
 func (c *customer) AfterUpdateCustomer(ctx context.Context, customer *proto.Customer, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -157,6 +162,7 @@ func (c *customer) AfterUpdateCustomer(ctx context.Context, customer *proto.Cust
 	return nil
 }
 
+//AfterDeleteCustomer calls processes to be run after customer delete
 func (c *customer) AfterDeleteCustomer(ctx context.Context, customer *proto.Customer, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -171,7 +177,7 @@ func (c *customer) AfterDeleteCustomer(ctx context.Context, customer *proto.Cust
 	return nil
 }
 
-//sendUserAudit: Convert a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
+//sendUserAudit converts a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (c *customer) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId string, customer *proto.Customer) string {
 	if !glDisableAuditRecords {
 		byteMessage, err := mb.ProtoToByte(customer)

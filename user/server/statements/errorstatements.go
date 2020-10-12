@@ -14,6 +14,7 @@ func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
+//UserErr defines user specific error messages
 type UserErr string
 
 var errTxtEn = map[string]UserErr{

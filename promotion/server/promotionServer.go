@@ -47,7 +47,7 @@ var glDisableAuditRecords = false
 //myStore: Store to hold cached values
 var glCache globalUtils.Cache
 
-//AuthWrapper: Authentication middleware
+//AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		meta, ok := metadata.FromContext(ctx)
