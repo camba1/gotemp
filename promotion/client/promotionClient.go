@@ -165,7 +165,7 @@ func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetPromotion(), nil
 }
 
-//DeletePromotion: Call the promotion service and delete the promotion identified by a given id
+//DeletePromotion calls the promotion service and delete the promotion identified by a given id
 func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (int64, error) {
 
 	resp, err := promotionClient.DeletePromotion(ctx, promoId)

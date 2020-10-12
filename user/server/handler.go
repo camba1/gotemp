@@ -16,16 +16,16 @@ import (
 	"time"
 )
 
-//glErr: Holds the service global errors that are shared cross services
+//glErr holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//Promotion: Main entry point for promotion related services
+//Promotion is the main entry point for promotion related services
 type User struct{}
 
-//userErr: Holds service specific errors
+//userErr holds service specific errors
 var userErr statements.UserErr
 
-//GetUserById: Get User from DB based on a given ID
+//GetUserById gets User from DB based on a given ID
 func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *pb.User) error {
 	_ = ctx
 
@@ -72,7 +72,7 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 	return nil
 }
 
-//GetUsers: Search the Users table in the DB based in a set of search parameters
+//GetUsers searches the Users table in the DB based in a set of search parameters
 func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users *pb.Users) error {
 
 	_ = ctx
@@ -129,7 +129,7 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 	return nil
 }
 
-//getSQLForSearch: Combine the where clause built in the buildSearchWhereClause method with the rest of the sql
+//getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
 //statement to return the final search for users sql statement
 func (u *User) getSQLForSearch(searchParms *pb.SearchParams) ([]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
@@ -142,7 +142,7 @@ func (u *User) getSQLForSearch(searchParms *pb.SearchParams) ([]interface{}, str
 	return values, sqlStatement, nil
 }
 
-//buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+//buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
 //slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
 //for the date lookup which is done  as a contains clause
 func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []interface{}, error) {

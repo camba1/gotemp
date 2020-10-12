@@ -103,7 +103,7 @@ type AuditMsgHeaderStructs struct {
 	Header []AuditMsgHeaderStruct
 }
 
-//AuditSearchParams: Parameters to search for audit records
+//AuditSearchParams defines the parameters to search for audit records
 type AuditSearchParams struct {
 	ObjectName      string
 	ObjectId        string
