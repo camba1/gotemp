@@ -241,7 +241,7 @@ func (a *AuditSrv) buildSearchWhereClause(searchParms *globalUtils.AuditSearchPa
 	if !searchParms.ActionTimeEnd.IsZero() {
 		sqlWhereClause += fmt.Sprintf(" AND audit.actiontime <= $%d", i)
 		values = append(values, searchParms.ActionTimeEnd)
-		i++
+		//i++
 	}
 	return sqlWhereClause, values, nil
 }

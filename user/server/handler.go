@@ -183,7 +183,7 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 		validFrom := convertedDates[0]
 		sqlWhereClause += fmt.Sprintf(" AND appuser.validfrom <= $%d AND appuser.validthru >= $%d", i, i)
 		values = append(values, validFrom)
-		i++
+		//i++
 	}
 	return sqlWhereClause, values, nil
 }

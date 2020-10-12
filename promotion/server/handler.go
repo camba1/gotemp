@@ -212,7 +212,7 @@ func (p *Promotion) buildSearchWhereClause(searchParms *proto.SearchParams) (str
 		validFrom := convertedDates[0]
 		sqlWhereClause += fmt.Sprintf(" AND promotion.validfrom <= $%d AND promotion.validthru >= $%d", i, i)
 		values = append(values, validFrom)
-		i++
+		//i++
 	}
 	return sqlWhereClause, values, nil
 }

@@ -59,11 +59,11 @@ func (i *idLookup) getCustomerName(ctx context.Context, customerId string) (stri
 //
 //	err := glCache.Store.Write(&rec)
 //	if err != nil {
-//		log.Printf("error writting. Error: %v", err)
+//		log.Printf("error writing. Error: %v", err)
 //	}
 //	rec1, err := glCache.Store.Read(key)
 //	if err != nil {
-//		log.Printf("Uanble to read. Error: %v\n", err)
+//		log.Printf("Unable to read. Error: %v\n", err)
 //	}
 //	log.Printf("Read 1: %v\n", rec1)
 //
