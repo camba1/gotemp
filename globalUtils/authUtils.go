@@ -9,6 +9,7 @@ import (
 	"strconv"
 )
 
+// AuthUtils contains methods to simplify authentication
 type AuthUtils struct{}
 
 //getCurrentUserFromContext: User is added to the context during authentication. this function extracts it so
