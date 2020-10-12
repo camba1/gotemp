@@ -57,10 +57,10 @@ var mb globalUtils.MyBroker
 //enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
 
-//Product: Main entry point for Product related services
+//Product is the main entry point for Product related services
 type Product struct{}
 
-//AuthWrapper: Authentication middleware
+//AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		meta, ok := metadata.FromContext(ctx)

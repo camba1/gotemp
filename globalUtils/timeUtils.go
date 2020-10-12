@@ -11,10 +11,10 @@ import (
 //DateLayoutISO: Default time format for dates entered as strings
 const DateLayoutISO = "2006-01-02"
 
-//glErr: Holds the service global errors that are shared cross services
+//glErr holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//TimeStampPPBToTime: Converts gRPC timestamp to time.time. Can take multiple timestamps at once. Returns a slice with
+//TimeStampPPBToTime converts gRPC timestamp to time.time. Can take multiple timestamps at once. Returns a slice with
 //the resulting time.times
 func TimeStampPPBToTime(timeStamps ...*timestamp.Timestamp) ([]time.Time, error) {
 	var returnTimes []time.Time
@@ -31,7 +31,7 @@ func TimeStampPPBToTime(timeStamps ...*timestamp.Timestamp) ([]time.Time, error)
 
 }
 
-//TimeToTimeStampPPB: Converts time.time to gRPC timestamp. Can take multiple time.times at once. Returns a slice with
+//TimeToTimeStampPPB converts time.time to gRPC timestamp. Can take multiple time.times at once. Returns a slice with
 //the resulting timestamps
 func TimeToTimeStampPPB(times ...time.Time) ([]*timestamp.Timestamp, error) {
 	var returnStamps []*timestamp.Timestamp
@@ -47,7 +47,7 @@ func TimeToTimeStampPPB(times ...time.Time) ([]*timestamp.Timestamp, error) {
 	return returnStamps, nil
 }
 
-//CheckValidityDates: Checks if the validFrom - ValidThru timestamp based time frame is valid
+//CheckValidityDates checks if the validFrom - ValidThru timestamp based time frame is valid
 func CheckValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Timestamp) ([]string, error) {
 	var FailureDesc []string
 	validDates := true
@@ -71,13 +71,13 @@ func CheckValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Tim
 	return FailureDesc, nil
 }
 
-//GetNextYearTimeStamp: Returns a timestamp that is exactly one year from today
+//GetNextYearTimeStamp returns a timestamp that is exactly one year from today
 func GetNextYearTimeStamp() *timestamp.Timestamp {
 	myDates, _ := TimeToTimeStampPPB(time.Now().AddDate(1, 0, 0))
 	return myDates[0]
 }
 
-//TimeStringToTimestamp: Converts the string representation of a date to a gRPC timestamp. String must match the DateLayoutISO
+//TimeStringToTimestamp converts the string representation of a date to a gRPC timestamp. String must match the DateLayoutISO
 func TimeStringToTimestamp(dateStr string) (error, *timestamp.Timestamp) {
 	dateTime, err := time.Parse(DateLayoutISO, dateStr)
 	if err != nil {

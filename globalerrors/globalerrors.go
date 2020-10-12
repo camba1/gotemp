@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-//ValidationError: Custom error type Used to compile multiple validations errors as one error
+//ValidationError is a custom error type Used to compile multiple validations errors as one error
 type ValidationError struct {
 	Source      string
 	FailureDesc []string
 }
 
-//Error: Combine all the message stored in the ValidationError.FailureDesc slice and return it as one
+//Error combines all the message stored in the ValidationError.FailureDesc slice and return it as one
 func (v *ValidationError) Error() string {
 	var failureDesc string
 	for _, desc := range v.FailureDesc {
@@ -128,7 +128,7 @@ func (ge *SrvError) AuthNilToken() string {
 	return fmt.Sprintf(string(authNilToken))
 }
 
-// returns relevant error based on the provided parameters
+//AuthNilClaim returns relevant error based on the provided parameters
 func (ge *SrvError) AuthNilClaim(claimType string) string {
 	return fmt.Sprintf(string(authNilClaim), claimType)
 }

@@ -10,10 +10,10 @@ import (
 	"strconv"
 )
 
-//mb: Broker instance to send/receive message from pub/sub system
+//mb is a broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
-//checkValidityDates: Enusre that the valid date from and valid date thru are populated properly
+//checkValidityDates ensures that the valid date from and valid date thru are populated properly
 func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Timestamp) ([]string, error) {
 	var FailureDesc []string
 	validDates := true
@@ -37,7 +37,7 @@ func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Tim
 	return FailureDesc, nil
 }
 
-//checkMandatoryFields: Ensure that all mandatory fields are populated properly
+//checkMandatoryFields ensures that all mandatory fields are populated properly
 func checkMandatoryFields(promo *proto.Promotion) ([]string, error) {
 	var FailureDesc []string
 	if promo.GetName() == "" {
@@ -64,7 +64,7 @@ func checkMandatoryFields(promo *proto.Promotion) ([]string, error) {
 //	promo.ValidThru = validThru[0]
 //}
 
-//BeforeCreatePromotion: Call data validations before creating a promotion
+//BeforeCreatePromotion calls data validations before creating a promotion
 func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(promotion)
@@ -78,7 +78,7 @@ func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *proto.
 	return nil
 }
 
-//BeforeUpdatePromotion: Call data validations before updating a promotion
+//BeforeUpdatePromotion calls data validations before updating a promotion
 func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(promotion)
@@ -92,7 +92,7 @@ func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *proto.
 	return nil
 }
 
-//BeforeDeletePromotion: Call data validations before deleting a promotion
+//BeforeDeletePromotion calls data validations before deleting a promotion
 func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	if promotion.ApprovalStatus > 0 {
@@ -104,7 +104,7 @@ func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *proto.
 	return nil
 }
 
-//AfterCreatePromotion: Call processes to be run after promotion create
+//AfterCreatePromotion calls processes to be run after promotion create
 func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -119,7 +119,7 @@ func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *proto.P
 	return nil
 }
 
-//AfterUpdatePromotion: Call processes to be run after promotion update
+//AfterUpdatePromotion calls processes to be run after promotion update
 func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -135,7 +135,7 @@ func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *proto.P
 	return nil
 }
 
-//AfterDeletePromotion: Call processes to be run after promotion delete
+//AfterDeletePromotion calls processes to be run after promotion delete
 func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -151,7 +151,7 @@ func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.P
 	return nil
 }
 
-//sendAudit: Convert a promotion to a byte array, and call AuditUtil to send message with updated promotion to audit service
+//sendAudit converts a promotion to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (p *Promotion) sendAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, iObjectId int64, promotion *proto.Promotion) string {
 
 	if !glDisableAuditRecords {
