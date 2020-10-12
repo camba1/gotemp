@@ -12,16 +12,16 @@ import (
 	"log"
 )
 
-//mb: Broker instance to send/receive message from pub/sub system
+//mb defines a broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
-//auditErr: Holds service specific errors
+//auditErr holds service specific errors
 var auditErr statements.UserErr
 
-//AuditSrv: Struct that will hold the audit service functionality
+//AuditSrv defines a struct that will hold the audit service functionality
 type AuditSrv struct{}
 
-//SubsToBrokerMsg: Subscribes to the pub/sub broker to receive messages
+//SubsToBrokerInsertMsg subscribes to the pub/sub broker to receive messages
 func (a *AuditSrv) SubsToBrokerInsertMsg() error {
 	err := mb.SubToMsg(a.processBrokerMessage, globalUtils.AuditTopic, globalUtils.AuditQueueInsert)
 	if err != nil {
@@ -30,7 +30,7 @@ func (a *AuditSrv) SubsToBrokerInsertMsg() error {
 	return nil
 }
 
-//processBrokerMessage: extract the topic, header and message payload from the message received from the broker
+//processBrokerMessage extracts the topic, header and message payload from the message received from the broker
 func (a *AuditSrv) processBrokerMessage(p broker.Event) error {
 	log.Printf("Extracting received message")
 	topic, header, message, err := mb.GetMsg(p)
@@ -51,7 +51,7 @@ func (a *AuditSrv) processBrokerMessage(p broker.Event) error {
 	return nil
 }
 
-//createAudit: Insert audit information into the database
+//createAudit inserts audit information into the database
 func (a *AuditSrv) createAudit(topic string, headerStruct *globalUtils.AuditMsgHeaderStruct, message []byte) error {
 
 	outHeaderStruct := globalUtils.AuditMsgHeaderStruct{}
@@ -94,7 +94,7 @@ func (a *AuditSrv) createAudit(topic string, headerStruct *globalUtils.AuditMsgH
 	return nil
 }
 
-//GetAudit: Get both header and message for an audit record
+//GetAudit gets both header and message for an audit record
 func (a *AuditSrv) GetAudit(ctx context.Context, searchId *globalUtils.AuditSearchId) (*globalUtils.AuditMsgHeaderStruct, *[]byte, error) {
 	_ = ctx
 	headerStruct := globalUtils.AuditMsgHeaderStruct{}
@@ -130,7 +130,7 @@ func (a *AuditSrv) GetAudit(ctx context.Context, searchId *globalUtils.AuditSear
 	return &headerStruct, &message, nil
 }
 
-//GetAudits: Retrieve audit headers from the DB. The details are not pulled as they could grow the message size significantly
+//GetAudits retrieves audit headers from the DB. The details are not pulled as they could grow the message size significantly
 func (a *AuditSrv) GetAudits(ctx context.Context, searchParms *globalUtils.AuditSearchParams) (*globalUtils.AuditMsgHeaderStructs, error) {
 	_ = ctx
 	var headerStructs globalUtils.AuditMsgHeaderStructs
@@ -177,7 +177,7 @@ func (a *AuditSrv) GetAudits(ctx context.Context, searchParms *globalUtils.Audit
 
 }
 
-//validateSearchParams: Check if we have a valid search params argument. All params are mandatory to avoid
+//validateSearchParams checks if we have a valid search params argument. All params are mandatory to avoid
 //potentially retrieve a large number of records
 func (a *AuditSrv) validateSearchParams(searchParms *globalUtils.AuditSearchParams) ([]string, error) {
 	var FailureDesc []string
@@ -202,7 +202,7 @@ func (a *AuditSrv) validateSearchParams(searchParms *globalUtils.AuditSearchPara
 	return FailureDesc, nil
 }
 
-//getSQLForSearch: Combine the where clause built in the buildSearchWhereClause method with the rest of the sql
+//getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
 //statement to return the final search for users sql statement
 func (a *AuditSrv) getSQLForSearch(searchParms *globalUtils.AuditSearchParams) ([]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
@@ -215,7 +215,7 @@ func (a *AuditSrv) getSQLForSearch(searchParms *globalUtils.AuditSearchParams) (
 	return values, sqlStatement, nil
 }
 
-//buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+//buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
 //slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
 //for the date lookup which is done  as a contains clause
 func (a *AuditSrv) buildSearchWhereClause(searchParms *globalUtils.AuditSearchParams) (string, []interface{}, error) {

@@ -6,10 +6,10 @@ import (
 	"log"
 )
 
-//language: Language in which the application messages will be presented
+//language is the language in which the application messages will be presented
 var language = globalUtils.LangEN
 
-//SetLanguage: Populates the language variable to set in which language the message will be displayed
+//SetLanguage populates the language variable to set in which language the message will be displayed
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }

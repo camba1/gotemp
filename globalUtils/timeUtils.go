@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-//DateLayoutISO: Default time format for dates entered as strings
+//DateLayoutISO defines the default time format for dates entered as strings
 const DateLayoutISO = "2006-01-02"
 
 //glErr holds the service global errors that are shared cross services

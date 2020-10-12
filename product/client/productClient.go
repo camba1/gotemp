@@ -22,10 +22,10 @@ const (
 	serviceNameUser = "goTemp.api.user"
 )
 
-//dateLayoutISO: Default time format for dates entered as strings
+//dateLayoutISO defaults time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
-//GetProductById: Call the product service and retrieve the product identified by a particular id
+//GetProductById calls the product service and retrieve the product identified by a particular id
 func GetProductById(ctx context.Context, productClient proto.ProductSrvService, custId *proto.SearchId) (*proto.Product, error) {
 
 	product, err := productClient.GetProductById(ctx, custId)
@@ -44,7 +44,7 @@ func GetProductById(ctx context.Context, productClient proto.ProductSrvService, 
 
 }
 
-//GetProducts: Contact the product service and retrieve products based on a search criteria
+//GetProducts contacts the product service and retrieve products based on a search criteria
 func GetProducts(ctx context.Context, productClient proto.ProductSrvService) (*proto.Products, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -70,7 +70,7 @@ func GetProducts(ctx context.Context, productClient proto.ProductSrvService) (*p
 
 }
 
-//CreateProduct: Call the product service and create a new product
+//CreateProduct calls the product service and create a new product
 func CreateProduct(ctx context.Context, productClient proto.ProductSrvService) (*proto.Product, error) {
 
 	//var cust *proto.Product
@@ -107,7 +107,7 @@ func CreateProduct(ctx context.Context, productClient proto.ProductSrvService) (
 	return resp.GetProduct(), nil
 }
 
-//UpdateProduct: Call the product service and update a product
+//UpdateProduct calls the product service and update a product
 func UpdateProduct(ctx context.Context, productClient proto.ProductSrvService, prod *proto.Product) (*proto.Product, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
@@ -133,7 +133,7 @@ func UpdateProduct(ctx context.Context, productClient proto.ProductSrvService, p
 	return resp.GetProduct(), nil
 }
 
-//DeleteProduct: Call the product service and delete the user identified by a given id
+//DeleteProduct calls the product service and delete the user identified by a given id
 func DeleteProduct(ctx context.Context, productClient proto.ProductSrvService, searchId *proto.SearchId) (int64, error) {
 
 	resp, err := productClient.DeleteProduct(ctx, searchId)
@@ -150,7 +150,7 @@ func DeleteProduct(ctx context.Context, productClient proto.ProductSrvService, s
 	return resp.GetAffectedCount(), nil
 }
 
-//timeStringToTimestamp: Convert time string to gRPC timestamp
+//timeStringToTimestamp converts time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -163,7 +163,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
-//authUser: Call the user service and authenticate a user. receive a jwt token if successful
+//authUser calls the user service and authenticate a user. receive a jwt token if successful
 func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.Token, error) {
 	token, err := srvClient.Auth(context.Background(), &userSrv.User{
 		Email: user.Email,
@@ -177,7 +177,7 @@ func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.To
 	return token, err
 }
 
-//loginUser: Call authUser to get an authentication token and store it in the context for use on other tasks
+//loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
 func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	myUser := &userSrv.User{
 		Pwd:   "1234",

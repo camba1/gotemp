@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-//checkMandatoryFields: Ensure that all mandatory fields are populated properly
+//checkMandatoryFields ensures that all mandatory fields are populated properly
 func checkMandatoryFields(product *proto.Product) ([]string, error) {
 	var FailureDesc []string
 	if product.GetName() == "" {
@@ -29,7 +29,7 @@ func checkMandatoryFields(product *proto.Product) ([]string, error) {
 	return FailureDesc, nil
 }
 
-//SetMandatoryFields: Preset the mandatory fields that need to be populated before insert,delete or update
+//SetMandatoryFields presets the mandatory fields that need to be populated before insert,delete or update
 func SetMandatoryFields(ctx context.Context, product *proto.Product, isInsert bool) error {
 
 	log.Println("Start Set Mandatory Fields")
@@ -68,7 +68,7 @@ func SetMandatoryFields(ctx context.Context, product *proto.Product, isInsert bo
 	return nil
 }
 
-//getCurrentUser: Get the user from the context. Notice that the authorization service returns a int64 and we convert to string
+//getCurrentUser gets the user from the context. Notice that the authorization service returns a int64 and we convert to string
 func getCurrentUser(ctx context.Context) (string, error) {
 	var auth globalUtils.AuthUtils
 	currentUser, err := auth.GetCurrentUserFromContext(ctx)
@@ -79,7 +79,7 @@ func getCurrentUser(ctx context.Context) (string, error) {
 	return strconv.FormatInt(currentUser, 10), nil
 }
 
-//BeforeCreateProduct: Call data validations before creating a product
+//BeforeCreateProduct calls data validations before creating a product
 func (p *Product) BeforeCreateProduct(ctx context.Context, product *proto.Product, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -100,7 +100,7 @@ func (p *Product) BeforeCreateProduct(ctx context.Context, product *proto.Produc
 	return nil
 }
 
-//BeforeUpdateProduct: Call data validations before updating a product
+//BeforeUpdateProduct calls data validations before updating a product
 func (p *Product) BeforeUpdateProduct(ctx context.Context, product *proto.Product, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -121,7 +121,7 @@ func (p *Product) BeforeUpdateProduct(ctx context.Context, product *proto.Produc
 	return nil
 }
 
-//BeforeDeleteProduct: Call data validations before deleting a product
+//BeforeDeleteProduct calls data validations before deleting a product
 func (p *Product) BeforeDeleteProduct(ctx context.Context, product *proto.Product, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -136,7 +136,7 @@ func (p *Product) BeforeDeleteProduct(ctx context.Context, product *proto.Produc
 	return nil
 }
 
-//AfterCreateProduct: Call processes to be run after product create
+//AfterCreateProduct calls processes to be run after product create
 func (p *Product) AfterCreateProduct(ctx context.Context, product *proto.Product, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -151,7 +151,7 @@ func (p *Product) AfterCreateProduct(ctx context.Context, product *proto.Product
 	return nil
 }
 
-//AfterUpdateProduct: Call processes to be run after product update
+//AfterUpdateProduct calls processes to be run after product update
 func (p *Product) AfterUpdateProduct(ctx context.Context, product *proto.Product, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -166,7 +166,7 @@ func (p *Product) AfterUpdateProduct(ctx context.Context, product *proto.Product
 	return nil
 }
 
-//AfterDeleteProduct: Call processes to be run after product delete
+//AfterDeleteProduct calls processes to be run after product delete
 func (p *Product) AfterDeleteProduct(ctx context.Context, product *proto.Product, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -181,7 +181,7 @@ func (p *Product) AfterDeleteProduct(ctx context.Context, product *proto.Product
 	return nil
 }
 
-//sendUserAudit: Convert a user to a byte array, and call AuditUtil to send message with updated record to audit service
+//sendUserAudit Converts a user to a byte array, and call AuditUtil to send message with updated record to audit service
 func (p *Product) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId string, product *proto.Product) string {
 	if !glDisableAuditRecords {
 		byteMessage, err := mb.ProtoToByte(product)

@@ -9,10 +9,10 @@ import (
 	"time"
 )
 
-//PgxDBConnect: Handles connections to postgres and TimeScaleDB
+//PgxDBConnect handles connections to postgres and TimeScaleDB
 type PgxDBConnect struct{}
 
-//connectToDB: Try to connect to the DB. Return true if connection was successful, false otherwise
+//ConnectToDB tries to connect to the DB. Return true if connection was successful, false otherwise
 func (p *PgxDBConnect) ConnectToDB(databaseName string, connectionString string) (*pgx.Conn, bool, error) {
 	dbConn, err := pgx.Connect(context.Background(), connectionString)
 	if err != nil {
@@ -22,7 +22,7 @@ func (p *PgxDBConnect) ConnectToDB(databaseName string, connectionString string)
 	return dbConn, true, nil
 }
 
-//connectToDBWithRetry: Attempts to connect to the DB every 3s for up to maxRetries in case of connection failure
+//ConnectToDBWithRetry attempts to connect to the DB every 3s for up to maxRetries in case of connection failure
 func (p *PgxDBConnect) ConnectToDBWithRetry(databaseName string, connectionString string) (*pgx.Conn, error) {
 	maxRetries := 5
 	var dbConn *pgx.Conn
@@ -45,17 +45,17 @@ func (p *PgxDBConnect) ConnectToDBWithRetry(databaseName string, connectionStrin
 	return dbConn, nil
 }
 
-//DbConnParams: Generic connection parameters to connect to the DB
+//DbConnParams defines generic connection parameters to connect to the DB
 type DbConnParams struct {
 	Address  string
 	Username string
 	Password string
 }
 
-//ArangoConnect: Handles connections to ArangoDB
+//ArangoConnect handles connections to ArangoDB
 type ArangoConnect struct{}
 
-//connectToDB: Try to connect to the DB. Return true if connection was successful, false otherwise
+//ConnectToDB tries to connect to the DB. Return true if connection was successful, false otherwise
 func (ac *ArangoConnect) ConnectToDB(databaseName string, connParams *DbConnParams) (adb.Database, bool, error) {
 
 	// Create an HTTP connection to the database
@@ -84,7 +84,7 @@ func (ac *ArangoConnect) ConnectToDB(databaseName string, connParams *DbConnPara
 	return db, true, nil
 }
 
-//connectToDBWithRetry: Attempts to connect to the DB every 3s for up to maxRetries in case of connection failure
+//ConnectToDBWithRetry attempts to connect to the DB every 3s for up to maxRetries in case of connection failure
 func (ac *ArangoConnect) ConnectToDBWithRetry(databaseName string, connParams *DbConnParams) (adb.Database, error) {
 	maxRetries := 5
 	var db adb.Database

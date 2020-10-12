@@ -19,7 +19,7 @@ const (
 	productCollectionName = "product"
 )
 
-//GetProductById: Get product from DB based on a given ID
+//GetProductById gets product from DB based on a given ID
 func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, outProduct *proto.Product) error {
 	col, err := conn.Collection(ctx, productCollectionName)
 	if err != nil {
@@ -41,7 +41,7 @@ func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, 
 	return nil
 }
 
-//GetProducts: Search the products table in the DB based in a set of search parameters
+//GetProducts searches the products table in the DB based in a set of search parameters
 func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, products *proto.Products) error {
 	values, sqlStatement, err2 := p.getSQLForSearch(params)
 	if err2 != nil {
@@ -73,7 +73,7 @@ func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, p
 	return nil
 }
 
-//CreateProduct: Creates a product in the Database. Calls before and after create functions
+//CreateProduct creates a product in the Database. Calls before and after create functions
 //for validations and sending record to the audit service via the broker
 func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, response *proto.Response) error {
 	outCustomer := &proto.Product{}
@@ -122,7 +122,7 @@ func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, r
 	return nil
 }
 
-//UpdateProduct: Update a product in the Database. Calls before and after create functions
+//UpdateProduct updates a product in the Database. Calls before and after create functions
 //for validations and sending record to the audit service via the broker
 func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, response *proto.Response) error {
 
@@ -167,7 +167,7 @@ func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, r
 	return nil
 }
 
-//DeleteProduct: Delete a product in the Database based on the product ID (Xkey). Calls before and after create functions
+//DeleteProduct deletes a product in the Database based on the product ID (Xkey). Calls before and after create functions
 //for validations and sending record to the audit service via the broker
 func (p *Product) DeleteProduct(ctx context.Context, searchId *proto.SearchId, response *proto.Response) error {
 	outCustomer := &proto.Product{}
@@ -200,7 +200,7 @@ func (p *Product) DeleteProduct(ctx context.Context, searchId *proto.SearchId, r
 	return nil
 }
 
-//getAfterAlerts: Call the appropriate after create/update/delete function and return the alert validation errors
+//getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
 //These alerts  are logged, but do not cause the record processing to fail
 func (p *Product) getAfterAlerts(ctx context.Context, customer *proto.Product, operation string) ([]string, error) {
 	afterFuncErr := &proto.AfterFuncErr{}
@@ -225,7 +225,7 @@ func (p *Product) getAfterAlerts(ctx context.Context, customer *proto.Product, o
 	return []string{}, nil
 }
 
-//arangoMapToStruct: takes the map returned by arangoDB and converts it to a struct
+//arangoMapToStruct takes the map returned by arangoDB and converts it to a struct
 // any fields not found in the struct are added to the extrafields field of the struct.
 //This function is necessary because the arango drive will either return a struct
 // that ignores the extra fields or a map that contain every thing (which cannot be
@@ -275,7 +275,7 @@ func arangoMapToStruct(inMap map[string]interface{}, product *proto.Product) err
 	return nil
 }
 
-//processExtraFields: Manage the fact that we may have data not defined in the Protobuf definition
+//processExtraFields manages the fact that we may have data not defined in the Protobuf definition
 //those records come in the ExtreFields field of the message
 func processExtraFields(product *proto.Product) error {
 	//TODO: Need to process extra fields instead of removing them before saving the record
@@ -283,7 +283,7 @@ func processExtraFields(product *proto.Product) error {
 	return nil
 }
 
-//getSQLForSearch: Combine the where clause built in the buildSearchWhereClause method with the rest of the sql
+//getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
 //statement to return the final search for users sql statement
 func (p *Product) getSQLForSearch(searchParms *proto.SearchParams) (map[string]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
@@ -296,7 +296,7 @@ func (p *Product) getSQLForSearch(searchParms *proto.SearchParams) (map[string]i
 	return values, sqlStatement, nil
 }
 
-//buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+//buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
 //slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
 //for the date lookup which is done  as a contains clause
 func (p *Product) buildSearchWhereClause(searchParms *proto.SearchParams) (string, map[string]interface{}, error) {

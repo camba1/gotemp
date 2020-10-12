@@ -21,10 +21,10 @@ const (
 	serviceNameUser = "goTemp.api.user"
 )
 
-//dateLayoutISO: Default time format for dates entered as strings
+//dateLayoutISO defines the default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
-//GetPromotionById: Call the promotion service and retrieve the promotion identified by a particular id
+//GetPromotionById calls the promotion service and retrieve the promotion identified by a particular id
 func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (*proto.Promotion, error) {
 
 	promotion, err := promotionClient.GetPromotionById(ctx, promoId)
@@ -43,7 +43,7 @@ func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvSer
 
 }
 
-//GetPromotions: Contact the promotion service and retrieve promotions based on a search criteria
+//GetPromotions contacts the promotion service and retrieve promotions based on a search criteria
 func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotions, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -69,7 +69,7 @@ func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvServic
 
 }
 
-//CreatePromotion: Call the promotion service and create a new promotion
+//CreatePromotion calls the promotion service and create a new promotion
 func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotion, error) {
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
@@ -119,7 +119,7 @@ func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetPromotion(), nil
 }
 
-//UpdatePromotion: Call the promotion service and update a promotion
+//UpdatePromotion calls the promotion service and update a promotion
 func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promo *proto.Promotion) (*proto.Promotion, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
@@ -182,7 +182,7 @@ func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetAffectedCount(), nil
 }
 
-//timeStringToTimestamp: Convert time string to gRPC timestamp
+//timeStringToTimestamp converts time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -195,7 +195,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
-//authUser: Call the user service and authenticate a user. receive a jwt token if successful
+//authUser calls the user service and authenticate a user. receive a jwt token if successful
 func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.Token, error) {
 	token, err := srvClient.Auth(context.Background(), &userSrv.User{
 		Email: user.Email,
@@ -209,7 +209,7 @@ func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.To
 	return token, err
 }
 
-//loginUser: Call authUser to get an authentication token and store it in the context for use on other tasks
+//loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
 func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	myUser := &userSrv.User{
 		Pwd:   "1234",

@@ -9,13 +9,13 @@ import (
 )
 
 const (
-	//AuditTopic: Topic to be used when publishing and subscribing to audit related message in the broker
+	//AuditTopic defines a topic to be used when publishing and subscribing to audit related message in the broker
 	AuditTopic = "Audit"
-	//AuditQueueInsert: Queue to be used when retrieve audit messages from the broker via a subscription to allow multiple instances processing messages in parallel
+	//AuditQueueInsert is the queue to be used when retrieve audit messages from the broker via a subscription to allow multiple instances processing messages in parallel
 	AuditQueueInsert = "Audit.Insert"
 )
 
-//auditMsg: Structure of the audit messages to be sent to the broker
+//auditMsg defines the structure of the audit messages to be sent to the broker
 type auditMsg struct {
 	topic        string
 	objectToSend []byte
@@ -37,7 +37,7 @@ func (a auditMsg) Topic() string {
 	return a.topic
 }
 
-//AuditMsgHeader: structure of the header portion of the audit message to be sent to the broker
+//AuditMsgHeader defines the structure of the header portion of the audit message to be sent to the broker
 type AuditMsgHeader map[string]string
 
 // AuditMsgHeaderStruct is the struct version of the AuditMsgHeader (map) to allow for easier handling

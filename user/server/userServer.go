@@ -37,7 +37,7 @@ var conn *pgx.Conn
 //enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
 
-//AuthWrapper: Authentication middleware
+//AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		//User login is excepted from authentication

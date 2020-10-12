@@ -21,7 +21,7 @@ func (v *ValidationError) Error() string {
 	return fmt.Sprintf("validation error in %s:\n %s ", v.Source, failureDesc)
 }
 
-//SrvError: String type relating to all the global errors
+//SrvError defines the string type relating to all the global errors
 type SrvError string
 
 const (
