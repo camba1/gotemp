@@ -13,14 +13,6 @@ db.product.insert({"_key": "intamd", "name": "IntAmd processor", "validityDates"
 db.product.insert({"_key": "elec", "name": "Electronics", "validityDates": {"validFrom": {"seconds": 1592692598,"nanos": 274583000}, "validThru": {"seconds": 1615792598, "nanos": 274584000}}, "hierarchylevel": "cat"});
 db.product.insert({"_key": "appli", "name": "Appliances", "validityDates": {"validFrom": {"seconds": 1592692598,"nanos": 274583000}, "validThru": {"seconds": 1615792598, "nanos": 274584000}}, "hierarchylevel": "cat"});
 
-
-// db.product.insert({"_key": "switch", "name": "Play Switch Console", "validFrom": "2019-01-02", "validThru": "2021-01-02", "hierarchylevel": "sku", "externalId": "12345"});
-// db.product.insert({"_key": "tele", "name": "Watch me TV", "validFrom": "2019-01-02", "validThru": "2021-01-02", "hierarchylevel": "sku"});
-// db.product.insert({"_key": "fridge", "name": "Cool Stuff Fridge", "validFrom": "2019-01-02", "validThru": "2021-01-02", "hierarchylevel": "sku"});
-// db.product.insert({"_key": "intamd", "name": "IntAmd processor", "validFrom": "2019-01-02", "validThru": "2021-01-02", "hierarchylevel": "sku"});
-// db.product.insert({"_key": "elec", "name": "Electronics", "validFrom": "2019-01-02", "validThru": "2021-01-02", "hierarchylevel": "cat"});
-// db.product.insert({"_key": "appli", "name": "Appliances", "validFrom": "2019-01-02", "validThru": "2021-01-02", "hierarchylevel": "cat"});
-
 db.isparentof.insert({"_from":"product/elec" , "_to":"product/tele",  "validFrom": "2019-01-02", "validThru": "2021-01-02"});
 db.isparentof.insert({"_from":"product/elec" , "_to":"product/switch", "validFrom": "2019-01-02", "validThru": "2021-01-02"});
 db.isparentof.insert({"_from":"product/elec" , "_to":"product/intamd", "validFrom": "2019-01-02", "validThru": "2021-01-02"});
