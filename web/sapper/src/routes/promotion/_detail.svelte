@@ -97,12 +97,12 @@
     let errorList = null
 
     /**
-     * List of warning messages to display to the user. Can include line feeds formultiple items
+     * List of warning messages to display to the user. Can include line feeds form multiple items
      */
     let warningMessage = null
 
     /**
-     * Controls opening and closing of the modal that shouw warnings
+     * Controls opening and closing of the modal that shows warnings
      */
     let openModal = false
 
@@ -113,7 +113,7 @@
     }
 
     /**
-     * Handles creation and updates based on wether the slug is present
+     * Handles creation and updates based on whether the slug is present
      * @returns {Promise<void>}
      */
     async function  handleSave() {
