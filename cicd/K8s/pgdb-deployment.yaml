@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f ../../docker-compose.yml convert
+    kompose.version: 1.21.0 ()
+  labels:
+    io.kompose.service: pgdb
+  name: pgdb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: pgdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f ../../docker-compose.yml convert
+        kompose.version: 1.21.0 ()
+      labels:
+        io.kompose.service: pgdb
+    spec:
+      containers:
+      - env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_PASSWORD
+              name: postgres-docker-compose-env
+        image: postgres
+        imagePullPolicy: ""
+        name: pgdb
+        ports:
+        - containerPort: 5432
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pgdb-claim0
+        - mountPath: /docker-entrypoint-initdb.d
+          name: postgres-initdb-config
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: pgdb-claim0
+        persistentVolumeClaim:
+          claimName: pgdb-claim0
+      - name: postgres-initdb-config
+        configMap:
+          name: postgres-initdb-config

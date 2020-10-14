@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f ../../docker-compose.yml convert
+    kompose.version: 1.21.0 ()
+  labels:
+    io.kompose.service: arangodb
+  name: arangodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: arangodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f ../../docker-compose.yml convert
+        kompose.version: 1.21.0 ()
+      labels:
+        io.kompose.service: arangodb
+    spec:
+      containers:
+      - env:
+        - name: ARANGO_ROOT_PASSWORD
+          valueFrom:
+            configMapKeyRef:
+              key: ARANGO_ROOT_PASSWORD
+              name: arangodb-docker-compose-env
+        - name: ARANGO_STORAGE_ENGINE
+          valueFrom:
+            configMapKeyRef:
+              key: ARANGO_STORAGE_ENGINE
+              name: arangodb-docker-compose-env
+        image: arangodb:3.6.4
+        imagePullPolicy: ""
+        name: arangodbcont
+        ports:
+        - containerPort: 8529
+        resources: {}
+        volumeMounts:
+        - mountPath: /var/lib/arangodb3
+          name: arangodb-claim0
+        - mountPath: /var/lib/arangodb3-apps/_db/
+          name: arangodb-claim1
+        - mountPath: /docker-entrypoint-initdb.d
+          name: arangodb-initdb-config
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: arangodb-claim0
+        persistentVolumeClaim:
+          claimName: arangodb-claim0
+      - name: arangodb-claim1
+        persistentVolumeClaim:
+          claimName: arangodb-claim1
+      - name: arangodb-initdb-config
+        configMap:
+          name: arangodb-initdb-config

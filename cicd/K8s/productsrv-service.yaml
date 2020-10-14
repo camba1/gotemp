@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose -f ../../docker-compose.yml convert
+    kompose.version: 1.21.0 ()
+  labels:
+    io.kompose.service: productsrv
+  name: productsrv
+spec:
+  ports:
+  - name: "50059"
+    port: 50059
+    targetPort: 50059
+  selector:
+    io.kompose.service: productsrv

@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f ../../docker-compose.yml convert
+    kompose.version: 1.21.0 ()
+  labels:
+    io.kompose.service: usersrv
+  name: usersrv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: usersrv
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f ../../docker-compose.yml convert
+        kompose.version: 1.21.0 ()
+      labels:
+        io.kompose.service: usersrv
+    spec:
+      containers:
+      - command:
+        - CompileDaemon
+        - --build=go build -o userServer ./user/server/
+        - --command=./userServer
+        env:
+        - name: DISABLE_AUDIT_RECORDS
+          valueFrom:
+            configMapKeyRef:
+              key: DISABLE_AUDIT_RECORDS
+              name: user-docker-compose-env
+        - name: MICRO_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MICRO_BROKER
+              name: user-docker-compose-env
+        - name: MICRO_BROKER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: MICRO_BROKER_ADDRESS
+              name: user-docker-compose-env
+        - name: MICRO_SERVER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: MICRO_SERVER_ADDRESS
+              name: user-docker-compose-env
+        - name: POSTGRES_CONNECT
+          valueFrom:
+            configMapKeyRef:
+              key: POSTGRES_CONNECT
+              name: user-docker-compose-env
+        image: usersrv
+        imagePullPolicy: ""
+        name: usersrvcont
+        ports:
+        - containerPort: 50053
+        resources: {}
+#        volumeMounts:
+#        - mountPath: /go/src/goTemp/user/server
+#          name: usersrv-claim0
+#        - mountPath: /go/src/goTemp/globalUtils
+#          name: usersrv-claim1
+      restartPolicy: Always
+      serviceAccountName: ""
+#      volumes:
+#      - name: usersrv-claim0
+#        persistentVolumeClaim:
+#          claimName: usersrv-claim0
+#      - name: usersrv-claim1
+#        persistentVolumeClaim:
+#          claimName: usersrv-claim1
