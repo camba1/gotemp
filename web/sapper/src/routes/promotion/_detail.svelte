@@ -24,6 +24,7 @@
     //helper utils
     import { isObjectEmpty, updateValidDate } from '../../globalUtils/helperUtils'
 
+
     /**
      * Main object to be displayed in the page
      * @type {object}
@@ -48,6 +49,8 @@
      *  @type {object}
      */
     export let addresses;
+
+    export let customersData ;
 
     /**
      * String representing the object displayed in the page
@@ -191,6 +194,28 @@
         updateValidDate("validThru", event.target.value, detailData)
     }
 
+
+    //export let customersData = []; // detailData && [{_key: detailData.customerId , name: detailData.readOnlyLookup.customerName}]
+    // async function loadItems(){
+    //     if (ddData.length  < 2) {
+    //         ddData.push({loading: "true"})
+    //         let params = {}
+    //         const {ok, data} = await httpPost(customerAddresses.getAll, params, $session.token);
+    //         if (ok) {
+    //             // alert(data)
+    //             if (isObjectEmpty(data)) {
+    //                 alert(`Data not found`)
+    //             } else {
+    //                 ddData = data.customer
+    //                 // alert(ddData)
+    //             }
+    //         } else {
+    //             alert(` Error getting data`)
+    //         }
+    //     }
+    //
+    // }
+
 </script>
 
 <Container>
@@ -232,13 +257,26 @@
         <Row>
             <GtDetailCard cardHeader="Customer">
                 <GtDetailCardFormGrp lblFor="customerid" lblText="Customer Id:">
-                    <Input id="customerid" class="form-control form-control-sm"  name="customerid" type="text" readonly={false} bind:value={detailData.customerId}/>
+                    <Input id="customerid" class="form-control form-control-sm"  name="customerid" type="text" readonly={true} bind:value={detailData.customerId}/>
                 </GtDetailCardFormGrp>
-                {#if detailData.readOnlyLookup}
-                    <GtDetailCardFormGrp lblFor="customerName" lblText="Customer :">
-                        <Input id="customerName" class="form-control form-control-sm"  name="customerName" type="text" readonly={true} bind:value={detailData.readOnlyLookup.customerName}/>
-                    </GtDetailCardFormGrp>
-                {/if}
+                <!--{#if detailData.readOnlyLookup}-->
+                <!--    <GtDetailCardFormGrp lblFor="customerName" lblText="Customer :">-->
+                <!--        <Input id="customerName" class="form-control form-control-sm"  name="customerName" type="text" readonly={true} bind:value={detailData.readOnlyLookup.customerName}/>-->
+                <!--    </GtDetailCardFormGrp>-->
+                <!--{/if}-->
+                <GtDetailCardFormGrp lblFor="testSelect" lblText="Test:">
+                    <Input type="select" name="testSelect" id="testSelect" class="form-control form-control-sm" readonly={false} bind:value={detailData.customerId}>
+                        {#if customersData}
+                            {#each customersData as item}
+                                <option value={item._key}>{item.name} - {item._key}</option>
+                            {/each}
+                        {:else if detailData.readOnlyLookup}
+                            <option value={detailData.customerId}>{detailData.readOnlyLookup.customerName} - {detailData.customerId}</option>
+                        {:else}
+                            <option value={detailData.customerId}>{detailData.customerId}</option>
+                        {/if}
+                    </Input>
+                </GtDetailCardFormGrp>
             </GtDetailCard>
             <GtDetailCard cardHeader="Status">
                 <GtDetailCardFormGrp lblFor="approvalStatus" lblText="Workflow:">

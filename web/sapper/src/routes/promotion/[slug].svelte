@@ -1,10 +1,10 @@
 <script context="module">
 
-    import { httpGet } from '../../globalUtils/api'
+    import {httpGet, httpPost} from '../../globalUtils/api'
 
     //Helper utils
     import { isObjectEmpty, convertExtraFields, addBoolField, addFieldtoObj } from '../../globalUtils/helperUtils'
-    import { promotionAddresses } from '../../globalUtils/addresses'
+    import {customerAddresses, promotionAddresses} from '../../globalUtils/addresses'
 
     /**
      * Uris for interacting with the server and navigating
@@ -57,11 +57,34 @@
 
             }
             let detailData = data
-console.log(data)
-            return  {detailData, slug, extraFields, addresses} ;
+            let customersData = await loadCustomers(session)
+            // console.log(customersData)
+// console.log(data)
+            return  {detailData, slug, extraFields, addresses, customersData} ;
 
         }
 
+    }
+
+    /**
+     * Load customer lookup data so that user can pick a customer from a dropdown
+     * @param session - session information including session token
+     * @returns {Promise<*>} - customer list promise
+     */
+    async function loadCustomers(session){
+            let params = {}
+            const {ok, data} = await httpPost(customerAddresses.getAll, params, session.token);
+            if (ok) {
+                // alert(data)
+                if (isObjectEmpty(data)) {
+                    alert(`Data not found`)
+                } else {
+                    // console.log(data)
+                    return data.customer
+                }
+            } else {
+                alert(` Error getting data`)
+            }
     }
 
 </script>
@@ -95,6 +118,11 @@ console.log(data)
      */
     export let addresses;
 
-</script>
+    /**
+     * customerData holds data for the customer drop down
+     * @type {object}
+     */
+    export let customersData;
 
-<Detail {detailData} {slug} {extraFields} {addresses}/>
+</script>
+<Detail {detailData} {slug} {extraFields} {addresses} {customersData}/>
