@@ -14,33 +14,33 @@ import (
 	"strings"
 )
 
-//serviceName: service identifier
+// serviceName service identifier
 const serviceName = "goTemp.api.user"
 
-//const serviceName = "user"
+// const serviceName = "user"
 
 const (
-	//dbName: Name of the DB hosting the data
+	// dbName Name of the DB hosting the data
 	dbName = "appuser"
-	//dbConStrEnvVarName: Name of Environment variable that contains connection string to DB
+	// dbConStrEnvVarName Name of Environment variable that contains connection string to DB
 	dbConStrEnvVarName = "POSTGRES_CONNECT"
 )
 
-//Other constants
+// Other constants
 const (
 	DisableAuditRecordsEnvVarName = "DISABLE_AUDIT_RECORDS"
 )
 
-// conn: Database connection
+//  conn Database connection
 var conn *pgx.Conn
 
-//enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
+// glDisableAuditRecords Allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
 
-//AuthWrapper defines the authentication middleware
+// AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
-		//User login is excepted from authentication
+		// User login is excepted from authentication
 		if req.Endpoint() == "UserSrv.Auth" || req.Endpoint() == "UserSrv.CreateUser" {
 			return fn(ctx, req, resp)
 		}
@@ -60,11 +60,11 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 		}
 		token := authSplit[1]
 
-		//token := meta["Token"]
+		// token := meta["Token"]
 
 		log.Printf("endpoint: %v", req.Endpoint())
 
-		//Validate token
+		// Validate token
 		var u User
 		outToken := &pb.Token{}
 		err := u.ValidateToken(ctx, &pb.Token{Token: token}, outToken)
@@ -75,12 +75,12 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 			return fmt.Errorf(glErr.AuthInvalidToken())
 		}
 
-		//Add current user to context to use in saving audit records
-		//userId, err := u.userIdFromToken(ctx, outToken)
-		//if err != nil {
-		//	return fmt.Errorf("unable to get user id from token for endpoint %v\n", req.Endpoint())
-		//}
-		//ctx2 := metadata.Set(ctx, "userid", strconv.FormatInt(userId, 10))
+		// Add current user to context to use in saving audit records
+		// userId, err := u.userIdFromToken(ctx, outToken)
+		// if err != nil {
+		// 	return fmt.Errorf("unable to get user id from token for endpoint %v\n", req.Endpoint())
+		// }
+		// ctx2 := metadata.Set(ctx, "userid", strconv.FormatInt(userId, 10))
 
 		if outToken.EUid == "" {
 			return fmt.Errorf("unable to get user id from token for endpoint %v\n", req.Endpoint())
@@ -91,7 +91,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
-//getDBConnString: Get the connection string to the DB
+// getDBConnString gets the connection string to the DB
 func getDBConnString() string {
 	connString := os.Getenv(dbConStrEnvVarName)
 	if connString == "" {
@@ -100,8 +100,8 @@ func getDBConnString() string {
 	return connString
 }
 
-//connectToDB: Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
-//before giving up and throwing an error
+// connectToDB calls the Util pgxDBConnect to connect to the database. Service will try to connect a few times
+// before giving up and throwing an error
 func connectToDB() *pgx.Conn {
 	var pgxConnect globalUtils.PgxDBConnect
 	dbConn, err := pgxConnect.ConnectToDBWithRetry(dbName, getDBConnString())
@@ -112,25 +112,25 @@ func connectToDB() *pgx.Conn {
 }
 
 func loadConfig() {
-	//conf, err := config.NewConfig()
-	//if err != nil {
-	//	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
-	//	//log.Fatal(err)
-	//}
-	//defer conf.Close()
+	// conf, err := config.NewConfig()
+	// if err != nil {
+	// 	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
+	// 	// log.Fatal(err)
+	// }
+	// defer conf.Close()
 	//
-	//src := env.NewSource()
+	// src := env.NewSource()
 	//
-	//err = conf.Load(src)
-	////ws, err := src.Read()
-	//if err != nil {
-	//	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
-	//	//log.Fatal(err)
-	//}
-	//test := conf.Map()
-	////log.Printf("conf %v\n", ws.Data)
+	// err = conf.Load(src)
+	// // ws, err := src.Read()
+	// if err != nil {
+	// 	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
+	// 	// log.Fatal(err)
+	// }
+	// test := conf.Map()
+	// // log.Printf("conf %v\n", ws.Data)
 	//
-	//log.Printf("conf map %v\n", test)
+	// log.Printf("conf map %v\n", test)
 
 	audits := os.Getenv(DisableAuditRecordsEnvVarName)
 	if audits == "true" {
@@ -142,7 +142,7 @@ func loadConfig() {
 
 func main() {
 
-	//instantiate service
+	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
@@ -154,20 +154,20 @@ func main() {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
 
-	//Load configuration
+	// Load configuration
 	loadConfig()
 
-	//Connect to DB
+	// Connect to DB
 	conn = connectToDB()
 
 	defer conn.Close(context.Background())
 
-	//setup the nats broker
+	// setup the nats broker
 
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
 
-	// Run Service
+	//  Run Service
 	err = service.Run()
 	if err != nil {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))

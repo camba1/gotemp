@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-//language is the default language in which messages are returned
+// language is the default language in which messages are returned
 var language globalUtils.Languages = globalUtils.LangEN
 
-// SetLanguage Overrides the language in which the messages are returned
+//  SetLanguage Overrides the language in which the messages are returned
 func SetLanguage(newLanguage globalUtils.Languages) {
 	language = newLanguage
 }
 
-//PromoErr defines promotion specific error messages
+// PromoErr defines promotion specific error messages
 type PromoErr string
 
 var errTxtEn = map[string]PromoErr{
@@ -50,7 +50,7 @@ var errTxtES = map[string]PromoErr{
 	"customerNameNotFound":      "El nombre del cliente %s no se encontro en el cache o en el servicio. Error: %v\n",
 }
 
-//getSqlTxt pull an error message in the correct language
+// getSqlTxt pull an error message in the correct language
 func (ge *PromoErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) string {
 	var returnstr string
 	switch myLanguage {
@@ -66,68 +66,68 @@ func (ge *PromoErr) getSqlTxt(errKey string, myLanguage globalUtils.Languages) s
 	return returnstr
 }
 
-//internalError returns relevant error in the selected language
+// internalError returns relevant error in the selected language
 func (ge *PromoErr) internalError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("internalError", language), err)
 }
 
-//InsertError returns relevant error in the selected language
+// InsertError returns relevant error in the selected language
 func (ge *PromoErr) InsertError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("insertError", language), err)
 }
 
-//UpdateError returns relevant error in the selected language
+// UpdateError returns relevant error in the selected language
 func (ge *PromoErr) UpdateError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("UpdateError", language), err)
 }
 
-//DeleteError returns relevant error in the selected language
+// DeleteError returns relevant error in the selected language
 func (ge *PromoErr) DeleteError(Id int64, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("DeleteError", language), Id, err)
 }
 
-//DeleteRowNotFoundError returns relevant error in the selected language
+// DeleteRowNotFoundError returns relevant error in the selected language
 func (ge *PromoErr) DeleteRowNotFoundError(id int64) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), id)
 }
 
-//SelectReadError returns relevant error in the selected language
+// SelectReadError returns relevant error in the selected language
 func (ge *PromoErr) SelectReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectReadError", language), err)
 }
 
-//SelectScanError returns relevant error in the selected language
+// SelectScanError returns relevant error in the selected language
 func (ge *PromoErr) SelectScanError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectScanError", language), err)
 }
 
-//SelectRowReadError returns relevant error in the selected language
+// SelectRowReadError returns relevant error in the selected language
 func (ge *PromoErr) SelectRowReadError(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("SelectRowReadError", language), err)
 }
 
-//MissingField returns relevant error in the selected language
+// MissingField returns relevant error in the selected language
 func (ge *PromoErr) MissingField(fieldName string) string {
 	return fmt.Sprintf(ge.getSqlTxt("MissingField", language), fieldName)
 }
 
-//DtInvalidValidityDates returns relevant error in the selected language
+// DtInvalidValidityDates returns relevant error in the selected language
 func (ge *PromoErr) DtInvalidValidityDates(validFrom, validThru time.Time) string {
 	dateLayout := globalUtils.DateLayoutISO
 	return fmt.Sprintf(ge.getSqlTxt("DtInvalidValidityDates", language), validThru.Format(dateLayout), validFrom.Format(dateLayout))
 }
 
-//DelPromoNotInitialState returns relevant error in the selected language
+// DelPromoNotInitialState returns relevant error in the selected language
 func (ge *PromoErr) DelPromoNotInitialState() string {
 	return fmt.Sprintf(ge.getSqlTxt("DelPromoNotInitialState", language))
 }
 
-//CacheCustomerNameNotFound returns relevant error in the selected language
+// CacheCustomerNameNotFound returns relevant error in the selected language
 func (ge *PromoErr) CacheCustomerNameNotFound(err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("cacheCustomerNameNotFound", language), err)
 }
 
-//CustomerNameNotFound returns relevant error in the selected language
+// CustomerNameNotFound returns relevant error in the selected language
 func (ge *PromoErr) CustomerNameNotFound(customerId string, err error) string {
 	return fmt.Sprintf(ge.getSqlTxt("customerNameNotFound", language), customerId, err)
 }

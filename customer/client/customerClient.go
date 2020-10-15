@@ -16,13 +16,13 @@ import (
 )
 
 const (
-	//serviceName: service identifier
+	// serviceName: service identifier
 	serviceName = "goTemp.api.customer"
-	//serviceNameUser: service identifier for user service
+	// serviceNameUser: service identifier for user service
 	serviceNameUser = "goTemp.api.user"
 )
 
-//dateLayoutISO default time format for dates entered as strings
+// dateLayoutISO default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
 // GetCustomerById calls the customer service and retrieve the customer identified by a particular id
@@ -44,7 +44,7 @@ func GetCustomerById(ctx context.Context, customerClient proto.CustomerSrvServic
 
 }
 
-//GetCustomers contacts the customer service and retrieve customer based on a search criteria
+// GetCustomers contacts the customer service and retrieve customer based on a search criteria
 func GetCustomers(ctx context.Context, customerClient proto.CustomerSrvService) (*proto.Customers, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -70,11 +70,11 @@ func GetCustomers(ctx context.Context, customerClient proto.CustomerSrvService) 
 
 }
 
-//CreateCustomer calls the customer service and create a new customer
+// CreateCustomer calls the customer service and create a new customer
 func CreateCustomer(ctx context.Context, customerClient proto.CustomerSrvService) (*proto.Customer, error) {
 
-	//var cust *proto.Customer
-	//var err error
+	// var cust *proto.Customer
+	// var err error
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
 
@@ -106,7 +106,7 @@ func CreateCustomer(ctx context.Context, customerClient proto.CustomerSrvService
 	return resp.GetCustomer(), nil
 }
 
-//UpdateCustomer calls the customer service and update a customer
+// UpdateCustomer calls the customer service and update a customer
 func UpdateCustomer(ctx context.Context, customerClient proto.CustomerSrvService, cust *proto.Customer) (*proto.Customer, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
@@ -131,7 +131,7 @@ func UpdateCustomer(ctx context.Context, customerClient proto.CustomerSrvService
 	return resp.GetCustomer(), nil
 }
 
-//DeleteCustomer calls the customer service and delete the customer identified by a given id
+// DeleteCustomer calls the customer service and delete the customer identified by a given id
 func DeleteCustomer(ctx context.Context, customerClient proto.CustomerSrvService, custId *proto.SearchId) (int64, error) {
 
 	resp, err := customerClient.DeleteCustomer(ctx, custId)
@@ -148,7 +148,7 @@ func DeleteCustomer(ctx context.Context, customerClient proto.CustomerSrvService
 	return resp.GetAffectedCount(), nil
 }
 
-//timeStringToTimestamp converts time string to gRPC timestamp
+// timeStringToTimestamp converts time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -161,7 +161,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
-//authUser calls the user service and authenticate a user. receive a jwt token if successful
+// authUser calls the user service and authenticate a user. receive a jwt token if successful
 func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.Token, error) {
 	token, err := srvClient.Auth(context.Background(), &userSrv.User{
 		Email: user.Email,
@@ -175,7 +175,7 @@ func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.To
 	return token, err
 }
 
-//loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
+// loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
 func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	myUser := &userSrv.User{
 		Pwd:   "1234",
@@ -187,7 +187,7 @@ func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	}
 
 	ctx := metadata.NewContext(context.Background(), map[string]string{
-		//"token": authToken.Token,
+		// "token": authToken.Token,
 		"Authorization": "Bearer " + authToken.Token,
 	})
 	return ctx, nil
@@ -200,7 +200,7 @@ func main() {
 	service.Init()
 	fmt.Println("Client Running")
 
-	// send requests
+	//  send requests
 	ctx, err := loginUser(userSrv.NewUserSrvService(serviceNameUser, client.DefaultClient))
 	if err != nil {
 		return

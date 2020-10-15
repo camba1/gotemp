@@ -12,8 +12,8 @@ import (
 // AuthUtils contains methods to simplify authentication
 type AuthUtils struct{}
 
-// GetCurrentUserFromContext : User is added to the context during authentication. this function extracts it so
-//that it can be used sending audit records to the broker
+// GetCurrentUserFromContext adds user  to the context during authentication. this function extracts it so
+// that it can be used sending audit records to the broker
 func (a *AuthUtils) GetCurrentUserFromContext(ctx context.Context) (int64, error) {
 	meta, ok := metadata.FromContext(ctx)
 	if !ok {
@@ -28,7 +28,7 @@ func (a *AuthUtils) GetCurrentUserFromContext(ctx context.Context) (int64, error
 	return userId, nil
 }
 
-//euidToId: Convert  []byte based id to a regular int64 id
+// euidToId converts  []byte based id to a regular int64 id
 func euidToId(euid string) (int64, error) {
 	decoded, err := base64.StdEncoding.DecodeString(euid)
 	if err != nil {

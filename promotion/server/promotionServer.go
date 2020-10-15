@@ -18,36 +18,36 @@ import (
 )
 
 const (
-	//serviceName: service identifier
+	// serviceName service identifier
 	serviceName = "goTemp.api.promotion"
-	//serviceNameUser: service identifier for user service
+	// serviceNameUser service identifier for user service
 	serviceNameUser = "goTemp.api.user"
-	//serviceNameCustomer: service identifier for customer service
+	// serviceNameCustomer service identifier for customer service
 	serviceNameCustomer = "goTemp.api.customer"
 )
 
 const (
-	//dbName: Name of the DB hosting the data
+	// dbName Name of the DB hosting the data
 	dbName = "postgres"
-	//dbConStrEnvVarName: Name of Environment variable that contains connection string to DB
+	// dbConStrEnvVarName Name of Environment variable that contains connection string to DB
 	dbConStrEnvVarName = "POSTGRES_CONNECT"
 )
 
-//Other constants
+// Other constants
 const (
 	DisableAuditRecordsEnvVarName = "DISABLE_AUDIT_RECORDS"
 )
 
-// conn: Database connection
+// conn Database connection
 var conn *pgx.Conn
 
-//enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
+// enableAuditRecords allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
 
-//myStore: Store to hold cached values
+// glCache Store to hold cached values
 var glCache globalUtils.Cache
 
-//AuthWrapper defines the authentication middleware
+// AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		meta, ok := metadata.FromContext(ctx)
@@ -64,7 +64,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 			return fmt.Errorf(glErr.AuthNilToken())
 		}
 		token := authSplit[1]
-		//token := meta["Token"]
+		// token := meta["Token"]
 
 		log.Printf("endpoint: %v", req.Endpoint())
 
@@ -86,7 +86,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
-//getDBConnString: Get the connection string to the DB
+// getDBConnString gets the connection string to the DB
 func getDBConnString() string {
 	connString := os.Getenv(dbConStrEnvVarName)
 	if connString == "" {
@@ -95,8 +95,8 @@ func getDBConnString() string {
 	return connString
 }
 
-//connectToDB: Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
-//before giving up and throwing an error
+// connectToDB call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
+// before giving up and throwing an error
 func connectToDB() *pgx.Conn {
 	var pgxConnect globalUtils.PgxDBConnect
 	dbConn, err := pgxConnect.ConnectToDBWithRetry(dbName, getDBConnString())
@@ -107,25 +107,25 @@ func connectToDB() *pgx.Conn {
 }
 
 func loadConfig() {
-	//conf, err := config.NewConfig()
-	//if err != nil {
-	//	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
-	//	//log.Fatal(err)
-	//}
-	//defer conf.Close()
+	// conf, err := config.NewConfig()
+	// if err != nil {
+	// 	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
+	// 	// log.Fatal(err)
+	// }
+	// defer conf.Close()
 	//
-	//src := env.NewSource()
+	// src := env.NewSource()
 	//
-	//err = conf.Load(src)
-	////ws, err := src.Read()
-	//if err != nil {
-	//	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
-	//	//log.Fatal(err)
-	//}
-	//test := conf.Map()
-	////log.Printf("conf %v\n", ws.Data)
+	// err = conf.Load(src)
+	// // ws, err := src.Read()
+	// if err != nil {
+	// 	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
+	// 	// log.Fatal(err)
+	// }
+	// test := conf.Map()
+	// // log.Printf("conf %v\n", ws.Data)
 	//
-	//log.Printf("conf map %v\n", test)
+	// log.Printf("conf map %v\n", test)
 
 	audits := os.Getenv(DisableAuditRecordsEnvVarName)
 	if audits == "true" {
@@ -137,14 +137,14 @@ func loadConfig() {
 
 func main() {
 
-	//instantiate service
+	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
-		//micro.Store(redis.NewStore()),
+		// micro.Store(redis.NewStore()),
 	)
 
-	//initialize plugins (this is just needed for stores)
+	// initialize plugins (this is just needed for stores)
 	initPlugins()
 
 	service.Init()
@@ -153,23 +153,23 @@ func main() {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
 
-	//Load configuration
+	// Load configuration
 	loadConfig()
 
-	//init the cache store
+	// init the cache store
 	glCache.Store = service.Options().Store
 	glCache.SetDatabaseName(serviceName)
 	defer glCache.Store.Close()
 
-	//Connect to DB
+	// Connect to DB
 	conn = connectToDB()
 	defer conn.Close(context.Background())
 
-	//setup the nats broker
+	// setup the nats broker
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
 
-	// Run Service
+	//  Run Service
 	if err := service.Run(); err != nil {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))
 	}

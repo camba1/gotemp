@@ -15,16 +15,16 @@ import (
 )
 
 const (
-	//serviceName: service identifier
+	// serviceName: service identifier
 	serviceName = "goTemp.api.promotion"
-	//serviceNameUser: service identifier for user service
+	// serviceNameUser: service identifier for user service
 	serviceNameUser = "goTemp.api.user"
 )
 
-//dateLayoutISO defines the default time format for dates entered as strings
+// dateLayoutISO defines the default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
-//GetPromotionById calls the promotion service and retrieve the promotion identified by a particular id
+// GetPromotionById calls the promotion service and retrieve the promotion identified by a particular id
 func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (*proto.Promotion, error) {
 
 	promotion, err := promotionClient.GetPromotionById(ctx, promoId)
@@ -43,7 +43,7 @@ func GetPromotionById(ctx context.Context, promotionClient proto.PromotionSrvSer
 
 }
 
-//GetPromotions contacts the promotion service and retrieve promotions based on a search criteria
+// GetPromotions contacts the promotion service and retrieve promotions based on a search criteria
 func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotions, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -69,27 +69,27 @@ func GetPromotions(ctx context.Context, promotionClient proto.PromotionSrvServic
 
 }
 
-//CreatePromotion calls the promotion service and create a new promotion
+// CreatePromotion calls the promotion service and create a new promotion
 func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService) (*proto.Promotion, error) {
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
 
-	//disc := &proto.Discount{
-	//	Id:          123456789,
-	//	Value:       0.59,
-	//	Type:        0,
-	//	Description: "Good customer",
-	//}
-	//prod1 := &proto.Product{
-	//	Id:      7308345766332077057,
-	//	UpcCode: "prod1a",
-	//}
-	//prod1.Discount = append(prod1.Discount, disc)
-	//prod2 := &proto.Product{
-	//	Id:      8308345766441128962,
-	//	UpcCode: "prod1",
-	//}
-	//prod2.Discount = append(prod1.Discount, disc)
+	// disc := &proto.Discount{
+	// 	Id:          123456789,
+	// 	Value:       0.59,
+	// 	Type:        0,
+	// 	Description: "Good customer",
+	// }
+	// prod1 := &proto.Product{
+	// 	Id:      7308345766332077057,
+	// 	UpcCode: "prod1a",
+	// }
+	// prod1.Discount = append(prod1.Discount, disc)
+	// prod2 := &proto.Product{
+	// 	Id:      8308345766441128962,
+	// 	UpcCode: "prod1",
+	// }
+	// prod2.Discount = append(prod1.Discount, disc)
 
 	newPromo := proto.Promotion{
 		Id:                 6308345766332077057,
@@ -103,7 +103,7 @@ func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 		ApprovalStatus:     0,
 		PrevApprovalStatus: 0,
 	}
-	//newPromo.Product = append(newPromo.Product, prod1, prod2)
+	// newPromo.Product = append(newPromo.Product, prod1, prod2)
 
 	resp, err := promotionClient.CreatePromotion(ctx, &newPromo)
 
@@ -119,26 +119,26 @@ func CreatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetPromotion(), nil
 }
 
-//UpdatePromotion calls the promotion service and update a promotion
+// UpdatePromotion calls the promotion service and update a promotion
 func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promo *proto.Promotion) (*proto.Promotion, error) {
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
-	//disc := &pb.Discount{
-	//	Id:          123456789,
-	//	Value:       0.59,
-	//	Type:        0,
-	//	Description: "Good customer",
-	//}
-	//prod1 := &pb.Product{
-	//	Id:        7308345766332077057,
-	//	UpcCode: "prod1a",
-	//}
-	//prod1.Discount = append(prod1.Discount, disc)
-	//prod2 := &pb.Product{
-	//	Id:        8308345766441128962,
-	//	UpcCode: "prod1",
-	//}
-	//prod2.Discount = append(prod1.Discount, disc)
+	// disc := &pb.Discount{
+	// 	Id:          123456789,
+	// 	Value:       0.59,
+	// 	Type:        0,
+	// 	Description: "Good customer",
+	// }
+	// prod1 := &pb.Product{
+	// 	Id:        7308345766332077057,
+	// 	UpcCode: "prod1a",
+	// }
+	// prod1.Discount = append(prod1.Discount, disc)
+	// prod2 := &pb.Product{
+	// 	Id:        8308345766441128962,
+	// 	UpcCode: "prod1",
+	// }
+	// prod2.Discount = append(prod1.Discount, disc)
 
 	promo.Name = "Super Promo2"
 	promo.Description = "Super Promo2"
@@ -165,7 +165,7 @@ func UpdatePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetPromotion(), nil
 }
 
-//DeletePromotion calls the promotion service and delete the promotion identified by a given id
+// DeletePromotion calls the promotion service and delete the promotion identified by a given id
 func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvService, promoId *proto.SearchId) (int64, error) {
 
 	resp, err := promotionClient.DeletePromotion(ctx, promoId)
@@ -182,7 +182,7 @@ func DeletePromotion(ctx context.Context, promotionClient proto.PromotionSrvServ
 	return resp.GetAffectedCount(), nil
 }
 
-//timeStringToTimestamp converts time string to gRPC timestamp
+// timeStringToTimestamp converts time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -195,7 +195,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
-//authUser calls the user service and authenticate a user. receive a jwt token if successful
+// authUser calls the user service and authenticate a user. receive a jwt token if successful
 func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.Token, error) {
 	token, err := srvClient.Auth(context.Background(), &userSrv.User{
 		Email: user.Email,
@@ -209,7 +209,7 @@ func authUser(srvClient userSrv.UserSrvService, user *userSrv.User) (*userSrv.To
 	return token, err
 }
 
-//loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
+// loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
 func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	myUser := &userSrv.User{
 		Pwd:   "1234",
@@ -221,7 +221,7 @@ func loginUser(srvClient userSrv.UserSrvService) (context.Context, error) {
 	}
 
 	ctx := metadata.NewContext(context.Background(), map[string]string{
-		//"token": authToken.Token,
+		// "token": authToken.Token,
 		"Authorization": "Bearer " + authToken.Token,
 	})
 	return ctx, nil
@@ -235,7 +235,7 @@ func main() {
 	service.Init()
 	fmt.Println("Client Running")
 
-	// send requests
+	//  send requests
 	ctx, err := loginUser(userSrv.NewUserSrvService(serviceNameUser, client.DefaultClient))
 	if err != nil {
 		return

@@ -12,16 +12,16 @@ import (
 	"time"
 )
 
-//serviceNameUser: service identifier for user service
+// serviceNameUser service identifier for user service
 const serviceNameUser = "goTemp.api.user"
 
-//dateLayoutISO: Default time format for dates entered as strings
+// dateLayoutISO Default time format for dates entered as strings
 const dateLayoutISO = "2006-01-02"
 
 // CreateUser  calls the user service and create a new user
 func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, error) {
-	//var outUser *pb.User
-	//var err error
+	// var outUser *pb.User
+	// var err error
 
 	_, validThru := timeStringToTimestamp("2021-05-24")
 
@@ -36,11 +36,11 @@ func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, err
 		Company:   "Tiny",
 	}
 
-	//if serverAddress != "" {
-	//	outUser, err = srvClient.CreateUser(context.Background(), &newUser, client.WithAddress(serverAddress))
-	//} else {
+	// if serverAddress != "" {
+	// 	outUser, err = srvClient.CreateUser(context.Background(), &newUser, client.WithAddress(serverAddress))
+	// } else {
 	resp, err := srvClient.CreateUser(ctx, &newUser)
-	//}
+	// }
 
 	if err != nil {
 		log.Printf("Unable to create user. Error: %v", err)
@@ -54,10 +54,10 @@ func CreateUser(ctx context.Context, srvClient pb.UserSrvService) (*pb.User, err
 	return resp.GetUser(), nil
 }
 
-//UpdateUser calls the user service and update a user
+// UpdateUser calls the user service and update a user
 func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User) (*pb.User, error) {
-	//var outUser *pb.User
-	//var err error
+	// var outUser *pb.User
+	// var err error
 
 	_, validThru := timeStringToTimestamp("2021-06-26")
 
@@ -68,7 +68,7 @@ func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User)
 	user.Active = false
 	user.Pwd = "5678"
 	user.Email = "microbes@tiny.com"
-	//user.Email = "cow@mymail.com"
+	// user.Email = "cow@mymail.com"
 	user.Company = "Tiny"
 
 	resp, err := srvClient.UpdateUser(ctx, user)
@@ -84,7 +84,7 @@ func UpdateUser(ctx context.Context, srvClient pb.UserSrvService, user *pb.User)
 	return resp.GetUser(), nil
 }
 
-//GetUserById  calls the user service and retrieve the user identified by a particular id
+// GetUserById  calls the user service and retrieve the user identified by a particular id
 func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (*pb.User, error) {
 	var outUser *pb.User
 	var err error
@@ -105,7 +105,7 @@ func GetUserById(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.
 	return outUser, nil
 }
 
-//DeleteUser calls the user service and DeleteUser the user identified by a given id
+// DeleteUser calls the user service and DeleteUser the user identified by a given id
 func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.SearchId) (int64, error) {
 
 	resp, err := srvClient.DeleteUser(ctx, searchId)
@@ -123,7 +123,7 @@ func DeleteUser(ctx context.Context, srvClient pb.UserSrvService, searchId *pb.S
 	return resp.GetAffectedCount(), nil
 }
 
-//GetUsers contact the user service and retrieve users based on a search criteria
+// GetUsers contact the user service and retrieve users based on a search criteria
 func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, error) {
 	_, searchDate := timeStringToTimestamp("2020-10-24")
 
@@ -152,7 +152,7 @@ func GetUsers(ctx context.Context, srvClient pb.UserSrvService) (*pb.Users, erro
 
 }
 
-//authUser calls the user service and authenticate a user. receive a jwt token if successful
+// authUser calls the user service and authenticate a user. receive a jwt token if successful
 func authUser(srvClient pb.UserSrvService, user *pb.User) (*pb.Token, error) {
 	token, err := srvClient.Auth(context.Background(), &pb.User{
 		Email: user.Email,
@@ -166,7 +166,7 @@ func authUser(srvClient pb.UserSrvService, user *pb.User) (*pb.Token, error) {
 	return token, err
 }
 
-//timeStringToTimestamp converts time string to gRPC timestamp
+// timeStringToTimestamp converts time string to gRPC timestamp
 func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	priceVTtime, err := time.Parse(dateLayoutISO, priceVTstr)
 	if err != nil {
@@ -179,7 +179,7 @@ func timeStringToTimestamp(priceVTstr string) (error, *timestamp.Timestamp) {
 	return err, priceVT
 }
 
-//loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
+// loginUser calls authUser to get an authentication token and store it in the context for use on other tasks
 func loginUser(srvClient pb.UserSrvService) (context.Context, error) {
 	myUser := &pb.User{
 		Pwd:   "1234",
@@ -191,7 +191,7 @@ func loginUser(srvClient pb.UserSrvService) (context.Context, error) {
 	}
 
 	ctx := metadata.NewContext(context.Background(), map[string]string{
-		//"token": authToken.Token,
+		// "token": authToken.Token,
 		"Authorization": "Bearer " + authToken.Token,
 	})
 	return ctx, nil
@@ -199,7 +199,7 @@ func loginUser(srvClient pb.UserSrvService) (context.Context, error) {
 
 func main() {
 
-	//define service
+	// define service
 	service := micro.NewService(
 		micro.Name("user.client"),
 	)
@@ -207,7 +207,7 @@ func main() {
 	fmt.Println("Client Running")
 	srvClient := pb.NewUserSrvService(serviceNameUser, service.Client())
 
-	// send requests
+	//  send requests
 	ctx, err := loginUser(srvClient)
 	if err != nil {
 		return

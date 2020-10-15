@@ -16,16 +16,16 @@ import (
 	"time"
 )
 
-//glErr holds the service global errors that are shared cross services
+// glErr holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//Promotion is the main entry point for promotion related services
+// User is the main entry point for user related services
 type User struct{}
 
-//userErr holds service specific errors
+// userErr holds service specific errors
 var userErr statements.UserErr
 
-//GetUserById gets User from DB based on a given ID
+// GetUserById gets User from DB based on a given ID
 func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *pb.User) error {
 	_ = ctx
 
@@ -72,7 +72,7 @@ func (u *User) GetUserById(ctx context.Context, searchId *pb.SearchId, outUser *
 	return nil
 }
 
-//GetUsers searches the Users table in the DB based in a set of search parameters
+// GetUsers searches the Users table in the DB based in a set of search parameters
 func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users *pb.Users) error {
 
 	_ = ctx
@@ -129,8 +129,8 @@ func (u *User) GetUsers(ctx context.Context, searchParms *pb.SearchParams, users
 	return nil
 }
 
-//getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
-//statement to return the final search for users sql statement
+// getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
+// statement to return the final search for users sql statement
 func (u *User) getSQLForSearch(searchParms *pb.SearchParams) ([]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
 	sqlWhereClause, values, err := u.buildSearchWhereClause(searchParms)
@@ -142,9 +142,9 @@ func (u *User) getSQLForSearch(searchParms *pb.SearchParams) ([]interface{}, str
 	return values, sqlStatement, nil
 }
 
-//buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
-//slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
-//for the date lookup which is done  as a contains clause
+// buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+// slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
+// for the date lookup which is done  as a contains clause
 func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []interface{}, error) {
 	sqlWhereClause := " where 1=1"
 	var values []interface{}
@@ -183,13 +183,13 @@ func (u *User) buildSearchWhereClause(searchParms *pb.SearchParams) (string, []i
 		validFrom := convertedDates[0]
 		sqlWhereClause += fmt.Sprintf(" AND appuser.validfrom <= $%d AND appuser.validthru >= $%d", i, i)
 		values = append(values, validFrom)
-		//i++
+		// i++
 	}
 	return sqlWhereClause, values, nil
 }
 
-//CreateUser creates a user in the Database, including hashing their password before saving it. Calls before and after create functions
-//for validations and sending record to the audit service via the broker
+// CreateUser creates a user in the Database, including hashing their password before saving it. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Response) error {
 	_ = ctx
 	outUser := &pb.User{}
@@ -260,8 +260,8 @@ func (u *User) CreateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	return nil
 }
 
-//UpdateUser updates a user in the Database. Calls before and after create functions
-//for validations and sending record to the audit service via the broker
+// UpdateUser updates a user in the Database. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Response) error {
 	_ = ctx
 
@@ -329,8 +329,8 @@ func (u *User) UpdateUser(ctx context.Context, inUser *pb.User, resp *pb.Respons
 	return nil
 }
 
-//DeleteUser deletes a user in the Database based on the user ID. Calls before and after create functions
-//for validations and sending record to the audit service via the broker
+// DeleteUser deletes a user in the Database based on the user ID. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.Response) error {
 	_ = ctx
 
@@ -363,8 +363,8 @@ func (u *User) DeleteUser(ctx context.Context, searchid *pb.SearchId, resp *pb.R
 	return nil
 }
 
-//getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
-//These alerts  are logged, but do not cause the record processing to fail
+// getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
+// These alerts  are logged, but do not cause the record processing to fail
 func (u *User) getAfterAlerts(ctx context.Context, user *pb.User, operation string) ([]string, error) {
 	afterFuncErr := &pb.AfterFuncErr{}
 	var errVal error
@@ -388,7 +388,7 @@ func (u *User) getAfterAlerts(ctx context.Context, user *pb.User, operation stri
 	return []string{}, nil
 }
 
-//Auth authenticates user and return a new JWT token
+// Auth authenticates user and return a new JWT token
 func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 	_ = ctx
 
@@ -426,7 +426,7 @@ func (u *User) Auth(ctx context.Context, user *pb.User, token *pb.Token) error {
 	return nil
 }
 
-//GetUsersByEmail gets a user given an email address. Internally just calls GetUsers.
+// GetUsersByEmail gets a user given an email address. Internally just calls GetUsers.
 func (u *User) GetUsersByEmail(ctx context.Context, searchString *pb.SearchString, outUsers *pb.Users) error {
 	searchParams := pb.SearchParams{
 		Email: searchString.Value,
@@ -438,7 +438,7 @@ func (u *User) GetUsersByEmail(ctx context.Context, searchString *pb.SearchStrin
 	return nil
 }
 
-//hashpwd hash a plan text string
+// hashpwd hash a plan text string
 func (u *User) hashpwd(plainPwd string) (string, error) {
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(plainPwd), bcrypt.DefaultCost)
 	if err != nil {
@@ -447,7 +447,7 @@ func (u *User) hashpwd(plainPwd string) (string, error) {
 	return string(hashedPwd), err
 }
 
-//ValidateToken validates token to ensure user is authenticated
+// ValidateToken validates token to ensure user is authenticated
 func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *pb.Token) error {
 	_ = ctx
 	ts := TokenService{}
@@ -459,11 +459,11 @@ func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *p
 		return fmt.Errorf(glErr.AuthNilClaim(serviceName))
 	}
 	if claims.User.Id == 0 || claims.Issuer != ClaimIssuer {
-		//fmt.Printf("claim User %v", claims.User)
+		// fmt.Printf("claim User %v", claims.User)
 		return fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
 	}
-	//fmt.Printf("Claim User %v", claims.User)
-	//TODO: Check that userid is a valid user in db
+	// fmt.Printf("Claim User %v", claims.User)
+	// TODO: Check that userid is a valid user in db
 
 	outToken.Token = inToken.Token
 	outToken.Valid = true
@@ -473,21 +473,21 @@ func (u *User) ValidateToken(ctx context.Context, inToken *pb.Token, outToken *p
 
 }
 
-//userIdFromToken: Return the user id from the token
-//func (u *User) userIdFromToken(ctx context.Context, inToken *pb.Token) (int64, error) {
-//	_ = ctx
-//	if inToken.Valid == false {
-//		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
-//	}
-//	ts := TokenService{}
-//	claims, err := ts.Decode(inToken.Token)
-//	if err != nil {
-//		return 0, err
-//	}
-//	if claims.User.Id == 0 {
-//		//fmt.Printf("claim User %v", claims.User)
-//		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
-//	}
-//	return claims.User.Id, nil
+// userIdFromToken: Return the user id from the token
+// func (u *User) userIdFromToken(ctx context.Context, inToken *pb.Token) (int64, error) {
+// 	_ = ctx
+// 	if inToken.Valid == false {
+// 		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+// 	}
+// 	ts := TokenService{}
+// 	claims, err := ts.Decode(inToken.Token)
+// 	if err != nil {
+// 		return 0, err
+// 	}
+// 	if claims.User.Id == 0 {
+// 		// fmt.Printf("claim User %v", claims.User)
+// 		return 0, fmt.Errorf(glErr.AuthInvalidClaim(serviceName))
+// 	}
+// 	return claims.User.Id, nil
 //
-//}
+// }

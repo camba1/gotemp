@@ -15,11 +15,11 @@ import (
 )
 
 const (
-	// productCollectionName: Name of the product collection (table)
+	//  productCollectionName: Name of the product collection (table)
 	productCollectionName = "product"
 )
 
-//GetProductById gets product from DB based on a given ID
+// GetProductById gets product from DB based on a given ID
 func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, outProduct *proto.Product) error {
 	col, err := conn.Collection(ctx, productCollectionName)
 	if err != nil {
@@ -28,7 +28,7 @@ func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, 
 	}
 	customerMap := make(map[string]interface{})
 	_, err = col.ReadDocument(ctx, searchId.GetXKey(), &customerMap)
-	//_, err = col.ReadDocument(ctx, searchId.GetXKey(), outCustomer)
+	// _, err = col.ReadDocument(ctx, searchId.GetXKey(), outCustomer)
 	if err != nil {
 		log.Printf(prodErr.SelectRowReadError(err))
 		return err
@@ -41,7 +41,7 @@ func (p *Product) GetProductById(ctx context.Context, searchId *proto.SearchId, 
 	return nil
 }
 
-//GetProducts searches the products table in the DB based in a set of search parameters
+// GetProducts searches the products table in the DB based in a set of search parameters
 func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, products *proto.Products) error {
 	values, sqlStatement, err2 := p.getSQLForSearch(params)
 	if err2 != nil {
@@ -57,7 +57,7 @@ func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, p
 	for cur.HasMore() {
 		product := &proto.Product{}
 		productMap := make(map[string]interface{})
-		//_, err := cur.ReadDocument(ctx,&product)
+		// _, err := cur.ReadDocument(ctx,&product)
 		_, err := cur.ReadDocument(ctx, &productMap)
 		if err != nil {
 			log.Printf(prodErr.SelectScanError(err))
@@ -73,8 +73,8 @@ func (p *Product) GetProducts(ctx context.Context, params *proto.SearchParams, p
 	return nil
 }
 
-//CreateProduct creates a product in the Database. Calls before and after create functions
-//for validations and sending record to the audit service via the broker
+// CreateProduct creates a product in the Database. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, response *proto.Response) error {
 	outCustomer := &proto.Product{}
 	customerMap := make(map[string]interface{})
@@ -88,30 +88,30 @@ func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, r
 		return err
 	}
 
-	//Get a reference to the collection
+	// Get a reference to the collection
 	col, err := conn.Collection(ctx, productCollectionName)
 	if err != nil {
 		log.Printf(prodErr.UnableToOpenCollection(productCollectionName))
 		return err
 	}
 
-	//Create document
+	// Create document
 	ctxWithReturn := context.Background()
 	ctxWithReturn = driver.WithReturnNew(ctxWithReturn, &customerMap)
-	//ctxWithReturn =  driver.WithReturnNew(ctxWithReturn, outCustomer)
+	// ctxWithReturn =  driver.WithReturnNew(ctxWithReturn, outCustomer)
 	_, err = col.CreateDocument(ctxWithReturn, inProduct)
 	if err != nil {
 		log.Printf(prodErr.InsertError(err))
 		return err
 	}
 
-	//Map result back to Protobuf struct
+	// Map result back to Protobuf struct
 	err = arangoMapToStruct(customerMap, outCustomer)
 	if err != nil {
 		return err
 	}
 
-	//after save processes
+	// after save processes
 	response.Product = outCustomer
 	failureDesc, err := p.getAfterAlerts(ctx, outCustomer, "AfterCreateProduct")
 	if err != nil {
@@ -122,8 +122,8 @@ func (p *Product) CreateProduct(ctx context.Context, inProduct *proto.Product, r
 	return nil
 }
 
-//UpdateProduct updates a product in the Database. Calls before and after create functions
-//for validations and sending record to the audit service via the broker
+// UpdateProduct updates a product in the Database. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, response *proto.Response) error {
 
 	outProduct := &proto.Product{}
@@ -144,7 +144,7 @@ func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, r
 	}
 
 	ctxWithReturn := context.Background()
-	//ctxWithReturn =  driver.WithReturnNew(ctxWithReturn, outProduct)
+	// ctxWithReturn =  driver.WithReturnNew(ctxWithReturn, outProduct)
 	ctxWithReturn = driver.WithReturnNew(ctxWithReturn, &productMap)
 	_, err = col.UpdateDocument(ctxWithReturn, inProduct.GetXKey(), inProduct)
 	if err != nil {
@@ -167,8 +167,8 @@ func (p *Product) UpdateProduct(ctx context.Context, inProduct *proto.Product, r
 	return nil
 }
 
-//DeleteProduct deletes a product in the Database based on the product ID (Xkey). Calls before and after create functions
-//for validations and sending record to the audit service via the broker
+// DeleteProduct deletes a product in the Database based on the product ID (Xkey). Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (p *Product) DeleteProduct(ctx context.Context, searchId *proto.SearchId, response *proto.Response) error {
 	outCustomer := &proto.Product{}
 	if err := p.GetProductById(ctx, searchId, outCustomer); err != nil {
@@ -196,12 +196,12 @@ func (p *Product) DeleteProduct(ctx context.Context, searchId *proto.SearchId, r
 	}
 	response.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
 
-	//log.Printf("deleted document with meta %v\n", meta)
+	// log.Printf("deleted document with meta %v\n", meta)
 	return nil
 }
 
-//getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
-//These alerts  are logged, but do not cause the record processing to fail
+// getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
+// These alerts  are logged, but do not cause the record processing to fail
 func (p *Product) getAfterAlerts(ctx context.Context, customer *proto.Product, operation string) ([]string, error) {
 	afterFuncErr := &proto.AfterFuncErr{}
 	var errVal error
@@ -225,16 +225,16 @@ func (p *Product) getAfterAlerts(ctx context.Context, customer *proto.Product, o
 	return []string{}, nil
 }
 
-//arangoMapToStruct takes the map returned by arangoDB and converts it to a struct
-// any fields not found in the struct are added to the extrafields field of the struct.
-//This function is necessary because the arango drive will either return a struct
-// that ignores the extra fields or a map that contain every thing (which cannot be
-// sent as a gRPC message)
+// arangoMapToStruct takes the map returned by arangoDB and converts it to a struct
+//  any fields not found in the struct are added to the extrafields field of the struct.
+// This function is necessary because the arango drive will either return a struct
+//  that ignores the extra fields or a map that contain every thing (which cannot be
+//  sent as a gRPC message)
 func arangoMapToStruct(inMap map[string]interface{}, product *proto.Product) error {
 
-	//TODO: find a better way to do this ?
+	// TODO: find a better way to do this ?
 
-	//Get known fields into the struct
+	// Get known fields into the struct
 	fullMapBytes, err := json.Marshal(inMap)
 	if err != nil {
 		log.Printf(glErr.MarshalFullMap(err))
@@ -246,7 +246,7 @@ func arangoMapToStruct(inMap map[string]interface{}, product *proto.Product) err
 		return err
 	}
 
-	//Remove known fields from struct
+	// Remove known fields from struct
 	fields := reflect.TypeOf(proto.Product{})
 	num := fields.NumField()
 	for i := 0; i < num; i++ {
@@ -259,7 +259,7 @@ func arangoMapToStruct(inMap map[string]interface{}, product *proto.Product) err
 		}
 	}
 
-	//Get additional fields into ExtraFields field of struct
+	// Get additional fields into ExtraFields field of struct
 	partialMapBytes, err := json.Marshal(inMap)
 	if err != nil {
 		log.Printf(glErr.MarshalPartialMap(err))
@@ -275,16 +275,16 @@ func arangoMapToStruct(inMap map[string]interface{}, product *proto.Product) err
 	return nil
 }
 
-//processExtraFields manages the fact that we may have data not defined in the Protobuf definition
-//those records come in the ExtreFields field of the message
+// processExtraFields manages the fact that we may have data not defined in the Protobuf definition
+// those records come in the ExtreFields field of the message
 func processExtraFields(product *proto.Product) error {
-	//TODO: Need to process extra fields instead of removing them before saving the record
+	// TODO: Need to process extra fields instead of removing them before saving the record
 	product.ExtraFields = nil
 	return nil
 }
 
-//getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
-//statement to return the final search for users sql statement
+// getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
+// statement to return the final search for users sql statement
 func (p *Product) getSQLForSearch(searchParms *proto.SearchParams) (map[string]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
 	sqlWhereClause, values, err := p.buildSearchWhereClause(searchParms)
@@ -296,9 +296,9 @@ func (p *Product) getSQLForSearch(searchParms *proto.SearchParams) (map[string]i
 	return values, sqlStatement, nil
 }
 
-//buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
-//slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
-//for the date lookup which is done  as a contains clause
+// buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+// slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
+// for the date lookup which is done  as a contains clause
 func (p *Product) buildSearchWhereClause(searchParms *proto.SearchParams) (string, map[string]interface{}, error) {
 	sqlWhereClause := " FILTER 1==1 "
 	values := make(map[string]interface{})

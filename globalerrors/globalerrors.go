@@ -6,13 +6,13 @@ import (
 	"time"
 )
 
-//ValidationError is a custom error type Used to compile multiple validations errors as one error
+// ValidationError is a custom error type Used to compile multiple validations errors as one error
 type ValidationError struct {
 	Source      string
 	FailureDesc []string
 }
 
-//Error combines all the message stored in the ValidationError.FailureDesc slice and return it as one
+// Error combines all the message stored in the ValidationError.FailureDesc slice and return it as one
 func (v *ValidationError) Error() string {
 	var failureDesc string
 	for _, desc := range v.FailureDesc {
@@ -21,7 +21,7 @@ func (v *ValidationError) Error() string {
 	return fmt.Sprintf("validation error in %s:\n %s ", v.Source, failureDesc)
 }
 
-//SrvError defines the string type relating to all the global errors
+// SrvError defines the string type relating to all the global errors
 type SrvError string
 
 const (
@@ -68,157 +68,157 @@ const (
 Functions that return the error message formatted with the information passed in as arguments to the individual functions
 */
 
-//SrvNoStart returns relevant error based on the provided parameters
+// SrvNoStart returns relevant error based on the provided parameters
 func (ge *SrvError) SrvNoStart(serviceName string, err error) string {
 	return fmt.Sprintf(string(srvNoStartTxt), serviceName, err)
 }
 
-//DbNoConnection returns relevant error based on the provided parameters
+// DbNoConnection returns relevant error based on the provided parameters
 func (ge *SrvError) DbNoConnection(dbName string, err error) string {
 	return fmt.Sprintf(string(dbNoConnectionTxt), dbName, err)
 }
 
-//DbNoConnectionString returns relevant error based on the provided parameters
+// DbNoConnectionString returns relevant error based on the provided parameters
 func (ge *SrvError) DbNoConnectionString(envVarName string) string {
 	return fmt.Sprintf(string(dbNoConnectionStringTxt), envVarName)
 }
 
-//DbConnectRetry returns relevant error based on the provided parameters
+// DbConnectRetry returns relevant error based on the provided parameters
 func (ge *SrvError) DbConnectRetry(RetryNum int, err error) string {
 	return fmt.Sprintf(string(dbConnectRetry), RetryNum, err)
 }
 
-//SrvNoHandler returns relevant error based on the provided parameters
+// SrvNoHandler returns relevant error based on the provided parameters
 func (ge *SrvError) SrvNoHandler(err error) string {
 	return fmt.Sprintf(string(srvNoHandlerTxt), err)
 }
 
-//DtProtoTimeStampToTimeStamp returns relevant error based on the provided parameters
+// DtProtoTimeStampToTimeStamp returns relevant error based on the provided parameters
 func (ge *SrvError) DtProtoTimeStampToTimeStamp(currTimeStamp *timestamp.Timestamp, err error) string {
 	return fmt.Sprintf(string(dtProtoTimeStampToTimeStamp), currTimeStamp, err)
 }
 
-//DtTimeStampToProtoTimeStamp returns relevant error based on the provided parameters
+// DtTimeStampToProtoTimeStamp returns relevant error based on the provided parameters
 func (ge *SrvError) DtTimeStampToProtoTimeStamp(currentTime time.Time, err error) string {
 	return fmt.Sprintf(string(dtTimeStampToProtoTimeStamp), currentTime, err)
 }
 
-//MissingField returns relevant error based on the provided parameters
+// MissingField returns relevant error based on the provided parameters
 func (ge *SrvError) MissingField(fieldName string) string {
 	return fmt.Sprintf(string(missingField), fieldName)
 }
 
-//DtInvalidValidityDates returns relevant error based on the provided parameters
+// DtInvalidValidityDates returns relevant error based on the provided parameters
 func (ge *SrvError) DtInvalidValidityDates(validFrom, validThru time.Time) string {
 	return fmt.Sprintf(string(dtInvalidValidityDates), validFrom, validThru)
 }
 
-//AuthNoMetaData returns relevant error based on the provided parameters
+// AuthNoMetaData returns relevant error based on the provided parameters
 func (ge *SrvError) AuthNoMetaData(endpoint string) string {
 	return fmt.Sprintf(string(authNoMetaData), endpoint)
 }
 
-//AuthInvalidToken returns relevant error based on the provided parameters
+// AuthInvalidToken returns relevant error based on the provided parameters
 func (ge *SrvError) AuthInvalidToken() string {
 	return fmt.Sprintf(string(authInvalidToken))
 }
 
-//AuthNilToken returns relevant error based on the provided parameters
+// AuthNilToken returns relevant error based on the provided parameters
 func (ge *SrvError) AuthNilToken() string {
 	return fmt.Sprintf(string(authNilToken))
 }
 
-//AuthNilClaim returns relevant error based on the provided parameters
+// AuthNilClaim returns relevant error based on the provided parameters
 func (ge *SrvError) AuthNilClaim(claimType string) string {
 	return fmt.Sprintf(string(authNilClaim), claimType)
 }
 
-//AuthInvalidClaim returns relevant error based on the provided parameters
+// AuthInvalidClaim returns relevant error based on the provided parameters
 func (ge *SrvError) AuthInvalidClaim(claimType string) string {
 	return fmt.Sprintf(string(authInvalidClaim), claimType)
 }
 
-//BrkBadMarshall returns relevant error based on the provided parameters
+// BrkBadMarshall returns relevant error based on the provided parameters
 func (ge *SrvError) BrkBadMarshall(objToMarshal string, err error) string {
 	return fmt.Sprintf(string(brkBadMarshall), objToMarshal, err)
 }
 
-//BrkNoMessageSent returns relevant error based on the provided parameters
+// BrkNoMessageSent returns relevant error based on the provided parameters
 func (ge *SrvError) BrkNoMessageSent(objToMarshal string, err error) string {
 	return fmt.Sprintf(string(brkNoMessageSent), objToMarshal, err)
 }
 
-//BrkNoConnection returns relevant error based on the provided parameters
+// BrkNoConnection returns relevant error based on the provided parameters
 func (ge *SrvError) BrkNoConnection(err error) string {
 	return fmt.Sprintf(string(brkNoConnection), err)
 }
 
-//BrkUnableToSetSubs returns relevant error based on the provided parameters
+// BrkUnableToSetSubs returns relevant error based on the provided parameters
 func (ge *SrvError) BrkUnableToSetSubs(topic string, err error) string {
 	return fmt.Sprintf(string(brkUnableToSetSubs), topic, err)
 }
 
-//BrkBadUnMarshall returns relevant error based on the provided parameters
+// BrkBadUnMarshall returns relevant error based on the provided parameters
 func (ge *SrvError) BrkBadUnMarshall(topic string, message []byte, err error) string {
 	return fmt.Sprintf(string(brkBadUnMarshall), topic, message, err)
 }
 
-//AudFailureSending returns relevant error based on the provided parameters
+// AudFailureSending returns relevant error based on the provided parameters
 func (ge *SrvError) AudFailureSending(operation string, id string, err error) string {
 	return fmt.Sprintf(string(audFailureSending), operation, id, err)
 }
 
-//AuthNoUserInToken returns relevant error based on the provided parameters
+// AuthNoUserInToken returns relevant error based on the provided parameters
 func (ge *SrvError) AuthNoUserInToken(err error) string {
 	return fmt.Sprintf(string(authNoUserInToken), err)
 }
 
-//MarshalFullMap returns relevant error based on the provided parameters
+// MarshalFullMap returns relevant error based on the provided parameters
 func (ge *SrvError) MarshalFullMap(err error) string {
 	return fmt.Sprintf(string(marshalFullMap), err)
 }
 
-//UnMarshalByteFullMap returns relevant error based on the provided parameters
+// UnMarshalByteFullMap returns relevant error based on the provided parameters
 func (ge *SrvError) UnMarshalByteFullMap(err error) string {
 	return fmt.Sprintf(string(unMarshalByteFullMap), err)
 }
 
-//MarshalPartialMap returns relevant error based on the provided parameters
+// MarshalPartialMap returns relevant error based on the provided parameters
 func (ge *SrvError) MarshalPartialMap(err error) string {
 	return fmt.Sprintf(string(marshalPartialMap), err)
 }
 
-//UnMarshalBytePartialMap returns relevant error based on the provided parameters
+// UnMarshalBytePartialMap returns relevant error based on the provided parameters
 func (ge *SrvError) UnMarshalBytePartialMap(err error) string {
 	return fmt.Sprintf(string(unMarshalBytePartialMap), err)
 }
 
-//CacheUnableToWrite returns relevant error based on the provided parameters
+// CacheUnableToWrite returns relevant error based on the provided parameters
 func (ge *SrvError) CacheUnableToWrite(key string, err error) string {
 	return fmt.Sprintf(string(cacheUnableToWrite), key, err)
 }
 
-//CacheDBNameNotSet returns relevant error based on the provided parameters
+// CacheDBNameNotSet returns relevant error based on the provided parameters
 func (ge *SrvError) CacheDBNameNotSet() string {
 	return fmt.Sprintf(string(cacheDBNameNotSet))
 }
 
-//CacheUnableToReadVal returns relevant error based on the provided parameters
+// CacheUnableToReadVal returns relevant error based on the provided parameters
 func (ge *SrvError) CacheUnableToReadVal(key string, err error) string {
 	return fmt.Sprintf(string(cacheUnableToReadVal), key, err)
 }
 
-//CacheUnableToDeleteVal returns relevant error based on the provided parameters
+// CacheUnableToDeleteVal returns relevant error based on the provided parameters
 func (ge *SrvError) CacheUnableToDeleteVal(key string, err error) string {
 	return fmt.Sprintf(string(cacheUnableToDeleteVal), key, err)
 }
 
-//CacheTooManyValuesToList returns relevant error based on the provided parameters
+// CacheTooManyValuesToList returns relevant error based on the provided parameters
 func (ge *SrvError) CacheTooManyValuesToList(maxValues int) string {
 	return fmt.Sprintf(string(cacheTooManyValuesToList), maxValues)
 }
 
-//CacheListError returns relevant error based on the provided parameters
+// CacheListError returns relevant error based on the provided parameters
 func (ge *SrvError) CacheListError(err error) string {
 	return fmt.Sprintf(string(cacheListError), err)
 }

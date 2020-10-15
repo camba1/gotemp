@@ -10,19 +10,19 @@ import (
 	"strconv"
 )
 
-//mb is a broker instance to send/receive message from pub/sub system
+// mb is a broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
-//checkValidityDates ensures that the valid date from and valid date thru are populated properly
+// checkValidityDates ensures that the valid date from and valid date thru are populated properly
 func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Timestamp) ([]string, error) {
-	var FailureDesc []string
+	var failureDesc []string
 	validDates := true
 	if validFrom == nil {
-		FailureDesc = append(FailureDesc, promoErr.MissingField("valid from"))
+		failureDesc = append(failureDesc, promoErr.MissingField("valid from"))
 		validDates = false
 	}
 	if validThru == nil {
-		FailureDesc = append(FailureDesc, promoErr.MissingField("valid thru"))
+		failureDesc = append(failureDesc, promoErr.MissingField("valid thru"))
 		validDates = false
 	}
 	if validDates {
@@ -31,13 +31,13 @@ func checkValidityDates(validFrom *timestamp.Timestamp, validThru *timestamp.Tim
 			return nil, err
 		}
 		if vd[0].After(vd[1]) || vd[1].Equal(vd[0]) {
-			FailureDesc = append(FailureDesc, promoErr.DtInvalidValidityDates(vd[0], vd[1]))
+			failureDesc = append(failureDesc, promoErr.DtInvalidValidityDates(vd[0], vd[1]))
 		}
 	}
-	return FailureDesc, nil
+	return failureDesc, nil
 }
 
-//checkMandatoryFields ensures that all mandatory fields are populated properly
+// checkMandatoryFields ensures that all mandatory fields are populated properly
 func checkMandatoryFields(promo *proto.Promotion) ([]string, error) {
 	var FailureDesc []string
 	if promo.GetName() == "" {
@@ -55,16 +55,16 @@ func checkMandatoryFields(promo *proto.Promotion) ([]string, error) {
 	return FailureDesc, nil
 }
 
-//func SetMandatoryFields(promo *pb.Promotion){
-//	validThru, _ := globalUtils.TimeToTimeStampPPB(time.Now().AddDate(1,0,0))
-//	promo.Active = false
-//	promo.ApprovalStatus = 0
-//	promo.PrevApprovalStatus = 0
-//	promo.ValidFrom = ptypes.TimestampNow()
-//	promo.ValidThru = validThru[0]
-//}
+// func SetMandatoryFields(promo *pb.Promotion){
+// 	validThru, _ := globalUtils.TimeToTimeStampPPB(time.Now().AddDate(1,0,0))
+// 	promo.Active = false
+// 	promo.ApprovalStatus = 0
+// 	promo.PrevApprovalStatus = 0
+// 	promo.ValidFrom = ptypes.TimestampNow()
+// 	promo.ValidThru = validThru[0]
+// }
 
-//BeforeCreatePromotion calls data validations before creating a promotion
+// BeforeCreatePromotion calls data validations before creating a promotion
 func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(promotion)
@@ -78,7 +78,7 @@ func (p *Promotion) BeforeCreatePromotion(ctx context.Context, promotion *proto.
 	return nil
 }
 
-//BeforeUpdatePromotion calls data validations before updating a promotion
+// BeforeUpdatePromotion calls data validations before updating a promotion
 func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	validation, err := checkMandatoryFields(promotion)
@@ -92,7 +92,7 @@ func (p *Promotion) BeforeUpdatePromotion(ctx context.Context, promotion *proto.
 	return nil
 }
 
-//BeforeDeletePromotion calls data validations before deleting a promotion
+// BeforeDeletePromotion calls data validations before deleting a promotion
 func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *proto.Promotion, validationErr *proto.ValidationErr) error {
 	_ = ctx
 	if promotion.ApprovalStatus > 0 {
@@ -104,7 +104,7 @@ func (p *Promotion) BeforeDeletePromotion(ctx context.Context, promotion *proto.
 	return nil
 }
 
-//AfterCreatePromotion calls processes to be run after promotion create
+// AfterCreatePromotion calls processes to be run after promotion create
 func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -112,14 +112,14 @@ func (p *Promotion) AfterCreatePromotion(ctx context.Context, promotion *proto.P
 	if len(failureDesc) > 0 {
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
-	//_ = promotion
-	//if len(afterFuncErr.FailureDesc) > 0 {
-	//	return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
-	//}
+	// _ = promotion
+	// if len(afterFuncErr.FailureDesc) > 0 {
+	// 	return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
+	// }
 	return nil
 }
 
-//AfterUpdatePromotion calls processes to be run after promotion update
+// AfterUpdatePromotion calls processes to be run after promotion update
 func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -128,14 +128,14 @@ func (p *Promotion) AfterUpdatePromotion(ctx context.Context, promotion *proto.P
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
-	//_ = promotion
-	//if len(afterFuncErr.FailureDesc) > 0 {
-	//	return &globalerrors.ValidationError{Source: "AfterUpdatePromotion"}
-	//}
+	// _ = promotion
+	// if len(afterFuncErr.FailureDesc) > 0 {
+	// 	return &globalerrors.ValidationError{Source: "AfterUpdatePromotion"}
+	// }
 	return nil
 }
 
-//AfterDeletePromotion calls processes to be run after promotion delete
+// AfterDeletePromotion calls processes to be run after promotion delete
 func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.Promotion, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -144,14 +144,14 @@ func (p *Promotion) AfterDeletePromotion(ctx context.Context, promotion *proto.P
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
-	//_ = promotion
-	//if len(afterFuncErr.FailureDesc) > 0 {
-	//	return &globalerrors.ValidationError{Source: "AfterDeletePromotion"}
-	//}
+	// _ = promotion
+	// if len(afterFuncErr.FailureDesc) > 0 {
+	// 	return &globalerrors.ValidationError{Source: "AfterDeletePromotion"}
+	// }
 	return nil
 }
 
-//sendAudit converts a promotion to a byte array, and call AuditUtil to send message with updated promotion to audit service
+// sendAudit converts a promotion to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (p *Promotion) sendAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, iObjectId int64, promotion *proto.Promotion) string {
 
 	if !glDisableAuditRecords {

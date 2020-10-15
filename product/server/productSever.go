@@ -20,47 +20,47 @@ import (
 )
 
 const (
-	//serviceName: service identifier
+	// serviceName service identifier
 	serviceName = "goTemp.api.product"
-	//serviceNameUser: service identifier for user service
+	// serviceNameUser service identifier for user service
 	serviceNameUser = "goTemp.api.user"
 )
 
 const (
-	//dbName: Name of the DB hosting the data
+	// dbName Name of the DB hosting the data
 	dbName = "product"
-	//dbAddressEnvVarName: Name of Environment variable that contains the address to the DB
+	// dbAddressEnvVarName Name of Environment variable that contains the address to the DB
 	dbAddressEnvVarName = "DB_ADDRESS"
-	//dbUserEnvVarName: Name of Environment variable that contains the database username
+	// dbUserEnvVarName Name of Environment variable that contains the database username
 	dbUserEnvVarName = "DB_USER"
-	//dbPassEnvVarName: Name of Environment variable that contains the database password
+	// dbPassEnvVarName Name of Environment variable that contains the database password
 	dbPassEnvVarName = "DB_PASS"
 )
 
-//Other constants
+// Other constants
 const (
 	DisableAuditRecordsEnvVarName = "DISABLE_AUDIT_RECORDS"
 )
 
-// conn: Database connection
+//  conn Database connection
 var conn adb.Database
 
-//prodErr: Holds service specific errors
+// prodErr Holds service specific errors
 var prodErr statements.ProdErr
 
-//glErr: Holds the service global errors that are shared cross services
+// glErr Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//mb: Broker instance to send/receive message from pub/sub system
+// mb Broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
-//enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
+// glDisableAuditRecords allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
 
-//Product is the main entry point for Product related services
+// Product is the main entry point for Product related services
 type Product struct{}
 
-//AuthWrapper defines the authentication middleware
+// AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		meta, ok := metadata.FromContext(ctx)
@@ -77,7 +77,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 			return fmt.Errorf(glErr.AuthNilToken())
 		}
 		token := authSplit[1]
-		//token := meta["Token"]
+		// token := meta["Token"]
 
 		log.Printf("endpoint: %v", req.Endpoint())
 
@@ -100,7 +100,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
-//getDBConnString: Get the connection string to the DB
+// getDBConnString gets the connection string to the DB
 func getDBConnString() *globalUtils.DbConnParams {
 	addressString := os.Getenv(dbAddressEnvVarName)
 	if addressString == "" {
@@ -121,8 +121,8 @@ func getDBConnString() *globalUtils.DbConnParams {
 	}
 }
 
-//connectToDB: Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
-//before giving up and throwing an error
+// connectToDB calls the Util pgxDBConnect to connect to the database. Service will try to connect a few times
+// before giving up and throwing an error
 func connectToDB() adb.Database {
 	var dbConnect globalUtils.ArangoConnect
 	db, err := dbConnect.ConnectToDBWithRetry(dbName, getDBConnString())
@@ -132,27 +132,27 @@ func connectToDB() adb.Database {
 	return db
 }
 
-//loadConfig: Load configuration from environment variables
+// loadConfig loads configuration from environment variables
 func loadConfig() {
-	//conf, err := config.NewConfig()
-	//if err != nil {
-	//	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
-	//	//log.Fatal(err)
-	//}
-	//defer conf.Close()
+	// conf, err := config.NewConfig()
+	// if err != nil {
+	// 	log.Fatalf("Unable to create new application configuration object. Err: %v\n", err)
+	// 	// log.Fatal(err)
+	// }
+	// defer conf.Close()
 	//
-	//src := env.NewSource()
+	// src := env.NewSource()
 	//
-	//err = conf.Load(src)
-	////ws, err := src.Read()
-	//if err != nil {
-	//	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
-	//	//log.Fatal(err)
-	//}
-	//test := conf.Map()
-	////log.Printf("conf %v\n", ws.Data)
+	// err = conf.Load(src)
+	// // ws, err := src.Read()
+	// if err != nil {
+	// 	log.Fatalf("Unable to load application configuration object. Err: %v\n", err)
+	// 	// log.Fatal(err)
+	// }
+	// test := conf.Map()
+	// // log.Printf("conf %v\n", ws.Data)
 	//
-	//log.Printf("conf map %v\n", test)
+	// log.Printf("conf map %v\n", test)
 
 	audits := os.Getenv(DisableAuditRecordsEnvVarName)
 	if audits == "true" {
@@ -162,7 +162,7 @@ func loadConfig() {
 	}
 }
 func main() {
-	//instantiate service
+	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
@@ -174,19 +174,19 @@ func main() {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
 
-	//Load configuration
+	// Load configuration
 	loadConfig()
 
-	//Connect to DB
+	// Connect to DB
 	conn = connectToDB()
 
-	//defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
-	//setup the nats broker
+	// setup the nats broker
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
 
-	// Run Service
+	//  Run Service
 	err = service.Run()
 	if err != nil {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))

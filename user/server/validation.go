@@ -13,26 +13,26 @@ var mb globalUtils.MyBroker
 
 //checkMandatoryFields: Ensure that all mandatory fields are populated properly
 func checkMandatoryFields(user *pb.User) ([]string, error) {
-	var FailureDesc []string
+	var failureDesc []string
 	if user.GetFirstname() == "" {
-		FailureDesc = append(FailureDesc, glErr.MissingField("first name"))
+		failureDesc = append(failureDesc, glErr.MissingField("first name"))
 	}
 	if user.GetLastname() == "" {
-		FailureDesc = append(FailureDesc, glErr.MissingField("last name"))
+		failureDesc = append(failureDesc, glErr.MissingField("last name"))
 	}
 	if user.GetPwd() == "" {
-		FailureDesc = append(FailureDesc, glErr.MissingField("password"))
+		failureDesc = append(failureDesc, glErr.MissingField("password"))
 	}
 	if user.GetEmail() == "" {
-		FailureDesc = append(FailureDesc, glErr.MissingField("email"))
+		failureDesc = append(failureDesc, glErr.MissingField("email"))
 	}
 	dateValidation, err := globalUtils.CheckValidityDates(user.ValidFrom, user.ValidThru)
 	if err != nil {
 		return nil, err
 	}
-	FailureDesc = append(FailureDesc, dateValidation...)
+	failureDesc = append(failureDesc, dateValidation...)
 
-	return FailureDesc, nil
+	return failureDesc, nil
 }
 
 //checkEmail: Search the DB for users with a given email and call checkEmailUnique

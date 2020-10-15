@@ -13,16 +13,16 @@ import (
 	"time"
 )
 
-//glErr: Holds the service global errors that are shared cross services
+// glErr Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//Promotion is the main entry point for promotion related services
+// Promotion is the main entry point for promotion related services
 type Promotion struct{}
 
-//promoErr holds service specific errors
+// promoErr holds service specific errors
 var promoErr statements.PromoErr
 
-//UpdatePromotion updates a promotion based on the is provided in the inPromotion. Returns updated promotion
+// UpdatePromotion updates a promotion based on the is provided in the inPromotion. Returns updated promotion
 func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *proto.Promotion, resp *proto.Response) error {
 	_ = ctx
 
@@ -79,14 +79,14 @@ func (p *Promotion) UpdatePromotion(ctx context.Context, inPromotion *proto.Prom
 	}
 	resp.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
 
-	//if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
-	//	return errVal
-	//}
+	// if errVal := p.AfterUpdatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
+	// 	return errVal
+	// }
 
 	return nil
 }
 
-//DeletePromotion deletes a promotion based on the promotion id in the searchId.id field. Returns number of affected promotions which should be one always
+// DeletePromotion deletes a promotion based on the promotion id in the searchId.id field. Returns number of affected promotions which should be one always
 func (p *Promotion) DeletePromotion(ctx context.Context, searchid *proto.SearchId, resp *proto.Response) error {
 	_ = ctx
 
@@ -116,14 +116,14 @@ func (p *Promotion) DeletePromotion(ctx context.Context, searchid *proto.SearchI
 	}
 	resp.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
 
-	//if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &proto.AfterFuncErr{}); errVal != nil {
-	//	return errVal
-	//}
+	// if errVal := p.AfterDeletePromotion(ctx, &outPromotion, &proto.AfterFuncErr{}); errVal != nil {
+	// 	return errVal
+	// }
 
 	return nil
 }
 
-//GetPromotions returns a promotion slice based on the search parameters provided
+// GetPromotions returns a promotion slice based on the search parameters provided
 func (p *Promotion) GetPromotions(ctx context.Context, searchParms *proto.SearchParams, promotions *proto.Promotions) error {
 
 	_ = ctx
@@ -176,9 +176,9 @@ func (p *Promotion) GetPromotions(ctx context.Context, searchParms *proto.Search
 	return nil
 }
 
-//buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
-//slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
-//for the date lookup which is done  as a contains clause
+// buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+// slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
+// for the date lookup which is done  as a contains clause
 func (p *Promotion) buildSearchWhereClause(searchParms *proto.SearchParams) (string, []interface{}, error) {
 	sqlWhereClause := " where 1=1"
 	var values []interface{}
@@ -212,12 +212,12 @@ func (p *Promotion) buildSearchWhereClause(searchParms *proto.SearchParams) (str
 		validFrom := convertedDates[0]
 		sqlWhereClause += fmt.Sprintf(" AND promotion.validfrom <= $%d AND promotion.validthru >= $%d", i, i)
 		values = append(values, validFrom)
-		//i++
+		// i++
 	}
 	return sqlWhereClause, values, nil
 }
 
-//GetPromotionById gets a promotion for the given promotion id provided in searchId.id
+// GetPromotionById gets a promotion for the given promotion id provided in searchId.id
 func (p *Promotion) GetPromotionById(ctx context.Context, searchId *proto.SearchId, outPromotion *proto.Promotion) error {
 	_ = ctx
 
@@ -254,7 +254,7 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *proto.Search
 		return err
 	}
 
-	//Get the customer name
+	// Get the customer name
 	getLookups(ctx, outPromotion)
 
 	outPromotion.ValidFrom, outPromotion.ValidThru = convertedTimes[0], convertedTimes[1]
@@ -262,7 +262,7 @@ func (p *Promotion) GetPromotionById(ctx context.Context, searchId *proto.Search
 	return nil
 }
 
-//CreatePromotion creates a promotion based on the promotion passed in the inPromotion argument
+// CreatePromotion creates a promotion based on the promotion passed in the inPromotion argument
 func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *proto.Promotion, resp *proto.Response) error {
 	_ = ctx
 
@@ -319,15 +319,15 @@ func (p *Promotion) CreatePromotion(ctx context.Context, inPromotion *proto.Prom
 	}
 	resp.ValidationErr = &proto.ValidationErr{FailureDesc: failureDesc}
 	//
-	//if errVal := p.AfterCreatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
-	//	return errVal
-	//}
+	// if errVal := p.AfterCreatePromotion(ctx, outPromotion, &proto.AfterFuncErr{}); errVal != nil {
+	// 	return errVal
+	// }
 
 	return nil
 }
 
-//getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
-//These alerts  are logged, but do not cause the record processing to fail
+// getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
+// These alerts  are logged, but do not cause the record processing to fail
 func (p *Promotion) getAfterAlerts(ctx context.Context, promotion *proto.Promotion, operation string) ([]string, error) {
 	afterFuncErr := &proto.AfterFuncErr{}
 	var errVal error
@@ -351,8 +351,8 @@ func (p *Promotion) getAfterAlerts(ctx context.Context, promotion *proto.Promoti
 	return []string{}, nil
 }
 
-//getLookups gets any read only lookups from other services (or cache) and add them to the ReadOnlyLookup field.
-//In this case, it is pulling the customer name from the customer service based on the customerid
+// getLookups gets any read only lookups from other services (or cache) and add them to the ReadOnlyLookup field.
+// In this case, it is pulling the customer name from the customer service based on the customerid
 func getLookups(ctx context.Context, promotion *proto.Promotion) {
 	lookup := idLookup{}
 	custName, err := lookup.getCustomerName(ctx, promotion.CustomerId)
