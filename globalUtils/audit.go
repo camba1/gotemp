@@ -40,7 +40,7 @@ func (a auditMsg) Topic() string {
 // AuditMsgHeader defines the structure of the header portion of the audit message to be sent to the broker
 type AuditMsgHeader map[string]string
 
-//  AuditMsgHeaderStruct is the struct version of the AuditMsgHeader (map) to allow for easier handling
+// AuditMsgHeaderStruct is the struct version of the AuditMsgHeader (map) to allow for easier handling
 type AuditMsgHeaderStruct struct {
 	ServiceName  string
 	ActionFunc   string

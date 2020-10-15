@@ -115,7 +115,7 @@ func (ge *ProdErr) DtInvalidValidityDates(validFrom, validThru time.Time) string
 	return fmt.Sprintf(ge.getSqlTxt("DtInvalidValidityDates", language), validThru.Format(dateLayout), validFrom.Format(dateLayout))
 }
 
-//  DelPromoNotInitialState returns relevant error in the selected language
+// DelPromoNotInitialState returns relevant error in the selected language
 func (ge *ProdErr) DelPromoNotInitialState() string {
 	return fmt.Sprintf(ge.getSqlTxt("DelPromoNotInitialState", language))
 }
