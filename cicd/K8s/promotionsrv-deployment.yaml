@@ -23,11 +23,7 @@ spec:
         io.kompose.service: promotionsrv
     spec:
       containers:
-      - command:
-        - CompileDaemon
-        - --build=go build -o promotionServer ./promotion/server/
-        - --command=./promotionServer
-        env:
+      - env:
         - name: DISABLE_AUDIT_RECORDS
           valueFrom:
             configMapKeyRef:

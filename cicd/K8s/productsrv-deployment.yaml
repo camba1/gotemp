@@ -23,11 +23,7 @@ spec:
         io.kompose.service: productsrv
     spec:
       containers:
-      - command:
-        - CompileDaemon
-        - --build=go build -o productServer ./product/server/
-        - --command=./productServer
-        env:
+      - env:
         - name: DB_ADDRESS
           valueFrom:
             configMapKeyRef:

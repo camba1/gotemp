@@ -23,11 +23,7 @@ spec:
         io.kompose.service: usersrv
     spec:
       containers:
-      - command:
-        - CompileDaemon
-        - --build=go build -o userServer ./user/server/
-        - --command=./userServer
-        env:
+      - env:
         - name: DISABLE_AUDIT_RECORDS
           valueFrom:
             configMapKeyRef:

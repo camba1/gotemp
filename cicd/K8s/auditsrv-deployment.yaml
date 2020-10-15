@@ -23,11 +23,7 @@ spec:
         io.kompose.service: auditsrv
     spec:
       containers:
-      - command:
-        - CompileDaemon
-        - --build=go build -o auditServer ./audit/server/
-        - --command=./auditServer
-        env:
+      - env:
         - name: DB_CONNECT
           valueFrom:
             configMapKeyRef:
