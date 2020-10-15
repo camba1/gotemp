@@ -21,48 +21,48 @@ import (
 )
 
 const (
-	//serviceName: service identifier
+	// serviceName service identifier
 	serviceName = "goTemp.api.customer"
-	//serviceNameUser: service identifier for user service
+	// serviceNameUser service identifier for user service
 	serviceNameUser = "goTemp.api.user"
 )
 
 //DB related constants
 const (
-	//dbName: Name of the DB hosting the data
+	// dbName Name of the DB hosting the data
 	dbName = "customer"
-	//dbAddressEnvVarName: Name of Environment variable that contains the address to the DB
+	// dbAddressEnvVarName Name of Environment variable that contains the address to the DB
 	dbAddressEnvVarName = "DB_ADDRESS"
-	//dbUserEnvVarName: Name of Environment variable that contains the database username
+	// dbUserEnvVarName Name of Environment variable that contains the database username
 	dbUserEnvVarName = "DB_USER"
-	//dbPassEnvVarName: Name of Environment variable that contains the database password
+	// dbPassEnvVarName Name of Environment variable that contains the database password
 	dbPassEnvVarName = "DB_PASS"
 )
 
-//Other constants
+// Other constants
 const (
 	DisableAuditRecordsEnvVarName = "DISABLE_AUDIT_RECORDS"
 )
 
-// conn: Database connection
+// conn Database connection
 var conn adb.Database
 
-//custErr: Holds service specific errors
+// custErr Holds service specific errors
 var custErr statements.CustErr
 
-//glErr: Holds the service global errors that are shared cross services
+// glErr Holds the service global errors that are shared cross services
 var glErr globalerrors.SrvError
 
-//mb: Broker instance to send/receive message from pub/sub system
+// mb Broker instance to send/receive message from pub/sub system
 var mb globalUtils.MyBroker
 
-//enableAuditRecords: Allows all insert,update,delete records to be sent out to the broker for forwarding to
+// glDisableAuditRecords Allows all insert,update,delete records to be sent out to the broker for forwarding to
 var glDisableAuditRecords = false
 
-//customer: Main entry point for customer related services
+// customer Main entry point for customer related services
 type customer struct{}
 
-//AuthWrapper defines the authentication middleware
+// AuthWrapper defines the authentication middleware
 func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	return func(ctx context.Context, req server.Request, resp interface{}) error {
 		meta, ok := metadata.FromContext(ctx)
@@ -101,7 +101,7 @@ func AuthWrapper(fn server.HandlerFunc) server.HandlerFunc {
 	}
 }
 
-//getDBConnString: Get the connection string to the DB
+// getDBConnString Get the connection string to the DB
 func getDBConnString() *globalUtils.DbConnParams {
 	addressString := os.Getenv(dbAddressEnvVarName)
 	if addressString == "" {
@@ -122,7 +122,7 @@ func getDBConnString() *globalUtils.DbConnParams {
 	}
 }
 
-//connectToDB: Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
+// connectToDB Call the Util pgxDBConnect to connect to the database. Service will try to connect a few times
 //before giving up and throwing an error
 func connectToDB() adb.Database {
 	var dbConnect globalUtils.ArangoConnect
@@ -164,7 +164,7 @@ func loadConfig() {
 
 func main() {
 
-	//instantiate service
+	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
@@ -176,15 +176,15 @@ func main() {
 		log.Fatalf(glErr.SrvNoHandler(err))
 	}
 
-	//Load configuration
+	// Load configuration
 	loadConfig()
 
-	//Connect to DB
+	// Connect to DB
 	conn = connectToDB()
 
-	//defer conn.Close(context.Background())
+	// defer conn.Close(context.Background())
 
-	//setup the nats broker
+	// setup the nats broker
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
 

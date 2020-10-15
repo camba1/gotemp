@@ -11,22 +11,22 @@ import (
 	"time"
 )
 
-//checkMandatoryFields: Ensure that all mandatory fields are populated properly
+// checkMandatoryFields: Ensure that all mandatory fields are populated properly
 func checkMandatoryFields(customer *proto.Customer) ([]string, error) {
-	var FailureDesc []string
+	var failureDesc []string
 	if customer.GetName() == "" {
-		FailureDesc = append(FailureDesc, glErr.MissingField("name"))
+		failureDesc = append(failureDesc, glErr.MissingField("name"))
 	}
 	dateValidation, err := globalUtils.CheckValidityDates(customer.GetValidityDates().GetValidFrom(), customer.GetValidityDates().GetValidThru())
 	if err != nil {
 		return nil, err
 	}
-	FailureDesc = append(FailureDesc, dateValidation...)
+	failureDesc = append(failureDesc, dateValidation...)
 
-	return FailureDesc, nil
+	return failureDesc, nil
 }
 
-//SetMandatoryFields presets the mandatory fields that need to be populated before insert,delete or update
+// SetMandatoryFields presets the mandatory fields that need to be populated before insert,delete or update
 func SetMandatoryFields(ctx context.Context, customer *proto.Customer, isInsert bool) error {
 
 	log.Println("Start Set Mandatory Fields")
@@ -64,7 +64,7 @@ func SetMandatoryFields(ctx context.Context, customer *proto.Customer, isInsert 
 	return nil
 }
 
-//getCurrentUser: Get the user from the context. Notice that the authorization service returns a int64 and we convert to string
+// getCurrentUser: Get the user from the context. Notice that the authorization service returns a int64 and we convert to string
 func getCurrentUser(ctx context.Context) (string, error) {
 	var auth globalUtils.AuthUtils
 	currentUser, err := auth.GetCurrentUserFromContext(ctx)
@@ -75,7 +75,7 @@ func getCurrentUser(ctx context.Context) (string, error) {
 	return strconv.FormatInt(currentUser, 10), nil
 }
 
-//BeforeCreateCustomer calls data validations before creating a customer
+// BeforeCreateCustomer calls data validations before creating a customer
 func (c *customer) BeforeCreateCustomer(ctx context.Context, customer *proto.Customer, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -96,7 +96,7 @@ func (c *customer) BeforeCreateCustomer(ctx context.Context, customer *proto.Cus
 	return nil
 }
 
-//BeforeUpdateCustomer calls data validations before updating a customer
+// BeforeUpdateCustomer calls data validations before updating a customer
 func (c *customer) BeforeUpdateCustomer(ctx context.Context, customer *proto.Customer, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -117,7 +117,7 @@ func (c *customer) BeforeUpdateCustomer(ctx context.Context, customer *proto.Cus
 	return nil
 }
 
-//BeforeDeleteUser calls data validations before deleting a customer
+// BeforeDeleteUser calls data validations before deleting a customer
 func (c *customer) BeforeDeleteCustomer(ctx context.Context, customer *proto.Customer, validationErr *proto.ValidationErr) error {
 	_ = ctx
 
@@ -132,7 +132,7 @@ func (c *customer) BeforeDeleteCustomer(ctx context.Context, customer *proto.Cus
 	return nil
 }
 
-//AfterCreateCustomer calls processes to be run after customer creation
+// AfterCreateCustomer calls processes to be run after customer creation
 func (c *customer) AfterCreateCustomer(ctx context.Context, customer *proto.Customer, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -141,13 +141,13 @@ func (c *customer) AfterCreateCustomer(ctx context.Context, customer *proto.Cust
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
-	//if len(afterFuncErr.FailureDesc) > 0 {
-	//	return &globalerrors.ValidationError{Source: "AfterCreateUser", FailureDesc: afterFuncErr.FailureDesc}
-	//}
+	// if len(afterFuncErr.FailureDesc) > 0 {
+	// 	return &globalerrors.ValidationError{Source: "AfterCreateUser", FailureDesc: afterFuncErr.FailureDesc}
+	// }
 	return nil
 }
 
-//AfterUpdateCustomer calls processes to be run after customer update
+// AfterUpdateCustomer calls processes to be run after customer update
 func (c *customer) AfterUpdateCustomer(ctx context.Context, customer *proto.Customer, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -156,13 +156,13 @@ func (c *customer) AfterUpdateCustomer(ctx context.Context, customer *proto.Cust
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
-	//if len(afterFuncErr.FailureDesc) > 0 {
-	//	return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
-	//}
+	// if len(afterFuncErr.FailureDesc) > 0 {
+	// 	return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
+	// }
 	return nil
 }
 
-//AfterDeleteCustomer calls processes to be run after customer delete
+// AfterDeleteCustomer calls processes to be run after customer delete
 func (c *customer) AfterDeleteCustomer(ctx context.Context, customer *proto.Customer, afterFuncErr *proto.AfterFuncErr) error {
 	_ = ctx
 
@@ -171,13 +171,13 @@ func (c *customer) AfterDeleteCustomer(ctx context.Context, customer *proto.Cust
 		afterFuncErr.FailureDesc = append(afterFuncErr.FailureDesc, failureDesc)
 	}
 
-	//if len(afterFuncErr.FailureDesc) > 0 {
-	//	return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
-	//}
+	// if len(afterFuncErr.FailureDesc) > 0 {
+	// 	return &globalerrors.ValidationError{Source: "AfterCreatePromotion"}
+	// }
 	return nil
 }
 
-//sendUserAudit converts a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
+// sendUserAudit converts a user to a byte array, and call AuditUtil to send message with updated promotion to audit service
 func (c *customer) sendUserAudit(ctx context.Context, serviceName, actionFunc, actionType string, objectName string, objectId string, customer *proto.Customer) string {
 	if !glDisableAuditRecords {
 		byteMessage, err := mb.ProtoToByte(customer)

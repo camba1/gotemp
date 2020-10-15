@@ -18,6 +18,7 @@ const (
 	customerCollectionName = "customer"
 )
 
+// GetCustomerById gets customer from DB based on a given ID
 func (c *customer) GetCustomerById(ctx context.Context, searchId *proto.SearchId, outCustomer *proto.Customer) error {
 	col, err := conn.Collection(ctx, customerCollectionName)
 	if err != nil {
@@ -39,6 +40,7 @@ func (c *customer) GetCustomerById(ctx context.Context, searchId *proto.SearchId
 	return nil
 }
 
+// GetCustomers searches the customers table in the DB based in a set of search parameters
 func (c *customer) GetCustomers(ctx context.Context, params *proto.SearchParams, customers *proto.Customers) error {
 
 	values, sqlStatement, err2 := c.getSQLForSearch(params)
@@ -71,6 +73,8 @@ func (c *customer) GetCustomers(ctx context.Context, params *proto.SearchParams,
 	return nil
 }
 
+// CreateCustomer creates a customer in the Database. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (c *customer) CreateCustomer(ctx context.Context, inCustomer *proto.Customer, response *proto.Response) error {
 
 	outCustomer := &proto.Customer{}
@@ -119,6 +123,8 @@ func (c *customer) CreateCustomer(ctx context.Context, inCustomer *proto.Custome
 	return nil
 }
 
+// UpdateCustomer updates a customer in the Database. Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (c *customer) UpdateCustomer(ctx context.Context, inCustomer *proto.Customer, response *proto.Response) error {
 
 	outCustomer := &proto.Customer{}
@@ -162,6 +168,8 @@ func (c *customer) UpdateCustomer(ctx context.Context, inCustomer *proto.Custome
 	return nil
 }
 
+// DeleteCustomer deletes a customer in the Database based on the product ID (Xkey). Calls before and after create functions
+// for validations and sending record to the audit service via the broker
 func (c *customer) DeleteCustomer(ctx context.Context, searchId *proto.SearchId, response *proto.Response) error {
 
 	outCustomer := &proto.Customer{}
@@ -194,8 +202,8 @@ func (c *customer) DeleteCustomer(ctx context.Context, searchId *proto.SearchId,
 	return nil
 }
 
-//getAfterAlerts: Call the appropriate after create/update/delete function and return the alert validation errors
-//These alerts  are logged, but do not cause the record processing to fail
+// getAfterAlerts calls the appropriate after create/update/delete function and return the alert validation errors
+// These alerts  are logged, but do not cause the record processing to fail
 func (c *customer) getAfterAlerts(ctx context.Context, customer *proto.Customer, operation string) ([]string, error) {
 	afterFuncErr := &proto.AfterFuncErr{}
 	var errVal error
@@ -219,9 +227,9 @@ func (c *customer) getAfterAlerts(ctx context.Context, customer *proto.Customer,
 	return []string{}, nil
 }
 
-//arangoMapToStruct: takes the map returned by arangoDB and converts it to a struct
+// arangoMapToStruct takes the map returned by arangoDB and converts it to a struct
 // any fields not found in the struct are added to the extrafields field of the struct.
-//This function is necessary because the arango drive will either return a struct
+// This function is necessary because the arango drive will either return a struct
 // that ignores the extra fields or a map that contain every thing (which cannot be
 // sent as a gRPC message)
 func arangoMapToStruct(inMap map[string]interface{}, customer *proto.Customer) error {
@@ -269,16 +277,16 @@ func arangoMapToStruct(inMap map[string]interface{}, customer *proto.Customer) e
 	return nil
 }
 
-//processExtraFields: Manage the fact that we may have data not defined in the Protobuf definition
-//those records come in the ExtreFields field of the message
+// processExtraFields Manages the fact that we may have data not defined in the Protobuf definition
+// those records come in the ExtreFields field of the message
 func processExtraFields(customer *proto.Customer) error {
 	//TODO: Need to process extra fields instead of removing them before saving the record
 	customer.ExtraFields = nil
 	return nil
 }
 
-//getSQLForSearch: Combine the where clause built in the buildSearchWhereClause method with the rest of the sql
-//statement to return the final search for users sql statement
+// getSQLForSearch combines the where clause built in the buildSearchWhereClause method with the rest of the sql
+// statement to return the final search for users sql statement
 func (c *customer) getSQLForSearch(searchParms *proto.SearchParams) (map[string]interface{}, string, error) {
 	sql := statements.SqlSelectAll.String()
 	sqlWhereClause, values, err := c.buildSearchWhereClause(searchParms)
@@ -290,9 +298,9 @@ func (c *customer) getSQLForSearch(searchParms *proto.SearchParams) (map[string]
 	return values, sqlStatement, nil
 }
 
-//buildSearchWhereClause: Builds a sql string to be used as the where clause in a sql statement. It also returns an interface
-//slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
-//for the date lookup which is done  as a contains clause
+// buildSearchWhereClause builds a sql string to be used as the where clause in a sql statement. It also returns an interface
+// slice with the values to be used as replacements in the sql statement. Currently only handles equality constraints, except
+// for the date lookup which is done  as a contains clause
 func (c *customer) buildSearchWhereClause(searchParms *proto.SearchParams) (string, map[string]interface{}, error) {
 	sqlWhereClause := " FILTER 1==1 "
 	values := make(map[string]interface{})
