@@ -17,3 +17,4 @@ spec:
     targetPort: 10000
   selector:
     io.kompose.service: web
+  type: NodePort

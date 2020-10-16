@@ -14,3 +14,4 @@ spec:
     targetPort: 8080
   selector:
     io.kompose.service: microapi
+  type: NodePort
