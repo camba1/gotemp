@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  REDIS_PASS: TestDB@home2
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: redis-docker-compose-env
+  name: redis-docker-compose-env
