@@ -178,11 +178,12 @@ services:
   redis:
     image: redis
     container_name: rediscont
+    env_file: ./redis/docker-compose.env
     volumes:
     - ./redis/data:/data
     - ./redis/config:/usr/local/etc/redis/
 #    command: ["redis-server","/usr/local/etc/redis/redis.conf", "--appendonly", "yes"]
-    command: ["redis-server", "--appendonly", "yes", "--requirepass", "TestDB@home2"]
+    command: ["sh", "-c", "redis-server", "--appendonly", "yes", "--requirepass", "$${REDIS_PASS}"]
     ports:
       - "6379:6379"
   microapi:
