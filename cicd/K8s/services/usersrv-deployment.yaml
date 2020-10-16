@@ -49,7 +49,7 @@ spec:
             configMapKeyRef:
               key: POSTGRES_CONNECT
               name: user-docker-compose-env
-        image: usersrv
+        image: bolbeck/gotemp_usersrv
         imagePullPolicy: ""
         name: usersrvcont
         ports:

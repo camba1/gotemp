@@ -44,7 +44,7 @@ spec:
             configMapKeyRef:
               key: MICRO_SERVER_ADDRESS
               name: audit-docker-compose-env
-        image: auditsrv
+        image: bolbeck/gotemp_auditsrv
         imagePullPolicy: ""
         name: auditsrvcont
         ports:

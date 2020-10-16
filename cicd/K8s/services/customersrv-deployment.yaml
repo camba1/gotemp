@@ -59,7 +59,7 @@ spec:
             configMapKeyRef:
               key: MICRO_SERVER_ADDRESS
               name: customer-docker-compose-env
-        image: customersrv
+        image: bolbeck/gotemp_customersrv
         imagePullPolicy: ""
         name: customersrvcont
         ports:

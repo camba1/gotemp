@@ -23,7 +23,7 @@ spec:
         io.kompose.service: web
     spec:
       containers:
-      - image: web
+      - image: bolbeck/gotemp_web
         imagePullPolicy: ""
         name: gtweb
         ports:

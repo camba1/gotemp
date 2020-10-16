@@ -59,7 +59,7 @@ spec:
             configMapKeyRef:
               key: POSTGRES_CONNECT
               name: promotion-docker-compose-env
-        image: promotionsrv
+        image: bolbeck/gotemp_promotionsrv
         imagePullPolicy: ""
         name: promotionsrvcont
         ports:
