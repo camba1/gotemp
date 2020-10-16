@@ -29,7 +29,7 @@ spec:
             configMapKeyRef:
               key: POSTGRES_PASSWORD
               name: timescaledb-docker-compose-env
-        image: timescaledb
+        image: bolbeck/gotemp_bbtimescaledb
         imagePullPolicy: ""
         name: timescaledb
         ports:
