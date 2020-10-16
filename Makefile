@@ -2,6 +2,7 @@
 start:
 	docker-compose up -d usersrv customersrv productsrv promotionsrv auditsrv
 	docker-compose up web
+
 # Docker-compose sample commands
 composeup:
 	docker-compose up
@@ -17,11 +18,25 @@ composerestartpromocli:
 docbuildpromosrv:
 	docker build -t promosrv -f promotion/Dockerfile .
 docrunpromosrv:
-	docker run -p 50051:50051 --name promosrvcont promosrv
+	docker run --env-file ./promotion/docker-compose.env -p 50051:50051 --name promosrvcont promosrv
+# run and attach to existing network
+docrunusersrvnet:
+	docker run --env-file ./user/docker-compose.env --network=gotemp_default  -p 50051:50051 --name usersrvcont usersrv
 docbuildpromocli:
 	docker build -t promocli -f promotion/DockerfileCli .
 docrunpromocli:
 	docker run -p 50051:50051 --name promoclicont promocli
+
+#DockerHub
+hubpush:
+	docker build -t $$SERVICE -f  $$FOLDER/Dockerfile .
+	docker tag $$SERVICE bolbeck/gotemp_$$SERVICE
+	docker push bolbeck/gotemp_$$SERVICE
+
+hubpushweb:
+	docker build -t $$SERVICE -f  ./$$FOLDER/Dockerfile ./$$FOLDER
+	docker tag $$SERVICE bolbeck/gotemp_$$SERVICE
+	docker push bolbeck/gotemp_$$SERVICE
 
 # Run service directly
 runpromosrv:
@@ -29,17 +44,22 @@ runpromosrv:
 runpromocli:
 	go run promotion/client/promotionClient.go
 
+
 # Web App
 # Directly (dev)
 	npm run dev
+
 # Docker
 docbuildweb:
 	docker build -t gotempweb -f ./web/Dockerfile ./web
 docrunweb:
 	docker run -p 3000:3000 --name gotempwebcont gotempweb
+
 #Docker-compose
 composeupweb:
 	docker-compose up web
+
+
 
 # Compile proto files
 genpromotionproto:
@@ -59,3 +79,14 @@ promoviaapigateway:
     --header 'Content-Type: application/json' \
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5NzMzNTMzNywiaWF0IjoxNTk3MjQ4OTM3LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.QWAvvoXQHv_Cf48PTrjK9uRvrdEblNvFOxQWjNcX79U' \
     --data-raw '{"name":"Promo1", "customerId": "ducksrus"}'
+
+# K8s
+
+kapplyservices:
+	kubectl apply -f cicd/K8s/services
+kapplyclients:
+	kubectl apply -f cicd/K8s/clients
+kapplyweb:
+	kubectl apply -f cicd/K8s/web
+kdelete:
+	kubectl delete -f $folder
