@@ -33,7 +33,7 @@ hubpush:
 	docker tag $$SERVICE bolbeck/gotemp_$$SERVICE
 	docker push bolbeck/gotemp_$$SERVICE
 
-hubpushweb:
+hubpushcontext:
 	docker build -t $$SERVICE -f  ./$$FOLDER/Dockerfile ./$$FOLDER
 	docker tag $$SERVICE bolbeck/gotemp_$$SERVICE
 	docker push bolbeck/gotemp_$$SERVICE
