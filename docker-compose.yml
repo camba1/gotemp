@@ -196,9 +196,11 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
+      target: Dev
     depends_on:
       - microapi
     container_name: gtweb
+    env_file: ./web/docker-compose.env
     volumes:
     - ./web/sapper/src:/goTemp/web/sapper/src
     ports:
