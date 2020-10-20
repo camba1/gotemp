@@ -26,7 +26,14 @@ spec:
         - api
         - --handler=rpc
         - --namespace=goTemp.api
-        image: micro/micro
+        env:
+        - name: MICRO_PROFILE
+          value: kubernetes
+#        - name: MICRO_PROXY
+#          value: "network.micro.svc.cluster.local:8443"
+        - name: MICRO_SERVER_IMAGE
+          value: "micro/micro:v2.9.3"
+        image: micro/micro:v2.9.3
         imagePullPolicy: ""
         name: microcont
         ports:
