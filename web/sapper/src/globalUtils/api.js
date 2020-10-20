@@ -2,8 +2,7 @@
  * URL to the root of the micro services proxy
  * @type {string}
  */
-export const apiUrl = "http://localhost:8080/"
-// TODO: Move the URL to env variable or config file
+export const apiUrl = process.env.APIURL //"http://localhost:8080/"
 
 /**
  * Authentication token
