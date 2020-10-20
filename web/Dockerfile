@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:alpine AS Dev
 WORKDIR /goTemp/web/sapper
 COPY ./sapper/package*.json ./
 RUN npm install
@@ -9,3 +9,7 @@ ENV HOST=0.0.0.0
 CMD [ "npm", "run", "dev" ]
 #CMD [ "npm", "build" ]
 #CMD [ "npm", "start" ]
+
+FROM Dev
+RUN npm run build
+CMD ["npm", "run", "start"]
