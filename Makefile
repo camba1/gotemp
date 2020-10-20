@@ -80,6 +80,11 @@ promoviaapigateway:
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5NzMzNTMzNywiaWF0IjoxNTk3MjQ4OTM3LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.QWAvvoXQHv_Cf48PTrjK9uRvrdEblNvFOxQWjNcX79U' \
     --data-raw '{"name":"Promo1", "customerId": "ducksrus"}'
 
+authviaapigateway:
+	curl --location --request POST 'http://192.168.64.9:31196/user/userSrv/auth' \
+	--header 'Content-Type: application/json' \
+	--data-raw '{"pwd":"1234","email":"duck@mymail.com"}'
+
 # K8s
 
 kapplyservices:
