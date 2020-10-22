@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose -f ../../docker-compose.yml convert
+    kompose.cmd: kompose -f ./../docker-compose.yml convert
     kompose.version: 1.21.0 ()
   labels:
     io.kompose.service: web
@@ -17,25 +17,31 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose -f ../../docker-compose.yml convert
+        kompose.cmd: kompose -f ./../docker-compose.yml convert
         kompose.version: 1.21.0 ()
       labels:
         io.kompose.service: web
     spec:
       containers:
-      - image: bolbeck/gotemp_web
-        imagePullPolicy: ""
-        name: gtweb
-        ports:
-        - containerPort: 3000
-        - containerPort: 10000
-        resources: {}
-#        volumeMounts:
-#        - mountPath: /goTemp/web/sapper/src
-#          name: web-claim0
+        - env:
+            - name: APIURL
+              valueFrom:
+                configMapKeyRef:
+                  key: APIURL
+                  name: web-docker-compose-env
+          image: bolbeck/gotemp_web
+          imagePullPolicy: ""
+          name: gtweb
+          ports:
+            - containerPort: 3000
+            - containerPort: 10000
+          resources: {}
+#          volumeMounts:
+#            - mountPath: /goTemp/web/sapper/src
+#              name: web-claim0
       restartPolicy: Always
       serviceAccountName: ""
 #      volumes:
-#      - name: web-claim0
-#        persistentVolumeClaim:
-#          claimName: web-claim0
+#        - name: web-claim0
+#          persistentVolumeClaim:
+#            claimName: web-claim0
