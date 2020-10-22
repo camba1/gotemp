@@ -46,6 +46,8 @@ async function req(path, method, data, myFetch) {
     } else {
          fetchIt = fetch
     }
+    console.log(apiUrl)
+    console.log(process.env.APIURL)
     const res = await fetchIt(apiUrl + path, {
         method,
         headers: header,
