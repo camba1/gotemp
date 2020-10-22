@@ -34,14 +34,6 @@ spec:
           name: gtweb
           ports:
             - containerPort: 3000
-            - containerPort: 10000
           resources: {}
-#          volumeMounts:
-#            - mountPath: /goTemp/web/sapper/src
-#              name: web-claim0
       restartPolicy: Always
       serviceAccountName: ""
-#      volumes:
-#        - name: web-claim0
-#          persistentVolumeClaim:
-#            claimName: web-claim0
