@@ -80,13 +80,24 @@ promoviaapigateway:
     --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJVc2VyIjp7ImlkIjoyMzQzNzI1MzkxMjkxNjE4MzA1LCJjb21wYW55IjoiRHVjayBJbmMuIn0sImV4cCI6MTU5NzMzNTMzNywiaWF0IjoxNTk3MjQ4OTM3LCJpc3MiOiJnb1RlbXAudXNlcnNydiJ9.QWAvvoXQHv_Cf48PTrjK9uRvrdEblNvFOxQWjNcX79U' \
     --data-raw '{"name":"Promo1", "customerId": "ducksrus"}'
 
+# Call service using the micro gateway running behind the ingress in K8s
 authviaapigateway:
-	curl --location --request POST 'http://192.168.64.9:31196/user/userSrv/auth' \
+	curl --location --request POST 'http://gotemp.tst/user/userSrv/auth' \
 	--header 'Content-Type: application/json' \
 	--data-raw '{"pwd":"1234","email":"duck@mymail.com"}'
 
 # K8s
 
+startkub:
+	kubectl apply -f cicd/K8s/services
+	kubectl apply -f cicd/K8s/web
+	kubectl apply -f cicd/K8s/ingress
+stopkub:
+	kubectl delete -f cicd/K8s/ingress
+	kubectl delete -f cicd/K8s/web
+	kubectl delete -f cicd/K8s/services
+kapplyingress:
+	kubectl apply -f cicd/K8s/ingress
 kapplyservices:
 	kubectl apply -f cicd/K8s/services
 kapplyclients:
@@ -94,4 +105,4 @@ kapplyclients:
 kapplyweb:
 	kubectl apply -f cicd/K8s/web
 kdelete:
-	kubectl delete -f $folder
+	kubectl delete -f $FOLDER
