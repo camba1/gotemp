@@ -9,8 +9,8 @@ metadata:
   name: timescaledb
 spec:
   ports:
-  - name: "5433"
-    port: 5433
+  - name: "5432"
+    port: 5432
     targetPort: 5432
   selector:
     io.kompose.service: timescaledb
