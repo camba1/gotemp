@@ -96,6 +96,8 @@ stopkub:
 	kubectl delete -f cicd/K8s/ingress
 	kubectl delete -f cicd/K8s/web
 	kubectl delete -f cicd/K8s/services
+
+
 kapplyingress:
 	kubectl apply -f cicd/K8s/ingress
 kapplyservices:
@@ -106,3 +108,6 @@ kapplyweb:
 	kubectl apply -f cicd/K8s/web
 kdelete:
 	kubectl delete -f $FOLDER
+
+kstartSubset:
+	kubectl apply $(ls cicd/K8s/services/audit*.yaml | awk ' { print " -f " $1 } ')
