@@ -187,7 +187,7 @@ services:
     ports:
       - "6379:6379"
   microapi:
-    image: micro/micro
+    image: micro/micro:v2.9.3
     container_name: microcont
     command: api --handler=rpc --namespace=goTemp.api
     ports:
