@@ -143,13 +143,14 @@ Finally, access app:
     minikube service web
 ```
 
-#### Repo organization
+### Repo organization
 
 The project is organized in a way that each folder represents either a service, a database or a shared library package.
 Currently, we have the following:
 
 - `arangodb`: Volumes mounted to the ArangoDB container as well as data initialization scripts
 - `audit`: Audit service to collect and store historical audit information
+- `cicd` : Holds files related to CI/CD and orchestration
 - `customer`: Customer master data service
 - `diagramforDocs`: Diagrams used in the readme documents
 - `globalErrors`: Generic errors shared package
@@ -175,7 +176,7 @@ Additionally, we have the following files in the root directory as well:
 - `Makefile`: shortcuts to common actions
 - `Readme.md`: Well... this file...
 
-#### Services
+### Services
 
 We use `go-micro` as the main GO microservices framework. Using go-micro simplifies many of the tasks associated with building 
 micro services including (but not limited to):
@@ -235,7 +236,7 @@ the audit service may eventually store it in the time series DB. The audit servi
 The project initializes each of the DBs and seeds them with tables and data. Data changes made at run time are automatically persisted using mounted volumes when running via docker-compose. 
 See the folders for each DB for details as well as the docker-compose file.
 
-#### Web front end
+### Web front end
 
 Our web front end is built with Svelte and Sapper which have some interesting benefits:
 
@@ -272,9 +273,21 @@ All of our main routes are pretty standard in terms of organization. We will use
 
 There are three routes that do not share the structure above as they have very little functionality and thus are server by a single index.svelte component: root, register and login.
 
+### Kubernetes
 
+#### Organization
 
-#### Additional information:
+The K8s files live in the `./cicd/K8s` folder and it is organized as follows:
+
+- Clients : These are the test clients for each of the services. 
+- Ingress: Manifest to create the ingress resource that allows the front end and the back end to communicate
+- Services : Contains all the services and related entities manifest (deployment, service, etc...). It also contains the manifests for the related databases.
+- web: Manifest for the web front end and the API gateway
+
+Note that within each of the folders, most related manifests are organized  using a prefix. 
+For example, all the front end related services start with the 'web' prefix.
+
+### Additional information:
 
 Additional information can be found in the individual folders either in a `readme.md` or a `doc.go` file.
 Additionally, the Makefile contains many command samples that can be used for development.  
