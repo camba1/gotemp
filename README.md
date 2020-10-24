@@ -108,11 +108,13 @@ where serviceName is the name of the service for which the image should be built
  
  Example:
  
- ```bash
+```bash
      make hubpush SERVICE=usersrv FOLDER=./user
 ```
 
+
 Note that for the web front end and for Timescale DB the command to be used is slightly different:
+
 
 ```bash
      make hubpushcontext SERVICE=<serivceName> FOLDER=<folderName
