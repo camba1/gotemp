@@ -23,11 +23,9 @@ spec:
     spec:
       containers:
       - args:
-        - sh
-        - -c
         - redis-server
         - --requirepass
-        - ${REDIS_PASS}
+        - $(REDIS_PASS)
 #        - --appendonly
 #        - yes
         env:
@@ -42,17 +40,17 @@ spec:
         ports:
         - containerPort: 6379
         resources: {}
-#        volumeMounts:
+        volumeMounts:
 #        - mountPath: /data
 #          name: redis-claim0
-#        - mountPath: /usr/local/etc/redis/
-#          name: redis-claim1
+        - mountPath: /usr/local/etc/redis/
+          name: redis-config-configmap
       restartPolicy: Always
       serviceAccountName: ""
-#      volumes:
+      volumes:
 #      - name: redis-claim0
 #        persistentVolumeClaim:
 #          claimName: redis-claim0
-#      - name: redis-claim1
-#        persistentVolumeClaim:
-#          claimName: redis-claim1
+      - name: redis-config-configmap
+        configMap:
+          name: redis-config-configmap
