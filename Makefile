@@ -111,3 +111,11 @@ kdelete:
 
 kstartSubset:
 	kubectl apply $(ls cicd/K8s/services/audit*.yaml | awk ' { print " -f " $1 } ')
+
+
+# Misc
+
+encode:
+	echo -n 'data' | base64
+decode:
+	echo -n ZGF0YQ== | base64 -d
