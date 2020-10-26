@@ -26,9 +26,9 @@ spec:
       - env:
         - name: POSTGRES_PASSWORD
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               key: POSTGRES_PASSWORD
-              name: postgres-docker-compose-env
+              name: pgdb-secret
         image: postgres
         imagePullPolicy: ""
         name: pgdb

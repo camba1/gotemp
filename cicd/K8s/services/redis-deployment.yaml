@@ -31,9 +31,9 @@ spec:
         env:
         - name: REDIS_PASS
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               key: REDIS_PASS
-              name: redis-docker-compose-env
+              name: redis-secret
         image: redis
         imagePullPolicy: ""
         name: rediscont

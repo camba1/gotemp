@@ -1,8 +1,0 @@
-apiVersion: v1
-data:
-  POSTGRES_PASSWORD: TestDB@home2
-kind: ConfigMap
-metadata:
-  labels:
-    io.kompose.service: timescaledb-timescaledb-docker-compose-env
-  name: timescaledb-docker-compose-env
