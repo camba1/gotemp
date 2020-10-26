@@ -36,9 +36,9 @@ spec:
               name: user-docker-compose-env
         - name: MICRO_BROKER_ADDRESS
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               key: MICRO_BROKER_ADDRESS
-              name: user-docker-compose-env
+              name: usersrv-secret
         - name: MICRO_SERVER_ADDRESS
           valueFrom:
             configMapKeyRef:
@@ -46,9 +46,9 @@ spec:
               name: user-docker-compose-env
         - name: POSTGRES_CONNECT
           valueFrom:
-            configMapKeyRef:
+            secretKeyRef:
               key: POSTGRES_CONNECT
-              name: user-docker-compose-env
+              name: usersrv-secret
         image: bolbeck/gotemp_usersrv
         imagePullPolicy: ""
         name: usersrvcont
