@@ -23,13 +23,7 @@ spec:
         io.kompose.service: web
     spec:
       containers:
-        - env:
-            - name: APIURL
-              valueFrom:
-                configMapKeyRef:
-                  key: APIURL
-                  name: web-docker-compose-env
-          image: bolbeck/gotemp_web
+        - image: bolbeck/gotemp_web
           imagePullPolicy: ""
           name: gtweb
           ports:
