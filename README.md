@@ -277,6 +277,11 @@ There are three routes that do not share the structure above as they have very l
 
 ### Kubernetes
 
+The application configuration in K8s can be seen in the diagram below. Note that the diagram shows just one of the different microservices and its associated database.
+The configuration for all other microservices, beyond the shared ingress and API Gateway, is similar to the one depicted in the diagram.
+
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram-k8s.png)
+
 #### Organization
 
 The K8s files live in the `./cicd/K8s` folder and it is organized as follows:
