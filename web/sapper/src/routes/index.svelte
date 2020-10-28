@@ -3,6 +3,8 @@
 	import IconWtext from '../components/iconWtext.svelte'
 	import Col from 'sveltestrap/src/Col.svelte'
 	import Row from 'sveltestrap/src/Row.svelte'
+	import Container from 'sveltestrap/src/Container.svelte'
+
 
 	let header = "Welcome";
 	let osTechList = ["GO", "go-Micro", "Svelte", "NATS"];
@@ -69,12 +71,12 @@
 </svelte:head>
 
 <section class="sectionMain" style="background-image: url('mainbackground.jpg');">
-	<div class="container" >
-		<div class="row" >
-			<div class="col-lg-6 order-1 order-lg-1">
+	<Container>
+		<Row>
+			<Col class="col-lg-6 order-1 order-lg-1">
 				<img src="gotempwelcome.png" alt="Welcome to goTemp" class="img-fluid">
-			</div>
-			<div class="col-lg-6 order-2 order-lg-2">
+			</Col>
+			<Col class="col-lg-6 order-2 order-lg-2">
 				<h1>{header}</h1>
 				<p class="lead pmar">{description}
 					<a href="{bolbeck.address}">
@@ -87,27 +89,27 @@
 				<p>
 					<a href="{repo}" class="btn btn-secondary mr-2">Repo</a>
 				</p>
-			</div>
-		</div>
-	</div>
+			</Col>
+		</Row>
+	</Container>
 </section>
 
 <section>
-	<div class="container">
+	<Container>
 		<h2>Technology stack</h2>
 		<p class="text-muted mb-5">Below is the list of technologies used to build this demo.</p>
 
-		<div class="row">
+		<Row>
 			<IconWtext data="{frontend}" />
 			<IconWtext data="{backend}" />
 			<IconWtext data="{database}" />
-		</div>
-		<div class="row">
+		</Row>
+		<Row>
 			<IconWtext data="{orchestration}" />
 			<IconWtext data="{communication}" />
 			<IconWtext data="{other}" />
-		</div>
-	</div>
+		</Row>
+	</Container>
 </section>
 
 
