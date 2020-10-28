@@ -1,5 +1,7 @@
 # goTemp
 
+![Diagram showing goTemp components](diagramsforDocs/UI_goTemp_Landing small.png?display=inline-block)
+
 goTemp is an introduction to Golang microservices using go-micro.
 
 In it current incarnation (this is wip), this mono-repo uses the following stack as backend:
