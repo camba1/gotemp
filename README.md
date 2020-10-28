@@ -1,6 +1,6 @@
 # goTemp
 
-![Diagram showing goTemp components](diagramsforDocs/UI_goTemp_Landing small.png?display=inline-block)
+test ![Diagram showing goTemp components](diagramsforDocs/UI_goTemp_Landing small.png)
 
 goTemp is an introduction to Golang microservices using go-micro.
 
