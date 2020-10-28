@@ -2,6 +2,8 @@
 start:
 	docker-compose up -d usersrv customersrv productsrv promotionsrv auditsrv
 	docker-compose up web
+stop:
+	docker-compose down
 
 # Docker-compose sample commands
 composeup:
