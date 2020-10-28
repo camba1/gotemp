@@ -31,15 +31,19 @@ Below is a diagram that displays the overall setup of the application:
 
 In a nutshell. the application functionality is as follows in the backend:
 
-- Each service perform the basic CRUD operations to their underlying databases
+- The frontend connects to the different services through the API gateway
+- For each service the frontend provides:
+    - Search page
+    - Detail page
+- Additionally, the frontend provides:
+    - Landing page
+    - Login page
+    - Register page
+- Each service performs the basic CRUD operations to their underlying databases
 - All services authenticate via the user service
 - All completed CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB.
 - Each service has a client which can be used to test all basic CRUD functionality
 
-The frontend is still under construction at this time, but it is at a very usable state. It provides:
-- An entry page
-- Login/logout
-- A search and a detail page for each service
 
 ### Starting the application
 
