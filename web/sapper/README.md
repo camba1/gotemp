@@ -20,3 +20,14 @@ Which ever way you decide to start the frontend, you will also need to run at le
 
 Open up [localhost:3000](http://localhost:3000) and start clicking around.
 
+##### Sample landing Page
+
+![goTemp landing page](../../diagramsforDocs/UI_goTemp_Landing_small.png)
+
+##### Sample search Page
+
+![goTemp landing page](../../diagramsforDocs/UI_Promo_detail.png)
+
+##### Sample detail sage
+
+![goTemp landing page](../../diagramsforDocs/UI_Promo_search.png)
