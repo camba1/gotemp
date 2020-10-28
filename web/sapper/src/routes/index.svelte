@@ -9,8 +9,8 @@
 	let header = "Welcome";
 	let osTechList = ["GO", "go-Micro", "Svelte", "NATS"];
 	let dbTechList = ["ArangoDB", "PostgreSQL", "Redis", "TimescaleDB"];
-	let description = "This project provides a sample full stack microservices implementation. goTemp was built by Juan Peredo at ";
-	let bolbeck = {label:"Bobleck.com", address: "https://www.bolbeck.com"}
+	let description = "This project provides a sample full stack microservices implementation.";
+	let JPinfo = {label:"Juan Peredo", address: "https://twitter.com/juanperedotech"}
 	let repo = "https://bitbucket.org/Bolbeck/gotemp"
 	let frontend = {header: "Frontend", iconName: "fa-desktop", techList: ["Language: Javascript","Framework: Svelte/Sapper"]}
 	let backend = {header: "Backend", iconName: "fa-server", techList: ["Language: Go","Framework: go-Micro"]}
@@ -64,6 +64,9 @@
 		background-position: center center;
 		background-size: cover;
 	}
+	.footer {
+		text-align: center;
+	}
 </style>
 
 <svelte:head>
@@ -78,12 +81,10 @@
 			</Col>
 			<Col class="col-lg-6 order-2 order-lg-2">
 				<h1>{header}</h1>
-				<p class="lead pmar">{description}
-					<a href="{bolbeck.address}">
-						{bolbeck.label}
-					</a>
+				<p class="lead pmar">
+					{description}
 				</p>
-				<p class="pmar">Try exploring the application using the menu items at the top of the page. If you are curious about the tech stack, feel free to review the repo documentation in bitbucket for more info. <br/>
+				<p class="pmar">Try exploring the application using the menu items at the top of the page. If you are curious about the tech stack, feel free to review the repo documentation for more info. <br/>
 					If you find any issues or problems please create an issue or a pull request.
 				</p>
 				<p>
@@ -111,6 +112,17 @@
 		</Row>
 	</Container>
 </section>
+
+<Container>
+		<p class="footer text-muted">
+			<i class="fas fa-angle-left"></i>
+			Created by
+			<a href="{JPinfo.address}">
+				{JPinfo.label}
+			</a>
+			<i class="fas fa-angle-right"></i>
+		</p>
+</Container>
 
 
 <!--<Footer />-->
