@@ -1,6 +1,5 @@
 # goTemp
 
-![goTemp Landing page](diagramsforDocs/UI_goTemp_Landing small.png)
 
 goTemp is an introduction to Golang microservices using go-micro.
 
@@ -46,6 +45,7 @@ In a nutshell. the application functionality is as follows in the backend:
 - All completed CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB.
 - Each service has a client which can be used to test all basic CRUD functionality
 
+test ![goTemp landing page](diagramsforDocs/UI_goTemp_Landing_small.png)
 
 ### Starting the application
 
