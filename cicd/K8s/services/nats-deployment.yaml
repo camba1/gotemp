@@ -22,7 +22,7 @@ spec:
         io.kompose.service: nats
     spec:
       containers:
-      - image: nats
+      - image: bolbeck/gotemp_nats
         imagePullPolicy: ""
         name: nats
         ports:
