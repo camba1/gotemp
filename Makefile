@@ -49,6 +49,7 @@ runpromocli:
 
 # Web App
 # Directly (dev)
+runweb:
 	npm run dev
 
 # Docker
