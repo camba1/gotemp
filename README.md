@@ -2,6 +2,7 @@
 
 
 goTemp is a full stack Golang microservices sample application built using go-micro. The application is built as a series of services that provide:
+
 - Authentication using JWT
 - Creation and maintenance of :
     - Users
