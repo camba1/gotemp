@@ -109,3 +109,6 @@ Temporary Items
 /web/sapper/cypress/screenshots/
 /web/sapper/__sapper__/
 /web/sapper/.sessions/
+/vault/logs/
+/vault/data/
+/vault/keys.txt

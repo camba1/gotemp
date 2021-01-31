@@ -17,3 +17,6 @@ sapper/.sessions
 sapper/__sapper__
 sapper/node_modules
 sapper/src/node_modules
+vault/logs/
+vault/data/
+vault/keys.txt
