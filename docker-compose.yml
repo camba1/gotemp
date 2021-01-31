@@ -206,3 +206,20 @@ services:
     ports:
     - "3000:3000"
     - "10000:10000"
+  vault:
+    build: ./vault
+    container_name: vaultcont
+    ports:
+      - 8200:8200
+    volumes:
+#      - ./vault/config:/vault/config
+      - ./vault/policies:/vault/policies
+      - ./vault/data:/vault/data
+      - ./vault/logs:/vault/logs
+      - ./vault/scripts:/vault/scripts
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+    command: server -config=/vault/config/vault-config.json
+#    command: server -dev
+    cap_add:
+      - IPC_LOCK
