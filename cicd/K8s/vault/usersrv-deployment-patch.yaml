@@ -5,13 +5,19 @@ spec:
 #          postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@{{ .Data.data.server }}/{{ .Data.data.dbname }}?application_name={{ .Data.data.application_name }}
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "gotemp-usersrv"
-        vault.hashicorp.com/agent-inject-secret-gotemp-database-postgresql-user.txt: "gotempkv/data/database/postgresql/user"
-        vault.hashicorp.com/agent-inject-template-gotemp-database-postgresql-user.txt: |
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/agent-inject-secret-postgresql.txt: "gotempkv/data/database/postgresql/user"
+        vault.hashicorp.com/agent-inject-template-postgresql.txt: |
           {{- with secret "gotempkv/data/database/postgresql/user" -}}
           export POSTGRES_CONNECT="postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@{{ .Data.data.server }}/{{ .Data.data.dbname }}?application_name={{ .Data.data.application_name }}"
+          {{- end -}}
+        vault.hashicorp.com/agent-inject-secret-nats.txt: "gotempkv/data/broker/nats/usersrv"
+        vault.hashicorp.com/agent-inject-template-nats.txt: |
+          {{- with secret "gotempkv/data/broker/nats/usersrv" -}}
+          export MICRO_BROKER_ADDRESS="{{ .Data.data.username }}:{{ .Data.data.password }}@{{ .Data.data.server }}"
           {{- end -}}
     spec:
       serviceAccountName: gotemp-usersrv
       containers:
       - name: usersrvcont
-        command: ['sh', '-c', 'source /vault/secrets/gotemp-database-postgresql-user.txt && ./userServerAlp' ]
+        command: ['sh', '-c', 'source /vault/secrets/postgresql.txt && source /vault/secrets/nats.txt && ./userServerAlp' ]
