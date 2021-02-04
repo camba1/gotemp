@@ -1,0 +1,24 @@
+spec:
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "gotemp-productsrv"
+        vault.hashicorp.com/agent-pre-populate-only: "true"
+        vault.hashicorp.com/agent-inject-secret-arangodb.txt: "gotempkv/data/database/arangodb/productsrv"
+        vault.hashicorp.com/agent-inject-template-arangodb.txt: |
+          {{- with secret "gotempkv/data/database/arangodb/productsrv" -}}
+          export DB_USER="{{ .Data.data.username }}"
+          export DB_ADDRESS="{{ .Data.data.server }}"
+          export DB_PASS="{{ .Data.data.password }}"
+          {{- end -}}
+        vault.hashicorp.com/agent-inject-secret-nats.txt: "gotempkv/data/broker/nats/productsrv"
+        vault.hashicorp.com/agent-inject-template-nats.txt: |
+          {{- with secret "gotempkv/data/broker/nats/productsrv" -}}
+          export MICRO_BROKER_ADDRESS="{{ .Data.data.username }}:{{ .Data.data.password }}@{{ .Data.data.server }}"
+          {{- end -}}
+    spec:
+      serviceAccountName: gotemp-productsrv
+      containers:
+        - name: productsrvcont
+          command: ['sh', '-c', 'source /vault/secrets/arangodb.txt && source /vault/secrets/nats.txt && ./productServerAlp' ]

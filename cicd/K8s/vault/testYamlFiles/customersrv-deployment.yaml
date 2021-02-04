@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose -f ../../docker-compose.yml convert
+    kompose.version: 1.21.0 ()
+  labels:
+    io.kompose.service: customersrv
+  name: customersrv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: customersrv
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose -f ../../docker-compose.yml convert
+        kompose.version: 1.21.0 ()
+      labels:
+        io.kompose.service: customersrv
+    spec:
+      containers:
+      - env:
+        - name: DB_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: DB_ADDRESS
+              name: customer-docker-compose-env
+#        - name: DB_PASS
+#          valueFrom:
+#            secretKeyRef:
+#              key: DB_PASS
+#              name: customersrv-secret
+#        - name: DB_USER
+#          valueFrom:
+#            configMapKeyRef:
+#              key: DB_USER
+#              name: customer-docker-compose-env
+        - name: DISABLE_AUDIT_RECORDS
+          valueFrom:
+            configMapKeyRef:
+              key: DISABLE_AUDIT_RECORDS
+              name: customer-docker-compose-env
+        - name: MICRO_BROKER
+          valueFrom:
+            configMapKeyRef:
+              key: MICRO_BROKER
+              name: customer-docker-compose-env
+#        - name: MICRO_BROKER_ADDRESS
+#          valueFrom:
+#            secretKeyRef:
+#              key: MICRO_BROKER_ADDRESS
+#              name: customersrv-secret
+        - name: MICRO_SERVER_ADDRESS
+          valueFrom:
+            configMapKeyRef:
+              key: MICRO_SERVER_ADDRESS
+              name: customer-docker-compose-env
+        image: bolbeck/gotemp_customersrv
+        imagePullPolicy: ""
+        name: customersrvcont
+        ports:
+        - containerPort: 50057
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
