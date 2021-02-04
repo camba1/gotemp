@@ -1,4 +1,4 @@
-path "gotempkv/data/database/postgresql/user" {
+path "gotempkv/data/database/postgresql/usersrv" {
   capabilities = ["read"]
 }
 
