@@ -7,6 +7,8 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
+echo "Creating promotionsrv artifacts...."
+
 # Export token used to login to vault
 export VAULT_TOKEN=$1
 

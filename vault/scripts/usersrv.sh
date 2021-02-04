@@ -7,6 +7,8 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
+echo "Creating usersrv artifacts...."
+
 # Export token used to login to vault
 export VAULT_TOKEN=$1
 
@@ -16,17 +18,19 @@ export VAULT_TOKEN=$1
  vault kv put gotempkv/broker/nats/usersrv username="natsUser" password="TestDB@home2" server="nats"
 
 
- # Create Vault Policy
- vault policy write gotemp-usersrv - <<EOF
-path "gotempkv/data/database/postgresql/usersrv" {
-  capabilities = ["read"]
-}
+# Create Vault Policy
+vault policy write gotemp-usersrv file/policies/usersrv.hcl
 
-path "gotempkv/data/broker/nats/usersrv" {
-  capabilities = ["read"]
-}
-
-EOF
+# vault policy write gotemp-usersrv - <<EOF
+#path "gotempkv/data/database/postgresql/usersrv" {
+#  capabilities = ["read"]
+#}
+#
+#path "gotempkv/data/broker/nats/usersrv" {
+#  capabilities = ["read"]
+#}
+#
+#EOF
 
 # Create Vault K8s role to associate service account to the appropriate policy
 vault write auth/kubernetes/role/gotemp-usersrv \
