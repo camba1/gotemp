@@ -18,15 +18,8 @@ vault kv put gotempkv/database/arangodb/customersrv username="customerUser" pass
 vault kv put gotempkv/broker/nats/customersrv username="natsUser" password="TestDB@home2" server="nats"
 
 # Create Vault Policy
-vault policy write gotemp-customersrv - <<EOF
-path "gotempkv/data/database/arangodb/customersrv" {
-  capabilities = ["read"]
-}
+vault policy write gotemp-customersrv /vault/file/policies/customersrv.hcl
 
-path "gotempkv/data/broker/nats/customersrv" {
-  capabilities = ["read"]
-}
-EOF
 
 # Create Vault K8s role to associate service account to the appropriate policy
 vault write auth/kubernetes/role/gotemp-customersrv \

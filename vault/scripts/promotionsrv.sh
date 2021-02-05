@@ -20,19 +20,8 @@ vault kv put gotempkv/broker/nats/promotionsrv username="natsUser" password="Tes
 vault kv put gotempkv/database/redis/promotionsrv password="TestDB@home2" server="redis"
 
 # Create Vault Policy
-vault policy write gotemp-promotionsrv - <<EOF
-path "gotempkv/data/database/postgresql/promotionsrv" {
-  capabilities = ["read"]
-}
+vault policy write gotemp-promotionsrv /vault/file/policies/promotionsrv.hcl
 
-path "gotempkv/data/broker/nats/promotionsrv" {
-  capabilities = ["read"]
-}
-
-path "gotempkv/data/database/redis/promotionsrv" {
-  capabilities = ["read"]
-}
-EOF
 
 # Create Vault K8s role to associate service account to the appropriate policy
 vault write auth/kubernetes/role/gotemp-promotionsrv \

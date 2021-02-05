@@ -19,18 +19,8 @@ export VAULT_TOKEN=$1
 
 
 # Create Vault Policy
-vault policy write gotemp-usersrv file/policies/usersrv.hcl
+vault policy write gotemp-usersrv /vault/file/policies/usersrv.hcl
 
-# vault policy write gotemp-usersrv - <<EOF
-#path "gotempkv/data/database/postgresql/usersrv" {
-#  capabilities = ["read"]
-#}
-#
-#path "gotempkv/data/broker/nats/usersrv" {
-#  capabilities = ["read"]
-#}
-#
-#EOF
 
 # Create Vault K8s role to associate service account to the appropriate policy
 vault write auth/kubernetes/role/gotemp-usersrv \
