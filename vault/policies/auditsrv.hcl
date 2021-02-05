@@ -1,4 +1,6 @@
-path "gotempkv/data/database/postgresql/auditsrv"  {
+// Create policies to allow the vault agent running in K8s to read the secrets
+
+path "gotempkv/data/database/timescaledb/auditsrv"  {
   capabilities = ["read"]
 }
 

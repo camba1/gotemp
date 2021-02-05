@@ -13,20 +13,13 @@ echo "Creating auditsrv artifacts...."
 export VAULT_TOKEN=$1
 
 # Create key value pair secrets
-vault kv put gotempkv/database/postgresql/auditsrv username="postgres" password="TestDB@home2" application_name="auditSrv" server="timescaledb" dbname="postgres"
+vault kv put gotempkv/database/timescaledb/auditsrv username="postgres" password="TestDB@home2" application_name="auditSrv" server="timescaledb" dbname="postgres"
 
 vault kv put gotempkv/broker/nats/auditsrv username="natsUser" password="TestDB@home2" server="nats"
 
 # Create Vault Policy
-vault policy write gotemp-auditsrv - <<EOF
-path "gotempkv/data/database/postgresql/auditsrv"  {
-  capabilities = ["read"]
-}
+vault policy write gotemp-auditsrv /vault/file/policies/auditsrv.hcl
 
-path "gotempkv/data/broker/nats/auditsrv" {
-  capabilities = ["read"]
-}
-EOF
 
 # Create Vault K8s role to associate service account to the appropriate policy
 vault write auth/kubernetes/role/gotemp-auditsrv \
