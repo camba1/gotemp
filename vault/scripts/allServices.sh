@@ -8,8 +8,8 @@ if [ "$#" -ne 1 ]
 fi
 
 # Create all services artifacts
-./file/scripts/auditsrv.sh $1
-./file/scripts/customersrv.sh $1
-./file/scripts/productsrv.sh $1
-./file/scripts/promotionsrv.sh $1
-./file/scripts/usersrv.sh $1
+/vault/file/scripts/auditsrv.sh "$1"
+/vault/file/scripts/customersrv.sh "$1"
+/vault/file/scripts/productsrv.sh "$1"
+/vault/file/scripts/promotionsrv.sh "$1"
+/vault/file/scripts/usersrv.sh "$1"
