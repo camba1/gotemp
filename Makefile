@@ -92,6 +92,7 @@ authviaapigateway:
 # K8s
 
 startkub:
+	kubectl apply -f cicd/K8s/dbsAndBroker
 	kubectl apply -f cicd/K8s/services
 	kubectl apply -f cicd/K8s/web
 	kubectl apply -f cicd/K8s/ingress
@@ -99,10 +100,13 @@ stopkub:
 	kubectl delete -f cicd/K8s/ingress
 	kubectl delete -f cicd/K8s/web
 	kubectl delete -f cicd/K8s/services
+	kubectl delete -f cicd/K8s/dbsAndBroker
 
 
 kapplyingress:
 	kubectl apply -f cicd/K8s/ingress
+kapplydbandborkers:
+	kubectl apply -f cicd/K8s/dbsAndBroker
 kapplyservices:
 	kubectl apply -f cicd/K8s/services
 kapplyclients:
@@ -113,7 +117,7 @@ kdelete:
 	kubectl delete -f $FOLDER
 
 kstartSubset:
-	kubectl apply $(ls cicd/K8s/services/audit*.yaml | awk ' { print " -f " $1 } ')
+	kubectl apply $$(ls cicd/K8s/services/audit*.yaml | awk ' { print " -f " $$1 } ')
 
 
 # Misc
@@ -122,3 +126,48 @@ encode:
 	echo -n 'data' | base64
 decode:
 	echo -n ZGF0YQ== | base64 -d
+
+
+# Vault integration on K8s
+
+vkubsetup:
+	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
+	kubectl exec vault-0 -- rm -rf /vault/file/policies/
+	kubectl cp vault/policies vault-0:/vault/file/policies
+	kubectl cp vault/scripts vault-0:/vault/file/scripts
+	kubectl exec vault-0 -- /vault/file/scripts/allServices.sh  $$VAULT_TOKEN
+
+vstartkub:
+	make startkub
+	make vkubpatchdeploy
+
+
+vstopkub:
+	make stopkub
+	kubectl delete -f cicd/K8s/vault/serviceAccount
+
+vkubteardown:
+	kubectl exec vault-0 -- /vault/file/scripts/deleteAllSrv.sh $$VAULT_TOKEN
+	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
+	kubectl exec vault-0 -- rm -rf /vault/file/policies/
+
+vkubpatchdeploy:
+	kubectl apply -f cicd/K8s/vault/serviceAccount
+	kubectl patch deployment auditsrv --patch "$$(cat cicd/K8s/vault/patch/auditsrv-deployment-patch.yaml)"
+	kubectl patch deployment customersrv --patch "$$(cat cicd/K8s/vault/patch/customersrv-deployment-patch.yaml)"
+	kubectl patch deployment productsrv --patch "$$(cat cicd/K8s/vault/patch/productsrv-deployment-patch.yaml)"
+	kubectl patch deployment promotionsrv --patch "$$(cat cicd/K8s/vault/patch/promotionsrv-deployment-patch.yaml)"
+	kubectl patch deployment usersrv --patch "$$(cat cicd/K8s/vault/patch/usersrv-deployment-patch.yaml)"
+
+# ---------------------------------------------
+vkubunseal:
+	kubectl exec -ti vault-0 -- vault operator unseal $$KEY
+vkubui:
+	kubectl port-forward vault-0 8100:8200
+vkubenableseceng:
+	export VAULT_TOKEN=<token>
+	vault secrets enable -path=$$PATH $$TYPE
+
+vkubtestrmsecret:
+	kubectl apply -f cicd/K8s/vault/testYamlFile
+
