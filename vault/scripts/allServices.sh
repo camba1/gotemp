@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # Check if we got a vault token to be able to login
 if [ "$#" -ne 1 ]
   then
@@ -5,6 +7,7 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
+# Create all services artifacts
 ./file/scripts/auditsrv.sh $1
 ./file/scripts/customersrv.sh $1
 ./file/scripts/productsrv.sh $1
