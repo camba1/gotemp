@@ -65,17 +65,5 @@ spec:
         ports:
         - containerPort: 50051
         resources: {}
-#        volumeMounts:
-#        - mountPath: /go/src/goTemp/promotion/server
-#          name: promotionsrv-claim0
-#        - mountPath: /go/src/goTemp/globalUtils
-#          name: promotionsrv-claim1
       restartPolicy: Always
       serviceAccountName: ""
-#      volumes:
-#      - name: promotionsrv-claim0
-#        persistentVolumeClaim:
-#          claimName: promotionsrv-claim0
-#      - name: promotionsrv-claim1
-#        persistentVolumeClaim:
-#          claimName: promotionsrv-claim1

@@ -50,17 +50,5 @@ spec:
         ports:
         - containerPort: 50055
         resources: {}
-#        volumeMounts:
-#        - mountPath: /go/src/goTemp/audit/server
-#          name: auditsrv-claim0
-#        - mountPath: /go/src/goTemp/globalUtils
-#          name: auditsrv-claim1
       restartPolicy: Always
       serviceAccountName: ""
-#      volumes:
-#      - name: auditsrv-claim0
-#        persistentVolumeClaim:
-#          claimName: auditsrv-claim0
-#      - name: auditsrv-claim1
-#        persistentVolumeClaim:
-#          claimName: auditsrv-claim1

@@ -41,16 +41,11 @@ spec:
         - containerPort: 6379
         resources: {}
         volumeMounts:
-#        - mountPath: /data
-#          name: redis-claim0
         - mountPath: /usr/local/etc/redis/
           name: redis-config-configmap
       restartPolicy: Always
       serviceAccountName: ""
       volumes:
-#      - name: redis-claim0
-#        persistentVolumeClaim:
-#          claimName: redis-claim0
       - name: redis-config-configmap
         configMap:
           name: redis-config-configmap

@@ -65,17 +65,5 @@ spec:
         ports:
         - containerPort: 50057
         resources: {}
-#        volumeMounts:
-#        - mountPath: /go/src/goTemp/customer/server
-#          name: customersrv-claim0
-#        - mountPath: /go/src/goTemp/globalUtils
-#          name: customersrv-claim1
       restartPolicy: Always
       serviceAccountName: ""
-#      volumes:
-#      - name: customersrv-claim0
-#        persistentVolumeClaim:
-#          claimName: customersrv-claim0
-#      - name: customersrv-claim1
-#        persistentVolumeClaim:
-#          claimName: customersrv-claim1
