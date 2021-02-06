@@ -89,7 +89,7 @@ authviaapigateway:
 	--header 'Content-Type: application/json' \
 	--data-raw '{"pwd":"1234","email":"duck@mymail.com"}'
 
-# K8s
+# K8s wihtout Vault
 
 startkub:
 	kubectl apply -f cicd/K8s/dbsAndBroker
@@ -120,15 +120,8 @@ kstartSubset:
 	kubectl apply $$(ls cicd/K8s/services/audit*.yaml | awk ' { print " -f " $$1 } ')
 
 
-# Misc
 
-encode:
-	echo -n 'data' | base64
-decode:
-	echo -n ZGF0YQ== | base64 -d
-
-
-# Vault integration on K8s
+# Kubernetes with Vault as sidecars/init container
 
 vkubsetup:
 	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
@@ -170,4 +163,12 @@ vkubenableseceng:
 
 vkubtestrmsecret:
 	kubectl apply -f cicd/K8s/vault/testYamlFile
+
+
+# Misc
+
+encode:
+	echo -n 'data' | base64
+decode:
+	echo -n ZGF0YQ== | base64 -d
 
