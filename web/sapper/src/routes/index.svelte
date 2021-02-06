@@ -11,7 +11,7 @@
 	let dbTechList = ["ArangoDB", "PostgreSQL", "Redis", "TimescaleDB"];
 	let description = "This project provides a sample full stack microservices implementation.";
 	let JPinfo = {label:"Juan Peredo", address: "https://twitter.com/juanperedotech"}
-	let repo = "https://bitbucket.org/Bolbeck/gotemp"
+	let repo = "https://github.com/camba1/gotemp"
 	let frontend = {header: "Frontend", iconName: "fa-desktop", techList: ["Language: Javascript","Framework: Svelte/Sapper"]}
 	let backend = {header: "Backend", iconName: "fa-server", techList: ["Language: Go","Framework: go-Micro"]}
 	let database = {header: "Databases",
@@ -23,7 +23,11 @@
 					]}
 	let orchestration = {header: "Orchestration", iconName: "fa-cubes", techList: ["Docker","Kubernetes running in Minikube"]}
 	let communication = {header: "Communication", iconName: "fa-comments", techList: ["gRPC: Inter-service communication","JSON: External communication"]}
-	let other = {header: "Other", iconName: "fa-book", techList: ["NATS: Pub/sub","NGINX: K8s ingress controller"]}
+	let other = {header: "Other",
+					iconName: "fa-book",
+					techList: ["NATS: Pub/sub",
+						"NGINX: K8s ingress controller",
+						"Vault: Password Manager in K8s" ]}
 
 
 </script>
@@ -85,7 +89,7 @@
 					{description}
 				</p>
 				<p class="pmar">Try exploring the application using the menu items at the top of the page. If you are curious about the tech stack, feel free to review the repo documentation for more info. <br/>
-					If you find any issues or problems please create an issue or a pull request.
+					If you find any issues or problems please create an issue or a pull request. Contributions are most welcome.
 				</p>
 				<p>
 					<a href="{repo}" class="btn btn-secondary mr-2">Repo</a>
