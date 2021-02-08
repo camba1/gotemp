@@ -301,10 +301,11 @@ The configuration for all other microservices, beyond the shared ingress and API
 
 The K8s files live in the `./cicd/K8s` folder and it is organized as follows:
 
-- Clients : These are the test clients for each of the services. 
-- Ingress: Manifest to create the ingress resource that allows the front end and the back end to communicate
-- Services : Contains all the services and related entities manifest (deployment, service, etc...). It also contains the manifests for the related databases.
-- web: Manifest for the web front end and the API gateway
+- `Clients` : These are the test clients for each of the services.
+- `dbsAndBroker`: Contains the manifests for all the databases and for the broker
+- `Ingress`: Manifest to create the ingress resource that allows the front end and the back end to communicate
+- `Services`: Contains all the services and related entities manifest (deployment, service, etc...).
+- `web`: Manifest for the web front end and the API gateway
 
 Note that within each of the folders, most related manifests are organized  using a prefix. 
 For example, all the front end related services start with the 'web' prefix.
