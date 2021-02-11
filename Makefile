@@ -123,6 +123,11 @@ kstartSubset:
 
 # Kubernetes with Vault as sidecars/init container
 
+vkubinit:
+	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
+	kubectl cp vault/scripts vault-0:/vault/file/scripts
+	kubectl exec vault-0 -- /vault/file/scripts/setup.sh $$VAULT_TOKEN
+
 vkubsetup:
 	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
 	kubectl exec vault-0 -- rm -rf /vault/file/policies/
@@ -144,6 +149,9 @@ vkubteardown:
 	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
 	kubectl exec vault-0 -- rm -rf /vault/file/policies/
 
+vkubsetupdelete:
+	kubectl exec vault-0 -- /vault/file/scripts/deleteSetup.sh  $$VAULT_TOKEN
+
 vkubpatchdeploy:
 	kubectl apply -f cicd/K8s/vault/serviceAccount
 	kubectl patch deployment auditsrv --patch "$$(cat cicd/K8s/vault/patch/auditsrv-deployment-patch.yaml)"
@@ -153,10 +161,13 @@ vkubpatchdeploy:
 	kubectl patch deployment usersrv --patch "$$(cat cicd/K8s/vault/patch/usersrv-deployment-patch.yaml)"
 
 # ---------------------------------------------
+# Unseal Vault on startup
 vkubunseal:
 	kubectl exec -ti vault-0 -- vault operator unseal $$KEY
+# Enable Vault UI port
 vkubui:
 	kubectl port-forward vault-0 8100:8200
+
 vkubenableseceng:
 	export VAULT_TOKEN=<token>
 	vault secrets enable -path=$$PATH $$TYPE
