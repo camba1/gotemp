@@ -150,6 +150,8 @@ vkubteardown:
 	kubectl exec vault-0 -- rm -rf /vault/file/policies/
 
 vkubsetupdelete:
+	kubectl exec vault-0 -- rm -rf /vault/file/scripts
+	kubectl cp vault/scripts vault-0:/vault/file/scripts
 	kubectl exec vault-0 -- /vault/file/scripts/deleteSetup.sh  $$VAULT_TOKEN
 
 vkubpatchdeploy:
