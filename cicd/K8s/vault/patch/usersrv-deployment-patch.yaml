@@ -2,7 +2,6 @@ spec:
   template:
     metadata:
       annotations:
-#          postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@{{ .Data.data.server }}/{{ .Data.data.dbname }}?application_name={{ .Data.data.application_name }}
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "gotemp-usersrv"
         vault.hashicorp.com/agent-pre-populate-only: "true"
