@@ -11,7 +11,7 @@ goTemp is a full stack Golang microservices sample application built using go-mi
     - Promotions
 - Auditing of all changes to the application data
 
-In it current incarnation (this is wip), this mono-repo uses the following stack as backend:
+In its current incarnation (this is wip), this mono-repo uses the following stack as backend:
 
 - `Golang` as its main implementation technology
 - `go-Micro` as the micro service framework
@@ -37,7 +37,7 @@ In terms of the web front end, the stack is as follows:
 
 Below is a diagram that displays the overall setup of the application:
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V5.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V6.png)
 
 In a nutshell. the application functionality is as follows in the backend:
 
@@ -161,9 +161,9 @@ Finally, access app:
     minikube service web
 ```
 
-##### Running with Vault
+##### Running with Vault integration
 
-**Before running the app**, follow the steps in the ```./vault/README.md``` directory to set up and prepare Vault 
+**Before running the app integrated with Vault**, follow the steps in the ```./vault/README.md``` directory to set up and prepare Vault 
 
 Once the ingress has been enabled and Vault is ready to go, deploy the application to Minikube:
 
@@ -208,7 +208,7 @@ Currently, we have the following:
 - `redis`: Volumes mounted on the redis container as well as config files (if any)
 - `timescaleDB`: Volumes mounted to the Timescale DB container as well as data initialization scripts
 - `user`: User and authentication service
-- `Vault`: Scripts and policies needed to integrate the application with Vault
+- `Vault`: Scripts & policies needed to run the app in K8s with Vault
 - `web`: application web frontend
 
 Additionally, we have the following files in the root directory as well:
@@ -326,7 +326,7 @@ The configuration for all other microservices, beyond the shared ingress and API
 
 ![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram-k8s_v2.png)
 
-Note that when running the application with vault, the microservices secrets will be superseded by the secrets stored in Vault
+Note that when running the application with Vault, the microservices secrets will be superseded by the secrets stored in Vault
 
 #### Organization
 
