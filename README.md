@@ -22,6 +22,7 @@ In it current incarnation (this is wip), this mono-repo uses the following stack
 - `TimescaleDB` time series DB used for historical audit data storage
 - `ArangoDB`is a multi-model database used for master data storage
 - `Redis` is used to cache data and reduce number of data requests to other services
+- `Vault` for credentials management when running in Kubernetes 
 - `Docker` for creating application images
 - `Docker-compose` to run the application
 - `Minikube` to run the application in Kubernetes
@@ -135,7 +136,7 @@ Note that for the web front end and for Timescale DB the command to be used is s
      make hubpushcontext SERVICE=<serivceName> FOLDER=<folderName
 ```
 
-##### Running
+##### Running without Vault
 
 Once the ingress has been enabled, deploy the application to Minikube:
 
@@ -152,6 +153,33 @@ Once the application is deployed, check the address and host assigned to the ing
 Note that it takes a couple of minutes for K8s to assign the IP to the ingress. As such wait for that happens before moving ahead.
 
 If this is the first time running the app in Minikube: Grab the address & the host from the 
+result of the command above, and add it to your `/etc/hosts` file.
+
+Finally, access app:
+
+```bash
+    minikube service web
+```
+
+##### Running with Vault
+
+**Before running the app**, follow the steps in the ```./vault/README.md``` directory to set up and prepare Vault 
+
+Once the ingress has been enabled and Vault is ready to go, deploy the application to Minikube:
+
+```bash
+    make vstartkub
+```
+
+Once the application is deployed, check the address and host assigned to the ingress:
+
+```bash
+    kubectl get ingress
+```
+
+Note that it takes a couple of minutes for K8s to assign the IP to the ingress. As such wait for that happens before moving ahead.
+
+If this is the first time running the app in Minikube: Grab the address & the host from the
 result of the command above, and add it to your `/etc/hosts` file.
 
 Finally, access app:
@@ -180,6 +208,7 @@ Currently, we have the following:
 - `redis`: Volumes mounted on the redis container as well as config files (if any)
 - `timescaleDB`: Volumes mounted to the Timescale DB container as well as data initialization scripts
 - `user`: User and authentication service
+- `Vault`: Scripts and policies needed to integrate the application with Vault
 - `web`: application web frontend
 
 Additionally, we have the following files in the root directory as well:
@@ -295,16 +324,19 @@ There are three routes that do not share the structure above as they have very l
 The application configuration in K8s can be seen in the diagram below. Note that the diagram shows just one of the different microservices and its associated database.
 The configuration for all other microservices, beyond the shared ingress and API Gateway, is similar to the one depicted in the diagram.
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram-k8s.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram-k8s_v2.png)
+
+Note that when running the application with vault, the microservices secrets will be superseded by the secrets stored in Vault
 
 #### Organization
 
-The K8s files live in the `./cicd/K8s` folder and it is organized as follows:
+The K8s files live in the `./cicd/K8s` folder, and it is organized as follows:
 
-- `Clients` : These are the test clients for each of the services.
+- `clients` : These are the test clients for each of the services.
 - `dbsAndBroker`: Contains the manifests for all the databases and for the broker
-- `Ingress`: Manifest to create the ingress resource that allows the front end and the back end to communicate
-- `Services`: Contains all the services and related entities manifest (deployment, service, etc...).
+- `ingress`: Manifest to create the ingress resource that allows the front end and the back end to communicate
+- `services`: Contains all the services and related entities manifest (deployment, service, etc...).
+- `vault`: Manifests to create the service accounts and patches to integrate the application with Vault
 - `web`: Manifest for the web front end and the API gateway
 
 Note that within each of the folders, most related manifests are organized  using a prefix. 
