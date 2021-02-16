@@ -55,7 +55,7 @@ In a nutshell. the application functionality is as follows in the backend:
 - Each service has a client which can be used to test all basic CRUD functionality
 
 
-### Starting the application
+## Starting the application
 
 ![goTemp landing page](diagramsforDocs/UI_goTemp_Landing_small.png "landing Page")
 
@@ -84,16 +84,16 @@ At that point, yo can open your browser and navigate to:
     http://localhost:3000
 ``` 
 
-### Running the application on Kubernetes (Minikube)
+## Running the application on Kubernetes (Minikube)
 
 
-##### Prerequisites
+#### Prerequisites
 
-###### Minikube
+##### Minikube
 
 Ensure that Minikube is installed and running.
 
-###### Ingress
+##### Ingress
 
 The application front end connects with the API gateway using via a K8s ingress resource. As such, the ingress addon must be
 enabled in Minikube.  To enabled it, run: 
@@ -108,7 +108,7 @@ Check the ingress is working using the command below. The command's results shou
 ```
 
 
-##### Building and pushing images (optional)
+#### Building and pushing images (optional)
 
 
 Out of the box, the Kubernetes manifest will pull existing Bolbeck goTemp images from Docker Hub. 
@@ -136,7 +136,7 @@ Note that for the web front end and for Timescale DB the command to be used is s
      make hubpushcontext SERVICE=<serivceName> FOLDER=<folderName
 ```
 
-##### Running without Vault
+#### Running without Vault
 
 Once the ingress has been enabled, deploy the application to Minikube:
 
@@ -161,7 +161,7 @@ Finally, access app:
     minikube service web
 ```
 
-##### Running with Vault integration
+#### Running with Vault integration
 
 **Before running the app integrated with Vault**, follow the steps in the ```./vault/README.md``` directory to set up and prepare Vault 
 
@@ -188,7 +188,7 @@ Finally, access app:
     minikube service web
 ```
 
-### Repo organization
+## Repo organization
 
 The project is organized in a way that each folder represents either a service, a database or a shared library package.
 Currently, we have the following:
@@ -222,7 +222,7 @@ Additionally, we have the following files in the root directory as well:
 - `Makefile`: shortcuts to common actions
 - `Readme.md`: Well... this file...
 
-### Services
+## Services
 
 We use `go-micro` as the main GO microservices framework. Using go-micro simplifies many of the tasks associated with building 
 micro services including (but not limited to):
@@ -238,7 +238,7 @@ micro services including (but not limited to):
      - Automatic conversion of frontend JSON payloads to backend gRPC messages 
 
 
-##### Organization
+#### Organization
 
 Each one of the services has a similar structure:
 
@@ -250,7 +250,7 @@ Each one of the services has a similar structure:
 - `docker-compose.env`: Environment variable required to run the service when running the service with docker-compose
 - `docker-compose-cli.env`: Environment variable required to run the client when running the client with docker-compose
 
-##### Building
+#### Building
 
 The different service's images can be built from the root of the repo using the docker build command. 
 For example the user service can be built using:
@@ -259,7 +259,7 @@ For example the user service can be built using:
 
 Note that there is no need to run this if you are using docker-compose as that will build the image automatically
 
-##### Running individual services
+#### Running individual services
 
 The services are designed to run in containers, and the easiest way to run them is to bring them up using docker-compose:
 As an example we will run the user service with the commands below in a terminal:
@@ -277,12 +277,12 @@ the audit service may eventually store it in the time series DB. The audit servi
 
 `docker-compose up auditsrv`
 
-#### Databases Initialization
+### Databases Initialization
 
 The project initializes each of the DBs and seeds them with tables and data. Data changes made at run time are automatically persisted using mounted volumes when running via docker-compose. 
 See the folders for each DB for details as well as the docker-compose file.
 
-### Web front end
+## Web front end
 
 Our web front end is built with Svelte and Sapper which have some interesting benefits:
 
@@ -292,7 +292,7 @@ Our web front end is built with Svelte and Sapper which have some interesting be
 - Svelte translates the code to vanilla javascript. Thus, smaller application footprint than most frameworks
 - Emphasis on component re-usability
 
-##### Organization
+#### Organization
 
 The web application lives in the `./web` folder. Since `Sapper` and `Svelte` generate multiple files and folders, we will just discuss the relevant folders below:
 
@@ -307,7 +307,7 @@ The web application lives in the `./web` folder. Since `Sapper` and `Svelte` gen
     - `static`: Holds static items
 - `Dockerfile`: Used to build the docker image for the web app
         
-#### Routes
+### Routes
 
 All of our main routes are pretty standard in terms of organization. We will use the customer route (`./web/sapper/src/routes/customer`) as an example:
 
@@ -319,7 +319,7 @@ All of our main routes are pretty standard in terms of organization. We will use
 
 There are three routes that do not share the structure above as they have very little functionality and thus are server by a single index.svelte component: root, register and login.
 
-### Kubernetes
+## Kubernetes
 
 The application configuration in K8s can be seen in the diagram below. Note that the diagram shows just one of the different microservices and its associated database.
 The configuration for all other microservices, beyond the shared ingress and API Gateway, is similar to the one depicted in the diagram.
@@ -328,7 +328,7 @@ The configuration for all other microservices, beyond the shared ingress and API
 
 Note that when running the application with Vault, the microservices secrets will be superseded by the secrets stored in Vault
 
-#### Organization
+### Organization
 
 The K8s files live in the `./cicd/K8s` folder, and it is organized as follows:
 
@@ -342,7 +342,7 @@ The K8s files live in the `./cicd/K8s` folder, and it is organized as follows:
 Note that within each of the folders, most related manifests are organized  using a prefix. 
 For example, all the front end related services start with the 'web' prefix.
 
-### Additional information:
+## Additional information:
 
 Additional information can be found in the individual folders either in a `readme.md` or a `doc.go` file.
 Additionally, the Makefile contains many command samples that can be used for development.  
