@@ -153,6 +153,7 @@ Once the ingress has been enabled, deploy the application to Minikube:
     make startkub
 ```
  
+If this is the first time running the application in Minikube, the ingress IP address should be configured.
 Once the application is deployed, check the address and host assigned to the ingress:
     
 ```bash
@@ -161,8 +162,7 @@ Once the application is deployed, check the address and host assigned to the ing
 
 Note that it takes a couple of minutes for K8s to assign the IP to the ingress. As such wait for that happens before moving ahead.
 
-If this is the first time running the app in Minikube: Grab the address & the host from the 
-result of the command above, and add it to your `/etc/hosts` file.
+Grab the address & the host from the result of the command above, and add it to your `/etc/hosts` file.
 
 Finally, access app:
 
@@ -194,6 +194,7 @@ Once the ingress has been enabled and Vault is ready to go, deploy the applicati
     make vstartkub
 ```
 
+If this is the first time running the application in Minikube, the ingress IP address should be configured.
 Once the application is deployed, check the address and host assigned to the ingress:
 
 ```bash
@@ -202,8 +203,7 @@ Once the application is deployed, check the address and host assigned to the ing
 
 Note that it takes a couple of minutes for K8s to assign the IP to the ingress. As such wait for that happens before moving ahead.
 
-If this is the first time running the app in Minikube: Grab the address & the host from the
-result of the command above, and add it to your `/etc/hosts` file.
+Grab the address & the host from the result of the command above, and add it to your `/etc/hosts` file.
 
 Finally, access app:
 
