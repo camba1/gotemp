@@ -54,6 +54,9 @@ In a nutshell. the application functionality is as follows in the backend:
 - All completed CUD operations are forwarded to the NATS broker which in turn forwards the message to the auditing service. This service saves the data into TimescaleDB.
 - Each service has a client which can be used to test all basic CRUD functionality
 
+###### Note on running the application natively:
+go-Micro uses `mdns` for service discovery when running locally. While this works really well, `mdns` is *not* available by default in all operating systems.
+As such, the easiest way to run a go-Micro based applications is using Docker or Kubernetes.
 
 ## Starting the application
 
@@ -79,10 +82,16 @@ To start the application:
 
 Depending on whether you have run the application before, docker may have to download all the dependent images (PostgreSql, TimescaleDB, Nodejs, etc).
 This may take a while depending on your internet connection speed. Once everything has been downloaded and started, you should see a message in the terminal indicating that the application is listening at localhost:3000.
-At that point, yo can open your browser and navigate to:
+At that point, you can open your browser and navigate to:
 ```
     http://localhost:3000
 ``` 
+ 
+To stop the application:
+
+```bash
+    make stop
+```
 
 ## Running the application on Kubernetes (Minikube)
 
@@ -161,9 +170,23 @@ Finally, access app:
     minikube service web
 ```
 
+To stop the application:
+
+```bash
+  make stopkub
+```
+
+Note that if you stop the application, you can restart it by just running: 
+
+```bash
+  make startkub
+  minikube service web
+```
+
+
 #### Running with Vault integration
 
-**Before running the app integrated with Vault**, follow the steps in the ```./vault/README.md``` directory to set up and prepare Vault 
+*Before running the app integrated with Vault*, follow the steps in the ```./vault/README.md``` directory to set up and prepare Vault 
 
 Once the ingress has been enabled and Vault is ready to go, deploy the application to Minikube:
 
