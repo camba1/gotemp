@@ -40,12 +40,15 @@ hubpushcontext:
 	docker tag $$SERVICE bolbeck/gotemp_$$SERVICE
 	docker push bolbeck/gotemp_$$SERVICE
 
+# -------------------------------------------------------------------------------------
+
 # Run service directly
 runpromosrv:
 	go run promotion/server/promotionServer.go
 runpromocli:
 	go run promotion/client/promotionClient.go
 
+# -------------------------------------------------------------------------------------
 
 # Web App
 # Directly (dev)
@@ -62,7 +65,7 @@ docrunweb:
 composeupweb:
 	docker-compose up web
 
-
+# -------------------------------------------------------------------------------------
 
 # Compile proto files
 genpromotionproto:
@@ -76,6 +79,8 @@ genproductproto:
 genstandardFieldsproto:
 	protoc --proto_path=$$GOPATH/src:. --micro_out=source_relative:.. --go_out=. --go_opt=paths=source_relative globalProtos/standardFields.proto
 
+# -------------------------------------------------------------------------------------
+
 # Call service through the micro gateway
 promoviaapigateway:
 	curl --location --request POST 'http://localhost:8080/promotion/promotionSrv/getPromotions' \
@@ -88,6 +93,8 @@ authviaapigateway:
 	curl --location --request POST 'http://gotemp.tst/user/userSrv/auth' \
 	--header 'Content-Type: application/json' \
 	--data-raw '{"pwd":"1234","email":"duck@mymail.com"}'
+
+# -------------------------------------------------------------------------------------
 
 # K8s wihtout Vault
 
@@ -121,39 +128,61 @@ kstartSubset:
 
 
 
-# Kubernetes with Vault as sidecars/init container
+# -------------------------------------------------------------------------------------
+
+# Run Micro in K8s with Vault for service secret management
+
+# ---- Setup Vault ------
+
+# init secrets and K8s auth in Vault
 
 vkubinit:
-	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
 	kubectl cp vault/scripts vault-0:/vault/file/scripts
 	kubectl exec vault-0 -- /vault/file/scripts/setup.sh $$VAULT_TOKEN
 
+# Populate secrets, create roles and policies
 vkubsetup:
-	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
-	kubectl exec vault-0 -- rm -rf /vault/file/policies/
-	kubectl cp vault/policies vault-0:/vault/file/policies
-	kubectl cp vault/scripts vault-0:/vault/file/scripts
+	kubectl cp vault/policies vault-0:/vault/file/
+	kubectl cp vault/scripts vault-0:/vault/file/
 	kubectl exec vault-0 -- /vault/file/scripts/allServices.sh  $$VAULT_TOKEN
 
+# ---- Start and stop app ------
+
+# Start application and patch it
 vstartkub:
 	make startkub
 	make vkubpatchdeploy
 
-
+# Stop application and delete service accounts
 vstopkub:
 	make stopkub
 	kubectl delete -f cicd/K8s/vault/serviceAccount
 
+# ------ Remove setup from Vault -------
+
+# Remove secrets, create roles and policies
+
+# Remove secrets, create roles and policies
 vkubteardown:
 	kubectl exec vault-0 -- /vault/file/scripts/deleteAllSrv.sh $$VAULT_TOKEN
-	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
-	kubectl exec vault-0 -- rm -rf /vault/file/policies/
+	make vkubcleancontainer
 
+# Remove secret engine and K8s auth in Vault
 vkubsetupdelete:
-	kubectl exec vault-0 -- rm -rf /vault/file/scripts
 	kubectl cp vault/scripts vault-0:/vault/file/scripts
 	kubectl exec vault-0 -- /vault/file/scripts/deleteSetup.sh  $$VAULT_TOKEN
+	make vkubcleancontainer
 
+# ---- Vault Misc --------
+
+# Unseal Vault on startup
+vkubunseal:
+	kubectl exec -ti vault-0 -- vault operator unseal $$KEY
+# Enable Vault UI port
+vkubui:
+	kubectl port-forward vault-0 8100:8200
+
+# Apply patches to the services' deployments so they are visible to the Vault Agent
 vkubpatchdeploy:
 	kubectl apply -f cicd/K8s/vault/serviceAccount
 	kubectl patch deployment auditsrv --patch "$$(cat cicd/K8s/vault/patch/auditsrv-deployment-patch.yaml)"
@@ -162,23 +191,18 @@ vkubpatchdeploy:
 	kubectl patch deployment promotionsrv --patch "$$(cat cicd/K8s/vault/patch/promotionsrv-deployment-patch.yaml)"
 	kubectl patch deployment usersrv --patch "$$(cat cicd/K8s/vault/patch/usersrv-deployment-patch.yaml)"
 
-# ---------------------------------------------
-# Unseal Vault on startup
-vkubunseal:
-	kubectl exec -ti vault-0 -- vault operator unseal $$KEY
-# Enable Vault UI port
-vkubui:
-	kubectl port-forward vault-0 8100:8200
 
-vkubenableseceng:
-	export VAULT_TOKEN=<token>
-	vault secrets enable -path=$$PATH $$TYPE
+# Clean scripts and policies in Vault container
+vkubcleancontainer:
+	kubectl exec vault-0 -- rm -rf /vault/file/scripts/
+	kubectl exec vault-0 -- rm -rf /vault/file/policies/
 
+# Test that Vault is populating the secrets properly by deploying YAMLs without the K8s secrets
 vkubtestrmsecret:
 	kubectl apply -f cicd/K8s/vault/testYamlFile
+# -------------------------------------------------------------------------------------
 
-
-# Misc
+# ----  Misc --------
 
 encode:
 	echo -n 'data' | base64
