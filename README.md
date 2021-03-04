@@ -211,6 +211,12 @@ Finally, access app:
     minikube service web
 ```
 
+To stop the application:
+
+```bash
+  make vstopkub
+```
+
 ## Repo organization
 
 The project is organized in a way that each folder represents either a service, a database or a shared library package.
