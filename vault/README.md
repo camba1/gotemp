@@ -7,7 +7,7 @@ To enable the integration, there are two things that have to happen:
 - Vault needs to be configured with the necessary secrets/policies/roles for our services
 - The Kubernetes YAML manifests for our services deployments must be patched to interact with Vault's agent injector
 
-
+The figure below shows how the Vault Injector will find and populate the secrets for the microservices
 
 ![Agent pulls parameters from the deployment and uses them to create an init container](../diagramsforDocs/stopPasswordInsanity-InjectingValuesDetail.png)
 
@@ -20,7 +20,7 @@ To enable the integration, there are two things that have to happen:
 
 - Ensure [Helm](https://helm.sh/docs/intro/install/) is installed and that it has access to the K8s cluster 
 - Install the [Vault Helm chart](https://www.vaultproject.io/docs/platform/k8s/helm/run#standalone-mode) in the cluster.
-  While you can install Vault with different backends, for our purposes it is enough to install it in 'standalone' mode which will set up a file storage backend. The Agent injector is installed alongside Vault by the Helm chart.
+  The link contains instructions to install Vault in 'standalone' mode with a file storage backend. The Agent injector is installed alongside Vault by the Helm chart.
 - Initialize and unseal Vault
 
 #### Access the Vault UI (optional)
@@ -36,12 +36,12 @@ If the port is busy or returns an error when trying to access the UI in localhos
 ##### Scripts and policies
 
 The current directory (`/vault`) is organized as follows:
-- `policies`: Contains the policies that need to be created in Vault to provide access to our services' credentials
-- `scripts`: Contains the scripts that create all the required secrets, policies and roles in Vault
+- `policies` contains the policies that need to be created in Vault to provide access to our services' credentials
+- `scripts` contains the scripts that create all the required secrets, policies and roles in Vault
 
 ##### Setup 
 
-<u>Note:</u> The commands below assume that Vault was installed using the default name. Thus, it assumes that the Vault container is called `vault-0`. If that is not the case, you may need to modify the Makefile with the appropriate container name. 
+Note that the commands below assume that Vault was installed using the default name. Thus, it assumes that the Vault container is called `vault-0`. If that is not the case, you may need to modify the Makefile with the appropriate container name. 
 Additionally, the scripts need a Vault token in order to authenticate properly. You may use your 
 root token (not really recommended). Alternatively, you can create and provide your own token.
 
@@ -57,15 +57,19 @@ Create the secrets and roles needed to populate the credentials for our services
     make vkubsetup VAULT_TOKEN=<yourVaultToken>
 ```
 
+After everything runs successfully, the secrets, policies and authentication methods should hae been created in Vault.
+
+![Vault secrets policies and Authorization](../diagramsforDocs/VaultItemsSmall.png)
+
 ### Patching the services' deployment manifests
 
 The `/cicd/K8s/vault` directory contains the necessary manifests to patch our service deployments to set up interaction with Vault.
 
 The folder has the following structure:
 
-- `patch`: Contains the patches for each one of our service deployments.
-- `serviceAccount`: has the manifests that create the service accounts to be associated with our services.
-- `testYamlFile`: provides copies of the manifests for each of the services with the relevant secrets commented out. These manifests are used to test that the secrets are being properly populated by Vault. 
+- `patch` contains the patches for each one of our service deployments.
+- `serviceAccount` has the manifests that create the service accounts to be associated with our services.
+- `testYamlFile` provides copies of the manifests for each of the services with the relevant secrets commented out. These manifests are used to test that the secrets are being properly populated by Vault. 
 
 The service account and patches will be automatically applied when the application is started using:
 ```bash
@@ -75,3 +79,67 @@ However, they can also be applied separately by running:
 ```bash
     make vkubpatchdeploy
 ```
+
+Once either of those commands completes, the microservices will be integrated with Vault. At this point, the credentials of the microservices can be managed centrally in Vault.
+
+### Validating Integration
+
+To validate that integration was successful after patching the deployments, you can check the following things:
+
+- All microservices' pods are running
+- Describe a service pod (kubectl describe) and ensure a Vault-agent-init was created and started
+- Login into a service pod (kubectl exec) and check that there are files under /vault/secrets.
+- The front end can pull and display data normally from the different microservices
+
+### Testing the integration
+
+We will test the integration for the user service, but a similar process can be done for any of the microservices:
+- Login to PostgreSQL and ensure you are in the appuser DB
+- Change the appuser database password
+
+```postgresql
+  ALTER USER postgres WITH PASSWORD '<yourSuperPWD>';
+```
+
+- In Vault, create a new version of the secret that keeps the postgresDB credentials for the user service (in the following secret engine: gotempmkv -> database -> postgresql -> usersrv).
+
+  ![Path to user service secret ](../diagramsforDocs/VaultSecretsExample.png)
+
+
+- Ensure the new password in the new secret version matches the new password for the appuser DB
+- Restart the rollout of the user service deployment
+
+```bash
+  kubectl rollout restart deployment usersrv
+```
+- In the web front end, try to log in to the application and pull some data for the user service
+
+### Redeploying
+
+One important aspect of this integration is that it does not change any of the existing code of YAML for the microservices by using K8s patches.
+While this is great, there are one caveat:
+
+- Whenever changes are pushed to any of the microservices the associated patch must be applied as well
+
+### Removing Vault integration
+
+To remove the components that enable the Vault integration follow the steps below:
+
+- Bring application down (if it is running)
+
+```bash
+  make vstopkub
+```
+- Remove secrets, policies and roles from Vault
+
+```bash
+  make vkubteardown
+```
+
+- Remove secrets engine and K8s authentication from Vault
+
+```bash
+  make vkubsetupdelete
+```
+
+- Uninstall Vault using Helm (if needed)
