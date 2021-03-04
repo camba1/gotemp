@@ -5,7 +5,7 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "gotemp-customersrv"
         vault.hashicorp.com/agent-pre-populate-only: "true"
-        vault.hashicorp.com/agent-requests-cpu: "100m"
+        vault.hashicorp.com/agent-requests-cpu: "50m"
         vault.hashicorp.com/agent-inject-secret-arangodb.txt: "gotempkv/data/database/arangodb/customersrv"
         vault.hashicorp.com/agent-inject-template-arangodb.txt: |
           {{- with secret "gotempkv/data/database/arangodb/customersrv" -}}

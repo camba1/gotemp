@@ -5,7 +5,7 @@ spec:
         vault.hashicorp.com/agent-inject: "true"
         vault.hashicorp.com/role: "gotemp-usersrv"
         vault.hashicorp.com/agent-pre-populate-only: "true"
-        vault.hashicorp.com/agent-requests-cpu: "100m"
+        vault.hashicorp.com/agent-requests-cpu: "50m"
         vault.hashicorp.com/agent-inject-secret-postgresql.txt: "gotempkv/data/database/postgresql/usersrv"
         vault.hashicorp.com/agent-inject-template-postgresql.txt: |
           {{- with secret "gotempkv/data/database/postgresql/usersrv" -}}
