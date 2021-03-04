@@ -11,7 +11,13 @@ The figure below shows how the Vault Injector will find and populate the secrets
 
 ![Agent pulls parameters from the deployment and uses them to create an init container](../diagramsforDocs/stopPasswordInsanity-InjectingValuesDetail.png)
 
+Once the integration is complete, Vault is setup to manage the following:
 
+- `auditsrv`: TimescaleDB and NATS login credentials
+- `customersrv`: ArangoDB and NATS login credentials
+- `productsrv`: ArangoDB and NATS login credentials
+- `promotionsrv`: PostgreSQL, NATS and Redis login credentials
+- `usersrv`: PostgreSQL and NATS login credentials
 
 
 ### Setting up Vault
