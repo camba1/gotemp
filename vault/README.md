@@ -120,6 +120,7 @@ One important aspect of this integration is that it does not change any of the e
 While this is great, there are one caveat:
 
 - Whenever changes are pushed to any of the microservices the associated patch must be applied as well
+- Alternatively, the patches could be merged with the original deployment manifests. 
 
 ### Removing Vault integration
 
