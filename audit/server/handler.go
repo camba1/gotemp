@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/jackc/pgx"
+	"github.com/jackc/pgx/v4"
 	"github.com/micro/go-micro/v2/broker"
 	"goTemp/audit/server/statements"
 	"goTemp/globalUtils"
