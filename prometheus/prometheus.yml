@@ -1,0 +1,17 @@
+global:
+  scrape_interval:     15s
+  evaluation_interval: 30s
+  # scrape_timeout is set to the global default (10s).
+
+  external_labels:
+    appname: gotemp
+
+scrape_configs:
+  - job_name: arangodb
+    metrics_path: /_admin/metrics
+    basic_auth:
+      username: root
+      password: TestDB@home2
+    static_configs:
+      - targets:
+          [arangodb:8529]
