@@ -112,3 +112,5 @@ Temporary Items
 /vault/logs/
 /vault/data/
 /vault/keys.txt
+/grafana/data/
+/prometheus/data/
