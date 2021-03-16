@@ -206,3 +206,17 @@ services:
     ports:
     - "3000:3000"
     - "10000:10000"
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus:/etc/prometheus
+  grafana:
+    image: grafana/grafana
+    env_file: ./grafana/docker-compose.env
+    ports:
+    - "3001:3000"
+    volumes:
+    - ./grafana/data:/var/lib/grafana
+    - ./grafana/provisioning:/etc/grafana/provisioning
