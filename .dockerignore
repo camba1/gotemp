@@ -20,3 +20,6 @@ sapper/src/node_modules
 vault/logs/
 vault/data/
 vault/keys.txt
+cicd/
+prometheus/
+grafana/
