@@ -220,3 +220,10 @@ services:
     volumes:
     - ./grafana/data:/var/lib/grafana
     - ./grafana/provisioning:/etc/grafana/provisioning
+  pgdbexporter:
+    image: bitnami/postgres-exporter
+    depends_on:
+      - pgdb
+    env_file: ./prometheus/postgresExporter/docker-compose.env
+    ports:
+    - "9187:9187"
