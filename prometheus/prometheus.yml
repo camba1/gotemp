@@ -15,3 +15,6 @@ scrape_configs:
     static_configs:
       - targets:
           [arangodb:8529]
+  - job_name: pgdbexporter
+    static_configs:
+      - targets: [pgdbexporter:9187]
