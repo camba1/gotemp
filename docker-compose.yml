@@ -227,3 +227,10 @@ services:
     env_file: ./prometheus/postgresExporter/docker-compose.env
     ports:
     - "9187:9187"
+  redisexporter:
+    image: bitnami/redis-exporter
+    depends_on:
+      - redis
+    env_file: ./prometheus/redisExporter/docker-compose.env
+    ports:
+    - "9121:9121"

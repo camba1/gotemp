@@ -18,3 +18,6 @@ scrape_configs:
   - job_name: pgdbexporter
     static_configs:
       - targets: [pgdbexporter:9187]
+  - job_name: redisexporter
+    static_configs:
+      - targets: [redisexporter:9121]
