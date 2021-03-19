@@ -234,3 +234,17 @@ services:
     env_file: ./prometheus/redisExporter/docker-compose.env
     ports:
     - "9121:9121"
+  natsexporter:
+    image: natsio/prometheus-nats-exporter
+    depends_on:
+      - nats
+    ports:
+    - "7777:7777"
+    command: ["-varz", "http://nats:8222"]
+  timescaleexporter:
+    image: bitnami/postgres-exporter
+    depends_on:
+      - timescaledb
+    env_file: ./prometheus/timescaledbExporter/docker-compose.env
+    ports:
+      - "9188:9187"
