@@ -18,6 +18,16 @@ scrape_configs:
   - job_name: pgdbexporter
     static_configs:
       - targets: [pgdbexporter:9187]
+        labels:
+          gtsource: postgres
   - job_name: redisexporter
     static_configs:
       - targets: [redisexporter:9121]
+  - job_name: natsexporter
+    static_configs:
+      - targets: [natsexporter:7777]
+  - job_name: timescaleexporter
+    static_configs:
+      - targets: [ timescaleexporter:9187 ]
+        labels:
+          gtsource: timescale
