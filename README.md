@@ -276,8 +276,8 @@ Each one of the services has a similar structure:
 - `server`: Service that performs a number of actions like interacting with the DB
 - `Dockerfile`: Build the image for the server service
 - `DockerfileCLI`: Build the image of the client service
-- `docker-compose.env`: Environment variable required to run the service when running the service with docker-compose
-- `docker-compose-cli.env`: Environment variable required to run the client when running the client with docker-compose
+- `docker-compose.env`: Environment variables required to run the service when running the service with docker-compose
+- `docker-compose-cli.env`: Environment variables required to run the client when running the client with docker-compose
 
 #### Building
 
