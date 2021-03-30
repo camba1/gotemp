@@ -7,15 +7,24 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"goTemp/globalMonitoring"
 	"goTemp/globalUtils"
 	pb "goTemp/user/proto"
 	"log"
+	"net/http"
 	"os"
 	"strings"
 )
 
-// serviceName service identifier
-const serviceName = "goTemp.api.user"
+const (
+	// serviceName service identifier
+	serviceName = "goTemp.api.user"
+	// serviceId numeric service identifier
+	serviceId = "1"
+	// serviceMetricsPrefix prefix for all metrics related to this service
+	serviceMetricsPrefix = "goTemp_"
+)
 
 // const serviceName = "user"
 
@@ -140,12 +149,28 @@ func loadConfig() {
 	}
 }
 
+func runHttp() {
+	http.Handle("/metrics", promhttp.Handler())
+	http.ListenAndServe(":2112", nil)
+}
+
 func main() {
+
+	// TODO: get version number from external source
+	// setup metrics collector
+	metricsWrapper := globalMonitoring.NewMetricsWrapper(
+		globalMonitoring.ServiceName(serviceName),
+		globalMonitoring.ServiceID(serviceId),
+		globalMonitoring.ServiceVersion("latest"),
+		globalMonitoring.ServiceMetricsPrefix(serviceMetricsPrefix),
+		globalMonitoring.ServiceMetricsLabelPrefix(serviceMetricsPrefix),
+	)
 
 	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
+		micro.WrapHandler(metricsWrapper),
 	)
 
 	service.Init()
@@ -167,9 +192,13 @@ func main() {
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
 
+	// Initialize http server for metrics export
+	go runHttp()
+
 	//  Run Service
 	err = service.Run()
 	if err != nil {
 		log.Fatalf(glErr.SrvNoStart(serviceName, err))
 	}
+
 }
