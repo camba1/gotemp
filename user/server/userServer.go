@@ -7,24 +7,15 @@ import (
 	"github.com/micro/go-micro/v2"
 	"github.com/micro/go-micro/v2/metadata"
 	"github.com/micro/go-micro/v2/server"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"goTemp/globalMonitoring"
 	"goTemp/globalUtils"
 	pb "goTemp/user/proto"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 )
 
-const (
-	// serviceName service identifier
-	serviceName = "goTemp.api.user"
-	// serviceId numeric service identifier
-	serviceId = "1"
-	// serviceMetricsPrefix prefix for all metrics related to this service
-	serviceMetricsPrefix = "goTemp_"
-)
+// serviceName service identifier
+const serviceName = "goTemp.api.user"
 
 // const serviceName = "user"
 
@@ -120,6 +111,7 @@ func connectToDB() *pgx.Conn {
 	return dbConn
 }
 
+// loadConfig loads service configuration
 func loadConfig() {
 	// conf, err := config.NewConfig()
 	// if err != nil {
@@ -149,22 +141,11 @@ func loadConfig() {
 	}
 }
 
-func runHttp() {
-	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":2112", nil)
-}
-
 func main() {
 
 	// TODO: get version number from external source
 	// setup metrics collector
-	metricsWrapper := globalMonitoring.NewMetricsWrapper(
-		globalMonitoring.ServiceName(serviceName),
-		globalMonitoring.ServiceID(serviceId),
-		globalMonitoring.ServiceVersion("latest"),
-		globalMonitoring.ServiceMetricsPrefix(serviceMetricsPrefix),
-		globalMonitoring.ServiceMetricsLabelPrefix(serviceMetricsPrefix),
-	)
+	metricsWrapper := newMetricsWrapper()
 
 	// instantiate service
 	service := micro.NewService(
