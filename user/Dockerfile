@@ -1,5 +1,5 @@
 # Build DEv image with hot rebuild
-FROM golang AS Dev
+FROM golang AS dev
 
 ENV SRVDIR=user
 
@@ -12,14 +12,16 @@ RUN go mod download
 COPY ./$SRVDIR ./$SRVDIR
 COPY ./globalerrors ./globalerrors
 COPY ./globalUtils ./globalUtils
+COPY ./globalMonitoring ./globalMonitoring
 #COPY ./go.mod ./go.sum ./
 #RUN go get -d  -v ./...
 RUN go build -o $SRVNAME ./$SRVDIR/server/
 EXPOSE 50051
+EXPOSE 2112
 CMD ./$SRVNAME
 
 # Compile the Alpine version of the application
-FROM Dev AS alpBuild
+FROM dev AS alpBuild
 
 ENV SRVDIR=user
 
