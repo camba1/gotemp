@@ -15,7 +15,7 @@ services:
     build:
       context: .
       dockerfile: ./promotion/Dockerfile
-      target: Dev
+      target: dev
     depends_on:
       - pgdb
       - nats
@@ -34,7 +34,7 @@ services:
     build:
       context: .
       dockerfile: ./promotion/DockerfileCli
-      target: Dev
+      target: dev
     depends_on:
       - usersrv
     container_name: promotionclicont
@@ -48,7 +48,7 @@ services:
     build:
       context: .
       dockerfile: ./user/Dockerfile
-      target: Dev
+      target: dev
     depends_on:
       - pgdb
       - nats
@@ -58,13 +58,15 @@ services:
     volumes:
       - ./user/server:/go/src/goTemp/user/server
       - ./globalUtils:/go/src/goTemp/globalUtils
+      - ./globalMonitoring:/go/src/goTemp/globalMonitoring
     ports:
       - "50053:50053"
+      - "2112:2112"
   usercli:
     build:
       context: .
       dockerfile: ./user/DockerfileCli
-      target: Dev
+      target: dev
     container_name: userclicont
     env_file: ./user/docker-compose-cli.env
     entrypoint: CompileDaemon --build="go build -o userClient ./user/client/" --command=./userClient
@@ -76,7 +78,7 @@ services:
     build:
       context: .
       dockerfile: ./audit/Dockerfile
-      target: Dev
+      target: dev
     depends_on:
       - timescaledb
       - nats
@@ -92,7 +94,7 @@ services:
     build:
       context: .
       dockerfile: ./customer/Dockerfile
-      target: Dev
+      target: dev
     depends_on:
       - arangodb
       - nats
@@ -109,7 +111,7 @@ services:
     build:
       context: .
       dockerfile: ./customer/DockerfileCli
-      target: Dev
+      target: dev
     container_name: customerclicont
     env_file: ./customer/docker-compose-cli.env
     entrypoint: CompileDaemon --build="go build -o customerClient ./customer/client/" --command=./customerClient
@@ -121,7 +123,7 @@ services:
     build:
       context: .
       dockerfile: ./product/Dockerfile
-      target: Dev
+      target: dev
     depends_on:
       - arangodb
       - nats
@@ -138,7 +140,7 @@ services:
     build:
       context: .
       dockerfile: ./product/DockerfileCli
-      target: Dev
+      target: dev
     container_name: productclicont
     env_file: ./product/docker-compose-cli.env
     entrypoint: CompileDaemon --build="go build -o productClient ./product/client/" --command=./productClient
@@ -196,7 +198,7 @@ services:
     build:
       context: ./web
       dockerfile: Dockerfile
-      target: Dev
+      target: dev
     depends_on:
       - microapi
     container_name: gtweb
