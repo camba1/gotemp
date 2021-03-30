@@ -1,5 +1,5 @@
 # Build DEv image with hot rebuild
-FROM golang AS Dev
+FROM golang AS dev
 
 ENV SRVDIR=promotion
 
@@ -22,7 +22,7 @@ EXPOSE 50051
 CMD ./$SRVNAME
 
 # Compile the Alpine version of the application
-FROM Dev AS alpBuild
+FROM dev AS alpBuild
 
 ENV SRVDIR=promotion
 

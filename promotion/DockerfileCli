@@ -1,5 +1,5 @@
 # Build DEv image with hot rebuild
-FROM golang AS Dev
+FROM golang AS dev
 
 ENV CLIDIR=promotion
 
@@ -19,7 +19,7 @@ EXPOSE 50051
 CMD ./$CLINAME
 
 # Compile the Alpine version of the application
-FROM Dev AS AlpBuild
+FROM dev AS AlpBuild
 ENV CLIDIR=promotion
 
 ENV CLINAME=${CLIDIR}ClientAlp
