@@ -12,11 +12,10 @@ RUN go mod download
 COPY ./$SRVDIR ./$SRVDIR
 COPY ./globalerrors ./globalerrors
 COPY ./globalUtils ./globalUtils
-#COPY ./go.mod ./go.sum ./
-#RUN go get -d  -v ./...
+COPY ./globalMonitoring ./globalMonitoring
 RUN go build -o $SRVNAME ./$SRVDIR/server/
 EXPOSE 50051
-#CMD ["./promotionServer"]
+EXPOSE 2112
 CMD ./$SRVNAME
 
 # Compile the Alpine version of the application
