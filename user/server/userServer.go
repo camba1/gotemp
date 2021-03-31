@@ -143,7 +143,6 @@ func loadConfig() {
 
 func main() {
 
-	// TODO: get version number from external source
 	// setup metrics collector
 	metricsWrapper := newMetricsWrapper()
 
