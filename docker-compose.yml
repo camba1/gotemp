@@ -30,6 +30,7 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50051:50051"
+      - "2114:2112"
   promotioncli:
     build:
       context: .
@@ -61,7 +62,7 @@ services:
       - ./globalMonitoring:/go/src/goTemp/globalMonitoring
     ports:
       - "50053:50053"
-      - "2112:2112"
+      - "2111:2112"
   usercli:
     build:
       context: .
@@ -90,6 +91,7 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50055:50055"
+      - "2115:2112"
   customersrv:
     build:
       context: .
@@ -107,6 +109,7 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50057:50057"
+      - "2112:2112"
   customercli:
     build:
       context: .
@@ -136,6 +139,7 @@ services:
       - ./globalUtils:/go/src/goTemp/globalUtils
     ports:
       - "50059:50059"
+      - "2113:2112"
   productcli:
     build:
       context: .
