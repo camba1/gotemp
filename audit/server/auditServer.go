@@ -89,10 +89,14 @@ func connectToDB() *pgx.Conn {
 
 func main() {
 
+	// setup metrics collector
+	metricsWrapper := newMetricsWrapper()
+
 	//instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		//micro.WrapHandler(AuthWrapper),
+		micro.WrapHandler(metricsWrapper),
 	)
 
 	service.Init()
@@ -122,6 +126,9 @@ func main() {
 	if err != nil {
 		log.Printf("Error subscribing to message: Error: %v\n", err)
 	}
+
+	// Initialize http server for metrics export
+	go runHttp()
 
 	// Run Service
 	err = service.Run()

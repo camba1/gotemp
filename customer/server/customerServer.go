@@ -164,10 +164,14 @@ func loadConfig() {
 
 func main() {
 
+	// setup metrics collector
+	metricsWrapper := newMetricsWrapper()
+
 	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
+		micro.WrapHandler(metricsWrapper),
 	)
 
 	service.Init()
@@ -187,6 +191,9 @@ func main() {
 	// setup the nats broker
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
+
+	// Initialize http server for metrics export
+	go runHttp()
 
 	// Run Service
 	err = service.Run()

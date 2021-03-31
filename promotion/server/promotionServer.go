@@ -137,11 +137,14 @@ func loadConfig() {
 
 func main() {
 
+	// setup metrics collector
+	metricsWrapper := newMetricsWrapper()
+
 	// instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		micro.WrapHandler(AuthWrapper),
-		// micro.Store(redis.NewStore()),
+		micro.WrapHandler(metricsWrapper),
 	)
 
 	// initialize plugins (this is just needed for stores)
@@ -168,6 +171,9 @@ func main() {
 	// setup the nats broker
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
+
+	// Initialize http server for metrics export
+	go runHttp()
 
 	//  Run Service
 	if err := service.Run(); err != nil {
