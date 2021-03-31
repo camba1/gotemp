@@ -104,7 +104,7 @@ Temporary Items
 /web/svelte/node_modules/
 /web/svelte/public/build/
 /web/sapper/node_modules/
-/web/sapper/src/node_modules/@sapper/
+#/web/sapper/src/node_modules/@sapper/
 /web/sapper/yarn-error.log
 /web/sapper/cypress/screenshots/
 /web/sapper/__sapper__/
