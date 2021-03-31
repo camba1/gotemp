@@ -12,16 +12,21 @@ const (
 	serviceId = "1"
 	// serviceMetricsPrefix prefix for all metrics related to this service
 	serviceMetricsPrefix = "goTemp_"
+	// metricsEndPoint is the address where we can scrape metrics
+	metricsEndPoint = "/metrics"
+	//httpPort is the port where the http server for metrics is listening
+	httpPort = ":2112"
 )
 
 // runHttp runs a secondary server to handle metrics scraping
 func runHttp() {
-	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":2112", nil)
+	http.Handle(metricsEndPoint, promhttp.Handler())
+	http.ListenAndServe(httpPort, nil)
 }
 
-//newMetricsWrapper Create a new metrics wrapper to configreu the data to be scraped for monitoring
+//newMetricsWrapper Create a new metrics wrapper to configure the data to be scraped for monitoring
 func newMetricsWrapper() server.HandlerWrapper {
+	// TODO: get version number from external source
 	return globalMonitoring.NewMetricsWrapper(
 		globalMonitoring.ServiceName(serviceName),
 		globalMonitoring.ServiceID(serviceId),
