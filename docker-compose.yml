@@ -220,6 +220,8 @@ services:
       - ./prometheus:/etc/prometheus
   grafana:
     image: grafana/grafana
+    depends_on:
+      - prometheus
     env_file: ./grafana/docker-compose.env
     ports:
     - "3001:3000"
