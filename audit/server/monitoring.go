@@ -37,6 +37,8 @@ func newMetricsWrapper() server.HandlerWrapper {
 	)
 }
 
+// newMetricsSubscriberWrapper Create a new metrics wrapper to configure the data to be scraped for monitoring when
+// receiving a message from the broker
 func newMetricsSubscriberWrapper() func(fn broker.Handler) broker.Handler {
 	// TODO: get version number from external source
 	return globalMonitoring.NewMetricsSubscriberWrapper(

@@ -228,12 +228,15 @@ Currently, we have the following:
 - `customer`: Customer master data service
 - `diagramforDocs`: Diagrams used in the readme documents
 - `globalErrors`: Generic errors shared package
+- `globalMonitoring`: Generic monitoring utilities shared package
 - `globalProtos`: Generic protobuf message definitions shared across packages
 - `globalUtils`: Generic utilities shared package
+- `grafana`: Grafana configuration and custom dashboard definitions
 - `nats`: NATS dockerfile and configuration
 - `postgres`: Volumes mounted to the PostgreSQL DB container as well as data initialization scripts
 - `product`: Product master data service
 - `promotion`: Promotion service to track product discounts (this was the first service built)
+- `prometheus`: Prometheus configuration and exporters
 - `redis`: Volumes mounted on the redis container as well as config files (if any)
 - `timescaleDB`: Volumes mounted to the Timescale DB container as well as data initialization scripts
 - `user`: User and authentication service

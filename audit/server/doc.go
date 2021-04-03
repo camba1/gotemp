@@ -9,6 +9,7 @@ Service is currently composed of two files:
 		- Service name and service function that performed the operation
 		- The type of operation performed (insert, update, etc..)
 	- Message payload: Byte slice containing the actual data that was affected (e.g. inserted record)
+- monitoring: contains utilities related to monitoring the application
 Note that the header of the message is decode and stored in multiple columns,  but the payload is stored directly as is.
 */
 package main

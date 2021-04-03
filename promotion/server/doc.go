@@ -8,6 +8,7 @@ This package is composed of the following files:
 	from the customer service and caches it as needed in the redis store
 - plugins; Imports the go-micor plugins used by the service.
 - validation: Handles data validation routines and sends audit messages to the broker for storage
+- monitoring: contains utilities related to monitoring the application
 
 
 */

@@ -7,5 +7,6 @@ This package is composed of the following files:
 - plugins: Indicates which micro plugins we are using in th app
 - tokenService: Handles coding/decoding and validation of JWT tokens
 - validation: Handles data validation routines and sends audit messages to the broker for storage
+- monitoring: contains utilities related to monitoring the application
 */
 package main

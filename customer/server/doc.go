@@ -5,6 +5,7 @@ This package is composed of the following files:
 	connects to the database, initializes the broker and sets up the authentication wrapper
 - handler:Handles all the requests made to the service from outside clients
 - validation: Handles data validation routines and sends audit messages to the broker for storage
+- monitoring: contains utilities related to monitoring the application
 
 A note about retrieving data from the database: Since we are dealing with a multi-model No-SQL DB, there is a possibility
 that there will be fields in the DB that are not in the protobuf definition used to interact with data. Any such such
