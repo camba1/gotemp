@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/micro/go-micro/v2/broker"
 	"github.com/micro/go-micro/v2/server"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"goTemp/globalMonitoring"
@@ -28,6 +29,17 @@ func runHttp() {
 func newMetricsWrapper() server.HandlerWrapper {
 	// TODO: get version number from external source
 	return globalMonitoring.NewMetricsWrapper(
+		globalMonitoring.ServiceName(serviceName),
+		globalMonitoring.ServiceID(serviceId),
+		globalMonitoring.ServiceVersion("latest"),
+		globalMonitoring.ServiceMetricsPrefix(serviceMetricsPrefix),
+		globalMonitoring.ServiceMetricsLabelPrefix(serviceMetricsPrefix),
+	)
+}
+
+func newMetricsSubscriberWrapper() func(fn func(p broker.Event) error) func(p broker.Event) error {
+	// TODO: get version number from external source
+	return globalMonitoring.NewMetricsSubscriberWrapper(
 		globalMonitoring.ServiceName(serviceName),
 		globalMonitoring.ServiceID(serviceId),
 		globalMonitoring.ServiceVersion("latest"),

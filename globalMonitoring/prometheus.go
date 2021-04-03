@@ -3,6 +3,7 @@ package globalMonitoring
 import (
 	"context"
 	"fmt"
+	"github.com/micro/go-micro/v2/broker"
 	"github.com/micro/go-micro/v2/server"
 	"github.com/prometheus/client_golang/prometheus"
 	"log"
@@ -157,8 +158,9 @@ func (w *metricsHandler) registerMetrics(metricPrefix, labelPrefix string) {
 
 }
 
-// NewMetricsWrapper creates a new metrics handler and  call function to create and register the metrics to be exported
-func NewMetricsWrapper(opts ...Option) server.HandlerWrapper {
+// metricsInit creates a new metrics handler and  call function to create and register the metrics to be exported
+func metricsInit(opts []Option) *metricsHandler {
+	log.Println("Creating Metrics subscriber wrapper")
 
 	options := Options{}
 	for _, opt := range opts {
@@ -168,8 +170,14 @@ func NewMetricsWrapper(opts ...Option) server.HandlerWrapper {
 	handler := &metricsHandler{
 		options: options,
 	}
-	handler.registerMetrics(handler.options.MetricsPrefix, handler.options.MetricsLabelPrefix)
 
+	handler.registerMetrics(handler.options.MetricsPrefix, handler.options.MetricsLabelPrefix)
+	return handler
+}
+
+// NewMetricsWrapper calls metrics initializer and returns a wrapper to be used to collect end point metrics
+func NewMetricsWrapper(opts ...Option) server.HandlerWrapper {
+	handler := metricsInit(opts)
 	return handler.metricsWrapper
 }
 
@@ -187,6 +195,39 @@ func (w *metricsHandler) metricsWrapper(fn server.HandlerFunc) server.HandlerFun
 
 		err := fn(ctx, req, resp)
 
+		if err == nil {
+			metrics.opsCounter.WithLabelValues(w.options.Name, w.options.Version, w.options.ID, endpoint, "success").Inc()
+		} else {
+			metrics.opsCounter.WithLabelValues(w.options.Name, w.options.Version, w.options.ID, endpoint, "failure").Inc()
+		}
+
+		return err
+	}
+}
+
+type BrokerMetricsHandler func(p broker.Event) error
+
+// NewMetricsSubscriberWrapper calls metrics initializer and returns a wrapper to be used to collect broker metrics
+func NewMetricsSubscriberWrapper(opts ...Option) func(fn func(p broker.Event) error) func(p broker.Event) error {
+	handler := metricsInit(opts)
+	return handler.metricsSubscriberWrapper
+}
+
+// metricsSubscriberWrapper runs everytime a broker subscriber receives a message updates the metrics to be exported
+func (w *metricsHandler) metricsSubscriberWrapper(fn func(p broker.Event) error) func(p broker.Event) error {
+	return func(p broker.Event) error {
+		endpoint := p.Topic() // msg.Topic()
+
+		log.Printf("Recording metric for endpoint: %v", p.Topic())
+
+		timer := prometheus.NewTimer(prometheus.ObserverFunc(func(v float64) {
+			us := v * 1000000 // make microseconds
+			metrics.timeCounterSummary.WithLabelValues(w.options.Name, w.options.Version, w.options.ID, endpoint).Observe(us)
+			metrics.timeCounterHistogram.WithLabelValues(w.options.Name, w.options.Version, w.options.ID, endpoint).Observe(v)
+		}))
+		defer timer.ObserveDuration()
+
+		err := fn(p)
 		if err == nil {
 			metrics.opsCounter.WithLabelValues(w.options.Name, w.options.Version, w.options.ID, endpoint, "success").Inc()
 		} else {
