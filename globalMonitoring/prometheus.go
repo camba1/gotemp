@@ -160,7 +160,7 @@ func (w *metricsHandler) registerMetrics(metricPrefix, labelPrefix string) {
 
 // metricsInit creates a new metrics handler and  call function to create and register the metrics to be exported
 func metricsInit(opts []Option) *metricsHandler {
-	log.Println("Creating Metrics subscriber wrapper")
+	log.Println("Creating Metrics  wrapper")
 
 	options := Options{}
 	for _, opt := range opts {
@@ -205,16 +205,14 @@ func (w *metricsHandler) metricsWrapper(fn server.HandlerFunc) server.HandlerFun
 	}
 }
 
-type BrokerMetricsHandler func(p broker.Event) error
-
 // NewMetricsSubscriberWrapper calls metrics initializer and returns a wrapper to be used to collect broker metrics
-func NewMetricsSubscriberWrapper(opts ...Option) func(fn func(p broker.Event) error) func(p broker.Event) error {
+func NewMetricsSubscriberWrapper(opts ...Option) func(fn broker.Handler) broker.Handler {
 	handler := metricsInit(opts)
 	return handler.metricsSubscriberWrapper
 }
 
 // metricsSubscriberWrapper runs everytime a broker subscriber receives a message updates the metrics to be exported
-func (w *metricsHandler) metricsSubscriberWrapper(fn func(p broker.Event) error) func(p broker.Event) error {
+func (w *metricsHandler) metricsSubscriberWrapper(fn broker.Handler) broker.Handler {
 	return func(p broker.Event) error {
 		endpoint := p.Topic() // msg.Topic()
 

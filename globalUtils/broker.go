@@ -11,7 +11,7 @@ import (
 // MyBroker is a Struct type that contains all the broker functionality
 type MyBroker struct {
 	Br                     broker.Broker
-	SubscribeHandleWrapper func(fn func(p broker.Event) error) func(p broker.Event) error
+	SubscribeHandleWrapper func(fn broker.Handler) broker.Handler
 }
 
 // ProtoToByte converts a proto message to a byte slice so that it can be sent out to the broker

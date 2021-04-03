@@ -37,7 +37,7 @@ func newMetricsWrapper() server.HandlerWrapper {
 	)
 }
 
-func newMetricsSubscriberWrapper() func(fn func(p broker.Event) error) func(p broker.Event) error {
+func newMetricsSubscriberWrapper() func(fn broker.Handler) broker.Handler {
 	// TODO: get version number from external source
 	return globalMonitoring.NewMetricsSubscriberWrapper(
 		globalMonitoring.ServiceName(serviceName),
