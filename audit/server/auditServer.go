@@ -90,13 +90,14 @@ func connectToDB() *pgx.Conn {
 func main() {
 
 	// setup metrics collector
-	metricsWrapper := newMetricsWrapper()
-
+	//metricsWrapper := newMetricsWrapper()
+	//metricsSubscriberWrapper := newMetricsSubscriberWrapper()
 	//instantiate service
 	service := micro.NewService(
 		micro.Name(serviceName),
 		//micro.WrapHandler(AuthWrapper),
-		micro.WrapHandler(metricsWrapper),
+		//micro.WrapHandler(metricsWrapper),
+		//micro.WrapSubscriber(metricsSubscriberWrapper),
 	)
 
 	service.Init()
@@ -112,6 +113,17 @@ func main() {
 	//setup the nats broker
 	mb.Br = service.Options().Broker
 	defer mb.Br.Disconnect()
+
+	//mb.SubscribeHandleWrapper = globalMonitoring.NewMetricsSubscriberWrapper(
+	//	globalMonitoring.ServiceName(serviceName),
+	//	globalMonitoring.ServiceID(serviceId),
+	//	globalMonitoring.ServiceVersion("latest"),
+	//	globalMonitoring.ServiceMetricsPrefix(serviceMetricsPrefix),
+	//	globalMonitoring.ServiceMetricsLabelPrefix(serviceMetricsPrefix),
+	//)
+
+	// setup metrics collector for broker messages
+	mb.SubscribeHandleWrapper = newMetricsSubscriberWrapper()
 
 	//topic := "test"
 	//queueName := "test"

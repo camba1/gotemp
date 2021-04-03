@@ -10,7 +10,8 @@ import (
 
 // MyBroker is a Struct type that contains all the broker functionality
 type MyBroker struct {
-	Br broker.Broker
+	Br                     broker.Broker
+	SubscribeHandleWrapper func(fn func(p broker.Event) error) func(p broker.Event) error
 }
 
 // ProtoToByte converts a proto message to a byte slice so that it can be sent out to the broker
@@ -61,11 +62,18 @@ func (mb *MyBroker) SubToMsg(subHandler broker.Handler, topic string, queueName 
 		return err
 	}
 
-	if queueName != "" {
-		_, err = mb.Br.Subscribe(topic, subHandler, broker.Queue(queueName))
-	} else {
-		_, err = mb.Br.Subscribe(topic, subHandler)
+	// Check for optional wrapper passed in
+	subscriberHandler := subHandler
+	if mb.SubscribeHandleWrapper != nil {
+		subscriberHandler = mb.SubscribeHandleWrapper(subHandler)
 	}
+
+	if queueName != "" {
+		_, err = mb.Br.Subscribe(topic, subscriberHandler, broker.Queue(queueName))
+	} else {
+		_, err = mb.Br.Subscribe(topic, subscriberHandler)
+	}
+
 	if err != nil {
 		log.Printf(glErr.BrkUnableToSetSubs(topic, err))
 		return err
