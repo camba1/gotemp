@@ -214,6 +214,11 @@ services:
     - "10000:10000"
   prometheus:
     image: prom/prometheus
+    depends_on:
+      - pgdbexporter
+      - redisexporter
+      - natsexporter
+      - timescaleexporter
     ports:
       - "9090:9090"
     volumes:
