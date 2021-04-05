@@ -22,22 +22,30 @@ In its current incarnation (this is wip), this mono-repo uses the following stac
 - `TimescaleDB` time series DB used for historical audit data storage
 - `ArangoDB`is a multi-model database used for master data storage
 - `Redis` is used to cache data and reduce number of data requests to other services
-- `Vault` for credentials management when running in Kubernetes 
-- `Docker` for creating application images
-- `Docker-compose` to run the application
-- `Minikube` to run the application in Kubernetes
+- `Vault` for credentials management when running in Kubernetes
 
 In terms of the web front end, the stack is as follows:
 
 - `Javascript` as its main implementation technology
-- `Svelte` is used as  the compilation engine (via rollup)
+- `Svelte` is used as the compilation engine (via rollup)
 - `Sapper` is the javascript framework
 - `Sveltestrap` provides the css framework and is based on bootstrap
 - `Font Awesome` to display icons in the application
 
+As far as observability, the application uses:
+
+- `Prometheus` scrapes metrics from the microservices, databases and broker
+- `Grafana` provides graphic visualization of application metrics
+
+Finally, for orchestration, the stack is as follows:
+
+- `Docker` for creating application images
+- `Docker-compose` to run the application
+- `Minikube` to run the application in Kubernetes
+
 Below is a diagram that displays the overall setup of the application:
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V6.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram_V7.png)
 
 In a nutshell. the application functionality is as follows in the backend:
 
