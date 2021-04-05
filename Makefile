@@ -1,6 +1,7 @@
-# Start all services and the web UI. Does not start server clients
+# Start all services, monitoring and the web UI. Does not start server clients
 start:
 	docker-compose up -d usersrv customersrv productsrv promotionsrv auditsrv
+	docker-compose up -d grafana
 	docker-compose up web
 stop:
 	docker-compose down
@@ -200,7 +201,12 @@ vkubcleancontainer:
 # Test that Vault is populating the secrets properly by deploying YAMLs without the K8s secrets
 vkubtestrmsecret:
 	kubectl apply -f cicd/K8s/vault/testYamlFile
-# -------------------------------------------------------------------------------------
+
+# ----  Monitoring --------
+
+# Check the service metrics when running on docker
+getsrvmetrics:
+	curl http://localhost:$$PORT/metrics
 
 # ----  Misc --------
 
