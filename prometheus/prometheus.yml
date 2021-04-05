@@ -31,3 +31,18 @@ scrape_configs:
       - targets: [ timescaleexporter:9187 ]
         labels:
           gtsource: timescale
+  - job_name: auditsrv
+    static_configs:
+      - targets: [ auditsrv:2112 ]
+  - job_name: customersrv
+    static_configs:
+      - targets: [ customersrv:2112 ]
+  - job_name: productsrv
+    static_configs:
+      - targets: [ productsrv:2112 ]
+  - job_name: promotionsrv
+    static_configs:
+      - targets: [ promotionsrv:2112 ]
+  - job_name: usersrv
+    static_configs:
+      - targets: [ usersrv:2112 ]
