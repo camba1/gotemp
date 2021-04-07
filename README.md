@@ -94,7 +94,14 @@ At that point, you can open your browser and navigate to:
 ```
     http://localhost:3000
 ``` 
- 
+
+Additionally, observability tooling can be accessed at the addresses below
+
+```
+    Prometheus:  http://localhost:9090
+    Grafana:     http://localhost:3001
+```
+
 To stop the application:
 
 ```bash
