@@ -214,7 +214,11 @@ func NewMetricsSubscriberWrapper(opts ...Option) func(fn broker.Handler) broker.
 // metricsSubscriberWrapper runs everytime a broker subscriber receives a message updates the metrics to be exported
 func (w *metricsHandler) metricsSubscriberWrapper(fn broker.Handler) broker.Handler {
 	return func(p broker.Event) error {
-		endpoint := p.Topic() // msg.Topic()
+
+		endpoint := p.Topic()
+		if p.Message() != nil && len(p.Message().Header) != 0 {
+			endpoint = fmt.Sprintf("%s.%s.%s", p.Topic(), p.Message().Header["objectName"], p.Message().Header["actionType"])
+		}
 
 		log.Printf("Recording metric for endpoint: %v", p.Topic())
 
