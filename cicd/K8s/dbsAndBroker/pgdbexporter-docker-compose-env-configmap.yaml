@@ -1,0 +1,8 @@
+apiVersion: v1
+data:
+  PG_EXPORTER_AUTO_DISCOVER_DATABASES: "true"
+kind: ConfigMap
+metadata:
+  labels:
+    io.kompose.service: pgdbexporter-docker-compose-env
+  name: pgdbexporter-docker-compose-env
