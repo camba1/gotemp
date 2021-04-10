@@ -102,11 +102,13 @@ authviaapigateway:
 startkub:
 	kubectl apply -f cicd/K8s/dbsAndBroker
 	kubectl apply -f cicd/K8s/services
+	kubectl apply -f cicd/K8s/monitoring
 	kubectl apply -f cicd/K8s/web
 	kubectl apply -f cicd/K8s/ingress
 stopkub:
 	kubectl delete -f cicd/K8s/ingress
 	kubectl delete -f cicd/K8s/web
+	kubectl delete -f cicd/K8s/monitoring
 	kubectl delete -f cicd/K8s/services
 	kubectl delete -f cicd/K8s/dbsAndBroker
 
