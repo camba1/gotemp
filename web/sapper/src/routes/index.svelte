@@ -27,7 +27,9 @@
 					iconName: "fa-book",
 					techList: ["NATS: Pub/sub",
 						"NGINX: K8s ingress controller",
-						"Vault: Password Manager in K8s" ]}
+						"Vault: Password Manager in K8s",
+						"Prometheus: Metrics collection",
+						"Grafana: Observability dashboards" ]}
 
 
 </script>
