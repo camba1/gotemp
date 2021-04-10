@@ -3,8 +3,7 @@
 **Work in Progress**
 
 The application is integrated with Prometheus and Grafana to provide metrics observability.
-Currently, it is set up to collect metrics from all services, databases and NATS metrics when the app is running in Docker. 
-K8s integration will be forth coming as well.
+Currently, it is set up to collect metrics from all services, databases and NATS metrics.
 
 ### Folder Organization
 

@@ -157,7 +157,7 @@ Note that for the web front end and for Timescale DB the command to be used is s
 
 
 ```bash
-     make hubpushcontext SERVICE=<serivceName> FOLDER=<folderName
+     make hubpushcontext SERVICE=<serivceName> FOLDER=<folderName>
 ```
 
 #### Running without Vault
@@ -381,7 +381,8 @@ The K8s files live in the `./cicd/K8s` folder, and it is organized as follows:
 
 - `clients` : These are the test clients for each of the services.
 - `dbsAndBroker`: Contains the manifests for all the databases and for the broker
-- `ingress`: Manifest to create the ingress resource that allows the front end and the back end to communicate
+- `ingress`: Manifest to create the ingress resource that allows the frontend, and the back end to communicate
+- `monitoring`: holds the manifests to deploy monitoring resources (Prometheus, Grafana)
 - `services`: Contains all the services and related entities manifest (deployment, service, etc...).
 - `vault`: Manifests to create the service accounts and patches to integrate the application with Vault
 - `web`: Manifest for the web front end and the API gateway
