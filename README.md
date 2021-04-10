@@ -229,8 +229,15 @@ Finally, access app:
 To stop the application:
 
 ```bash
-  make vstopkub
+     make vstopkub
 ```
+
+#### Observability
+
+Observability tools access while the application is running in K8s (with or without Vault):
+
+- Prometheus: `minikube service prometheus`
+- Grafana: `minikube service grafana`
 
 ## Repo organization
 
@@ -371,9 +378,12 @@ There are three routes that do not share the structure above as they have very l
 The application configuration in K8s can be seen in the diagram below. Note that the diagram shows just one of the different microservices and its associated database.
 The configuration for all other microservices, beyond the shared ingress and API Gateway, is similar to the one depicted in the diagram.
 
-![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram-k8s_v2.png)
+![Diagram showing goTemp components](diagramsforDocs/goTemp_Diagram-k8s_v3.png)
 
-Note that when running the application with Vault, the microservices secrets will be superseded by the secrets stored in Vault
+Notes:
+- When running the application with Vault, the microservices secrets will be superseded by the secrets stored in Vault.
+- The microservices, ArangoDB and NATS have Prometheus metric scrape endpoints built-in. On the other hand, Redis, PostgresDB and TimescaleDB use adapter containers to expose the data to Prometheus.
+- To keep the diagram simple, the K8s services for the database, Vault, Prometheus and Grafana are not displayed in the diagram.
 
 ### Organization
 
