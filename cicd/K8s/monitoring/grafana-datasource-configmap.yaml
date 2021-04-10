@@ -1,0 +1,17 @@
+apiVersion: v1
+data:
+  datasource.yml: |-
+    apiVersion: 1
+
+    datasources:
+      - name: DS_PROMETHEUS
+        type: prometheus
+        access: proxy
+        orgId: 1
+        url: http://prometheus:9090
+        basicAuth: false
+        isDefault: true
+        editable: true
+kind: ConfigMap
+metadata:
+  name: grafana-datasource-configmap
