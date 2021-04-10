@@ -12,5 +12,8 @@ spec:
   - name: "5432"
     port: 5432
     targetPort: 5432
+  - name: "9187"
+    port: 9187
+    targetPort: 9187
   selector:
     io.kompose.service: timescaledb

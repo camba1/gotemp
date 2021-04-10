@@ -12,5 +12,8 @@ spec:
   - name: "50053"
     port: 50053
     targetPort: 50053
+  - name: "2112"
+    port: 2112
+    targetPort: 2112
   selector:
     io.kompose.service: usersrv

@@ -12,6 +12,9 @@ spec:
   - name: "6379"
     port: 6379
     targetPort: 6379
+  - name: "9121"
+    port: 9121
+    targetPort: 9121
   selector:
     io.kompose.service: redis
-  type: NodePort
+  type: ClusterIP

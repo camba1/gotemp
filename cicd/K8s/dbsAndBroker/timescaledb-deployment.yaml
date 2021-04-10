@@ -38,6 +38,23 @@ spec:
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: timescaledb-claim0
+      - env:
+          - name: DATA_SOURCE_NAME
+            valueFrom:
+              secretKeyRef:
+                key: DATA_SOURCE_NAME
+                name: timescaledbexporter-secret
+          - name: PG_EXPORTER_AUTO_DISCOVER_DATABASES
+            valueFrom:
+              configMapKeyRef:
+                key: PG_EXPORTER_AUTO_DISCOVER_DATABASES
+                name: timescaledbexporter-docker-compose-env
+        image: bitnami/postgres-exporter
+        imagePullPolicy: ""
+        name: timescaleexporter
+        ports:
+          - containerPort: 9187
+        resources: { }
       restartPolicy: Always
       serviceAccountName: ""
       volumes:

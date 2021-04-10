@@ -30,6 +30,15 @@ spec:
         - containerPort: 4222
         - containerPort: 6222
         resources: {}
+      - image: natsio/prometheus-nats-exporter
+        args:
+        - -varz
+        - http://localhost:8222
+        imagePullPolicy: ""
+        name: natsexporter
+        ports:
+        - containerPort: 7777
+        resources: {}
       restartPolicy: Always
       serviceAccountName: ""
 #      volumes: null

@@ -12,5 +12,8 @@ spec:
   - name: "50055"
     port: 50055
     targetPort: 50055
+  - name: "2112"
+    port: 2112
+    targetPort: 2112
   selector:
     io.kompose.service: auditsrv

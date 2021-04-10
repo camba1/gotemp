@@ -12,5 +12,8 @@ spec:
   - name: "50051"
     port: 50051
     targetPort: 50051
+  - name: "2112"
+    port: 2112
+    targetPort: 2112
   selector:
     io.kompose.service: promotionsrv

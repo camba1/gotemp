@@ -43,6 +43,17 @@ spec:
         volumeMounts:
         - mountPath: /usr/local/etc/redis/
           name: redis-config-configmap
+      - env:
+          - name: REDIS_ADDR
+            valueFrom:
+              secretKeyRef:
+                key: REDIS_ADDR
+                name: redisexporter-secret
+        image: bitnami/redis-exporter
+        imagePullPolicy: ""
+        name: redisexporter
+        ports:
+          - containerPort: 9121
       restartPolicy: Always
       serviceAccountName: ""
       volumes:

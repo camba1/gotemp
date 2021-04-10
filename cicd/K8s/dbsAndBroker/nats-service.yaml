@@ -18,5 +18,8 @@ spec:
   - name: "6222"
     port: 6222
     targetPort: 6222
+  - name: "7777"
+    port: 7777
+    targetPort: 7777
   selector:
     io.kompose.service: nats
