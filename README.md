@@ -177,7 +177,11 @@ Once the application is deployed, check the address and host assigned to the ing
 
 Note that it takes a couple of minutes for K8s to assign the IP to the ingress. As such wait for that happens before moving ahead.
 
-Grab the address & the host from the result of the command above, and add it to your `/etc/hosts` file.
+Grab the address & the host from the result of the command above, and add it to your `/etc/hosts` file:
+
+```
+    <ipAddress> gotemp.tst
+```
 
 Finally, access app:
 
@@ -218,7 +222,11 @@ Once the application is deployed, check the address and host assigned to the ing
 
 Note that it takes a couple of minutes for K8s to assign the IP to the ingress. As such wait for that happens before moving ahead.
 
-Grab the address & the host from the result of the command above, and add it to your `/etc/hosts` file.
+Grab the address & the host from the result of the command above, and add it to your `/etc/hosts` file:
+
+```
+    <ipAddress> gotemp.tst
+```
 
 Finally, access app:
 
